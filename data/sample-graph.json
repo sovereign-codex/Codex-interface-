@@ -1,0 +1,55 @@
+{
+  "nodes": [
+    {
+      "id": "thread_codex_control_center",
+      "type": "Thread"
+    },
+    {
+      "id": "codex-control-center",
+      "type": "Repo"
+    },
+    {
+      "id": "codex-net-index",
+      "type": "Repo"
+    },
+    {
+      "id": "avot-engine-core",
+      "type": "Repo"
+    },
+    {
+      "id": "codex_codex_control_center",
+      "type": "CodexEntry"
+    },
+    {
+      "id": "dec_0001",
+      "type": "Decision"
+    }
+  ],
+  "edges": [
+    {
+      "source": "thread_codex_control_center",
+      "target": "codex-control-center",
+      "relationship": "implemented_by"
+    },
+    {
+      "source": "thread_codex_control_center",
+      "target": "codex-net-index",
+      "relationship": "recorded_in"
+    },
+    {
+      "source": "codex-control-center",
+      "target": "codex_codex_control_center",
+      "relationship": "documented_by"
+    },
+    {
+      "source": "dec_0001",
+      "target": "thread_codex_control_center",
+      "relationship": "affects"
+    },
+    {
+      "source": "avot-engine-core",
+      "target": "thread_codex_control_center",
+      "relationship": "supports"
+    }
+  ]
+}

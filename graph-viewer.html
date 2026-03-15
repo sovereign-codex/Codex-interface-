@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Codex Graph Viewer</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="back-link" href="index.html">← Back</a>
+    <h1>Graph Viewer</h1>
+    <p class="sub">Lightweight relationship explorer</p>
+  </header>
+  <main class="container">
+    <section class="panel">
+      <h2>Nodes</h2>
+      <div id="nodesList"></div>
+    </section>
+    <section class="panel">
+      <h2>Relationships</h2>
+      <div id="edgesList"></div>
+    </section>
+  </main>
+  <script src="assets/js/app.js"></script>
+  <script>
+    fetch("data/sample-graph.json")
+      .then(r => r.json())
+      .then(data => {
+        const nodesHtml = data.nodes.map(n =>
+          `<div class="list-item"><strong>${n.id}</strong><br><span class="muted">${n.type}</span></div>`
+        ).join("");
+        const edgesHtml = data.edges.map(e =>
+          `<div class="list-item"><strong>${e.source}</strong> → <strong>${e.target}</strong><br><span class="muted">${e.relationship}</span></div>`
+        ).join("");
+        document.getElementById("nodesList").innerHTML = nodesHtml;
+        document.getElementById("edgesList").innerHTML = edgesHtml;
+      });
+  </script>
+</body>
+</html>

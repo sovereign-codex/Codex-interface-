@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Codex Control Panel</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="back-link" href="index.html">← Back</a>
+    <h1>Codex Control Panel</h1>
+    <p class="sub">Generate YAML from your iPhone</p>
+  </header>
+  <main class="container">
+    <section class="panel">
+      <h2>Create Repository Profile</h2>
+      <label>Repo Name<input id="repoName" placeholder="codex-graph"></label>
+      <label>Domain<input id="repoDomain" placeholder="CODEX_INFRASTRUCTURE"></label>
+      <label>Classification<input id="repoClass" placeholder="interface"></label>
+      <button onclick="generateRepo()">Generate Repo YAML</button>
+      <pre id="repoOutput" class="output"></pre>
+    </section>
+    <section class="panel">
+      <h2>Create Thread</h2>
+      <label>Thread ID<input id="threadId" placeholder="thread_codex_graph"></label>
+      <label>Title<input id="threadTitle" placeholder="Codex Graph Viewer"></label>
+      <label>Domain<input id="threadDomain" placeholder="CODEX_INFRASTRUCTURE"></label>
+      <label>Summary<textarea id="threadSummary" placeholder="Describe the thread..."></textarea></label>
+      <button onclick="generateThread()">Generate Thread YAML</button>
+      <pre id="threadOutput" class="output"></pre>
+    </section>
+    <section class="panel">
+      <h2>Create Decision Artifact</h2>
+      <label>Decision ID<input id="decisionId" placeholder="dec_0002"></label>
+      <label>Summary<textarea id="decisionSummary" placeholder="Decision summary..."></textarea></label>
+      <button onclick="generateDecision()">Generate Decision YAML</button>
+      <pre id="decisionOutput" class="output"></pre>
+    </section>
+    <section class="panel">
+      <h2>Create Codex Entry</h2>
+      <label>Entry Slug<input id="codexSlug" placeholder="codex_codex_graph"></label>
+      <label>Title<input id="codexTitle" placeholder="Codex Graph Viewer"></label>
+      <label>Body<textarea id="codexBody" placeholder="Entry body..."></textarea></label>
+      <button onclick="generateCodex()">Generate Markdown</button>
+      <pre id="codexOutput" class="output"></pre>
+    </section>
+  </main>
+  <script src="assets/js/app.js"></script>
+  <script>
+    function today(){ return new Date().toISOString().slice(0,10); }
+    function generateRepo(){
+      const name = val("repoName");
+      const domain = val("repoDomain");
+      const classification = val("repoClass");
+      setOut("repoOutput", `repo_id: ${name}
+
+name: ${name}
+
+classification: ${classification || "unknown"}
+
+domain: ${domain || "UNASSIGNED"}
+
+status: active
+
+created: ${today()}
+`);
+    }
+    function generateThread(){
+      const id = val("threadId");
+      const title = val("threadTitle");
+      const domain = val("threadDomain");
+      const summary = val("threadSummary");
+      setOut("threadOutput", `thread_id: ${id}
+
+title: ${title}
+
+domain: ${domain || "UNASSIGNED"}
+
+summary: >
+  ${summary}
+
+status: active
+
+created: ${today()}
+`);
+    }
+    function generateDecision(){
+      const id = val("decisionId");
+      const summary = val("decisionSummary");
+      setOut("decisionOutput", `decision_id: ${id}
+
+summary: >
+  ${summary}
+
+timestamp: ${new Date().toISOString()}
+`);
+    }
+    function generateCodex(){
+      const title = val("codexTitle");
+      const body = val("codexBody");
+      setOut("codexOutput", `# ${title}
+
+${body}
+`);
+    }
+  </script>
+</body>
+</html>
