@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trace Detail</title>
+
+  <style>
+    body {
+      font-family: -apple-system, sans-serif;
+      background: #0f1115;
+      color: #e6e6e6;
+      padding: 16px;
+    }
+
+    h2 {
+      margin-bottom: 8px;
+    }
+
+    .meta {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-bottom: 16px;
+    }
+
+    .event {
+      background: #1a1d23;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .timestamp {
+      font-size: 11px;
+      opacity: 0.6;
+    }
+
+    .workflow {
+      font-weight: bold;
+      color: #6ae3ff;
+      margin-top: 4px;
+    }
+
+    .status {
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .repo {
+      font-size: 11px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+<h2 id="title">Trace</h2>
+<div class="meta" id="meta"></div>
+
+<div id="timeline"></div>
+
+<script>
+function getTraceId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("trace");
+}
+
+const TRACE_ID = getTraceId();
+
+if (!TRACE_ID) {
+  document.body.innerHTML = "<h3>No trace ID provided</h3>";
+}
+
+const TRACE_URL = `https://raw.githubusercontent.com/sovereign-codex/AVOT-TRACE/main/traces/${TRACE_ID}.json`;
+
+async function loadTrace() {
+  try {
+    const res = await fetch(TRACE_URL);
+    const data = await res.json();
+
+    document.getElementById("title").innerText = `Trace: ${data.trace_id}`;
+
+    const events = data.events || [];
+
+    document.getElementById("meta").innerText =
+      `${events.length} events`;
+
+    const container = document.getElementById("timeline");
+
+    container.innerHTML = "";
+
+    events.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+    events.forEach(event => {
+      const div = document.createElement("div");
+      div.className = "event";
+
+      div.innerHTML = `
+        <div class="timestamp">${event.timestamp}</div>
+        <div class="workflow">${event.workflow}</div>
+        <div class="status">${event.status}</div>
+        <div class="repo">${event.repo}</div>
+      `;
+
+      container.appendChild(div);
+    });
+
+  } catch (err) {
+    document.body.innerHTML = "<h3>Trace not found</h3>";
+  }
+}
+
+loadTrace();
+</script>
+
+</body>
+</html>
