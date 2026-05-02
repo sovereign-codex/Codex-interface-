@@ -7,11 +7,15 @@
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+
   <header class="app-header">
     <h1>Codex Interface</h1>
     <p class="sub">Mobile-first operating surface for Codex-Net</p>
   </header>
+
   <main class="container">
+
+    <!-- SYSTEM MAP -->
     <section class="panel hero">
       <h2>System Map</h2>
       <div class="chips">
@@ -19,26 +23,47 @@
         <span class="chip">Interface = human interaction</span>
         <span class="chip">Net Index = memory graph</span>
         <span class="chip">AVOT Engine = cognition runtime</span>
+        <span class="chip">Trace Layer = system activity</span>
       </div>
     </section>
+
+    <!-- CORE MODULES -->
     <section class="grid">
+
       <a class="card-link" href="control-panel.html">
         <h3>Control Panel</h3>
         <p>Create YAML entries for repos, threads, decisions, and codex entries.</p>
       </a>
+
       <a class="card-link" href="graph-viewer.html">
         <h3>Graph Viewer</h3>
         <p>View a lightweight relationship graph built from Codex node data.</p>
       </a>
+
+      <a class="card-link" href="trace-viewer.html">
+        <h3>Trace Viewer</h3>
+        <p>Observe live system traces, execution flow, and runtime activity.</p>
+      </a>
+
+      <!-- Optional deep view (can keep or remove) -->
+      <a class="card-link" href="trace-detail.html">
+        <h3>Trace Detail</h3>
+        <p>Inspect individual traces, events, and execution context.</p>
+      </a>
+
       <a class="card-link" href="scroll-reader.html">
         <h3>Scroll Reader</h3>
         <p>Read codex entries in a clean, iPhone-friendly format.</p>
       </a>
+
       <a class="card-link" href="thread-explorer.html">
         <h3>Thread Explorer</h3>
         <p>Browse active threads and their linked repositories.</p>
       </a>
+
     </section>
+
+    <!-- SYSTEM ROLES -->
     <section class="panel">
       <h2>Recommended repository roles</h2>
       <ul class="simple-list">
@@ -48,7 +73,10 @@
         <li><strong>avot-engine-core</strong> — AVOT runtime and council reasoning</li>
       </ul>
     </section>
+
   </main>
+
   <script src="assets/js/app.js"></script>
+
 </body>
 </html>
