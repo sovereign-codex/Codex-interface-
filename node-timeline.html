@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Node Timeline</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+<header class="app-header">
+  <a href="graph-viewer.html">← Back</a>
+  <h1>Node Timeline</h1>
+</header>
+
+<main class="container">
+  <div id="timelineContainer">Loading...</div>
+</main>
+
+<script>
+const TRACE_PATH = "data/trace-relationship-index.json";
+
+function getNodeId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("node");
+}
+
+async function loadTimeline() {
+  const nodeId = getNodeId();
+  const container = document.getElementById("timelineContainer");
+
+  if (!nodeId) {
+    container.innerHTML = "No node specified.";
+    return;
+  }
+
+  try {
+    const res = await fetch(TRACE_PATH);
+    const data = await res.json();
+
+    let traces = data.traces || [];
+
+    // 🔥 FILTER traces touching this node
+    traces = traces.filter(t =>
+      t.repo === nodeId ||
+      t.context?.thread === nodeId ||
+      t.context?.avot === nodeId
+    );
+
+    // 🔥 SORT by time
+    traces.sort((a, b) =>
+      new Date(a.timestamp || 0) - new Date(b.timestamp || 0)
+    );
+
+    if (!traces.length) {
+      container.innerHTML = `<div class="trace-card">No traces found for ${nodeId}</div>`;
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="trace-card">
+        <h2>Node: ${nodeId}</h2>
+        <p>${traces.length} related traces</p>
+      </div>
+
+      ${traces.map(t => `
+        <div class="trace-card timeline-item"
+             onclick="openTrace('${t.trace_id}')">
+          <strong>${t.trace_id}</strong><br>
+          <small>${t.timestamp || "no time"}</small><br>
+          Repo: ${t.repo}<br>
+          Status: ${t.status}
+        </div>
+      `).join("")}
+    `;
+
+  } catch (err) {
+    container.innerHTML = "Failed to load timeline.";
+    console.error(err);
+  }
+}
+
+function openTrace(traceId) {
+  window.location.href = `trace-detail.html?trace_id=${traceId}`;
+}
+
+loadTimeline();
+</script>
+
+</body>
+</html>
