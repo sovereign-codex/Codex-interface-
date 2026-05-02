@@ -1,115 +1,213 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Trace Detail</title>
+  <link rel="stylesheet" href="assets/css/style.css">
 
   <style>
-    body {
-      font-family: -apple-system, sans-serif;
-      background: #0f1115;
-      color: #e6e6e6;
-      padding: 16px;
-    }
-
-    h2 {
-      margin-bottom: 8px;
-    }
-
-    .meta {
-      font-size: 12px;
-      opacity: 0.7;
-      margin-bottom: 16px;
-    }
-
-    .event {
-      background: #1a1d23;
+    .section { margin-bottom: 18px; }
+    .card {
+      background: #0f172a;
       border-radius: 10px;
-      padding: 12px;
+      padding: 14px;
       margin-bottom: 10px;
     }
-
-    .timestamp {
-      font-size: 11px;
+    .label {
+      font-size: 12px;
       opacity: 0.6;
+      margin-bottom: 4px;
     }
-
-    .workflow {
-      font-weight: bold;
-      color: #6ae3ff;
-      margin-top: 4px;
+    .link {
+      color: #60a5fa;
+      text-decoration: none;
     }
-
-    .status {
-      font-size: 13px;
-      margin-top: 4px;
-    }
-
-    .repo {
-      font-size: 11px;
-      opacity: 0.6;
-    }
+    .link:hover { text-decoration: underline; }
+    .small { font-size: 12px; opacity: 0.7; }
   </style>
 </head>
+
 <body>
 
-<h2 id="title">Trace</h2>
-<div class="meta" id="meta"></div>
+<header class="app-header">
+  <a href="trace-viewer.html" class="link">← Back</a>
+  <h1>Trace Detail</h1>
+</header>
 
-<div id="timeline"></div>
+<main class="container">
+
+  <div id="traceContainer">Loading trace...</div>
+
+</main>
 
 <script>
-function getTraceId() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("trace");
+
+const TRACE_INDEX_PATH = "data/trace-relationship-index.json";
+const REL_PATH = "relationships/generated/trace-relationships.json";
+const CAUSAL_PATH = "relationships/generated/causal-relationships.json";
+
+const params = new URLSearchParams(window.location.search);
+const traceId = params.get("id");
+
+
+async function loadAll() {
+  const [indexRes, relRes, causalRes] = await Promise.all([
+    fetch(TRACE_INDEX_PATH),
+    fetch(REL_PATH),
+    fetch(CAUSAL_PATH)
+  ]);
+
+  return {
+    index: await indexRes.json(),
+    rels: (await relRes.json()).relationships || [],
+    causal: (await causalRes.json()).relationships || []
+  };
 }
 
-const TRACE_ID = getTraceId();
 
-if (!TRACE_ID) {
-  document.body.innerHTML = "<h3>No trace ID provided</h3>";
+function findTrace(index) {
+  return index.traces.find(t => t.trace_id === traceId);
 }
 
-const TRACE_URL = `https://raw.githubusercontent.com/sovereign-codex/AVOT-TRACE/main/traces/${TRACE_ID}.json`;
 
-async function loadTrace() {
-  try {
-    const res = await fetch(TRACE_URL);
-    const data = await res.json();
+function renderTrace(trace) {
+  return `
+    <div class="card">
+      <div class="label">Trace ID</div>
+      <div>${trace.trace_id}</div>
 
-    document.getElementById("title").innerText = `Trace: ${data.trace_id}`;
+      <div class="label">Repo</div>
+      <div>${trace.repo}</div>
 
-    const events = data.events || [];
+      <div class="label">Workflow</div>
+      <div>${trace.workflow}</div>
 
-    document.getElementById("meta").innerText =
-      `${events.length} events`;
+      <div class="label">Status</div>
+      <div>${trace.status}</div>
 
-    const container = document.getElementById("timeline");
+      <div class="label">Timestamp</div>
+      <div class="small">${trace.timestamp}</div>
+    </div>
+  `;
+}
 
-    container.innerHTML = "";
 
-    events.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+function renderRelationships(rels) {
+  if (!rels.length) return "<div class='small'>No relationships</div>";
 
-    events.forEach(event => {
-      const div = document.createElement("div");
-      div.className = "event";
+  return rels.map(r => `
+    <div class="card">
+      <div>${r.type}</div>
+      <div class="small">
+        → ${r.to.kind}: 
+        <a class="link" href="${buildLink(r.to)}">
+          ${r.to.id}
+        </a>
+      </div>
+    </div>
+  `).join("");
+}
 
-      div.innerHTML = `
-        <div class="timestamp">${event.timestamp}</div>
-        <div class="workflow">${event.workflow}</div>
-        <div class="status">${event.status}</div>
-        <div class="repo">${event.repo}</div>
-      `;
 
-      container.appendChild(div);
-    });
-
-  } catch (err) {
-    document.body.innerHTML = "<h3>Trace not found</h3>";
+function buildLink(to) {
+  if (to.kind === "trace") {
+    return `trace-detail.html?id=${to.id}`;
   }
+  if (to.kind === "thread") {
+    return `thread-explorer.html`;
+  }
+  return "#";
 }
 
-loadTrace();
+
+function splitCausal(causal) {
+  const before = [];
+  const after = [];
+
+  for (const c of causal) {
+    if (c.to.id === traceId) before.push(c);
+    if (c.from.id === traceId) after.push(c);
+  }
+
+  return { before, after };
+}
+
+
+function renderCausalBlock(title, list, direction) {
+  if (!list.length) return "<div class='small'>None</div>";
+
+  return list.map(c => {
+    const other = direction === "before" ? c.from.id : c.to.id;
+
+    return `
+      <div class="card">
+        <div>${c.type}</div>
+        <div class="small">
+          ${direction === "before" ? "←" : "→"}
+          <a class="link" href="trace-detail.html?id=${other}">
+            ${other}
+          </a>
+        </div>
+        <div class="small">
+          confidence: ${c.confidence}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+
+async function main() {
+  if (!traceId) {
+    document.getElementById("traceContainer").innerHTML = "No trace id.";
+    return;
+  }
+
+  const { index, rels, causal } = await loadAll();
+  const trace = findTrace(index);
+
+  if (!trace) {
+    document.getElementById("traceContainer").innerHTML = "Trace not found.";
+    return;
+  }
+
+  const direct = rels.filter(r => r.from.id === traceId);
+  const { before, after } = splitCausal(causal);
+
+  document.getElementById("traceContainer").innerHTML = `
+    
+    <section class="section">
+      <h2>Trace</h2>
+      ${renderTrace(trace)}
+    </section>
+
+    <section class="section">
+      <h2>Direct Relationships</h2>
+      ${renderRelationships(direct)}
+    </section>
+
+    <section class="section">
+      <h2>Leads To</h2>
+      ${renderCausalBlock("after", after, "after")}
+    </section>
+
+    <section class="section">
+      <h2>Preceded By</h2>
+      ${renderCausalBlock("before", before, "before")}
+    </section>
+
+    <section class="section">
+      <a class="link" href="node-timeline.html?node=${trace.repo}">
+        → View Node Timeline
+      </a>
+    </section>
+
+  `;
+}
+
+main();
+
 </script>
 
 </body>
