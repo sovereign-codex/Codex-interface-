@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Trace Detail</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+<header class="app-header">
+  <a href="trace-viewer.html">← Back</a>
+  <h1>Trace Detail</h1>
+</header>
+
+<main class="container">
+  <div id="traceDetail">Loading...</div>
+</main>
+
+<script>
+const DATA_PATH = "data/trace-relationship-index.json";
+
+function getTraceId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("trace_id");
+}
+
+async function loadTraceDetail() {
+  const traceId = getTraceId();
+  const container = document.getElementById("traceDetail");
+
+  if (!traceId) {
+    container.innerHTML = "No trace_id provided.";
+    return;
+  }
+
+  try {
+    const res = await fetch(DATA_PATH);
+    const data = await res.json();
+
+    const trace = (data.traces || []).find(t => t.trace_id === traceId);
+
+    if (!trace) {
+      container.innerHTML = "Trace not found.";
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="trace-card">
+        <h2>${trace.trace_id}</h2>
+        <p><strong>Repo:</strong> ${trace.repo}</p>
+        <p><strong>Workflow:</strong> ${trace.workflow}</p>
+        <p><strong>Status:</strong> ${trace.status}</p>
+        <p><strong>Timestamp:</strong> ${trace.timestamp}</p>
+      </div>
+
+      <div class="trace-card">
+        <h3>Context</h3>
+        <pre>${JSON.stringify(trace.context, null, 2)}</pre>
+      </div>
+
+      <div class="trace-card">
+        <h3>Ontology</h3>
+        <pre>${JSON.stringify(trace.ontology, null, 2)}</pre>
+      </div>
+    `;
+
+  } catch (err) {
+    container.innerHTML = "Failed to load trace.";
+    console.error(err);
+  }
+}
+
+loadTraceDetail();
+</script>
+
+</body>
+</html>
