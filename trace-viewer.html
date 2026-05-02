@@ -1,20 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Trace Viewer</title>
 
   <!-- Shared styling -->
   <link rel="stylesheet" href="assets/css/style.css" />
 
   <style>
+    .trace-container {
+      padding: 12px;
+    }
+
     .trace-card {
       background: #1e293b;
       padding: 14px;
       margin-bottom: 12px;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       transition: 0.15s ease;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .trace-card:active {
+      transform: scale(0.98);
     }
 
     .trace-card:hover {
@@ -25,6 +35,7 @@
       font-weight: 600;
       font-size: 14px;
       margin-bottom: 4px;
+      word-break: break-all;
     }
 
     .trace-flow {
@@ -42,14 +53,26 @@
       opacity: 0.5;
       font-size: 13px;
       padding: 20px;
+      text-align: center;
+    }
+
+    .error {
+      color: #f87171;
     }
   </style>
 </head>
 
 <body>
 
-<h2>Trace Viewer</h2>
-<div id="traceContainer">Loading...</div>
+<header class="app-header">
+  <a href="index.html" class="back-link">← Back</a>
+  <h1>Trace Viewer</h1>
+  <p class="sub">Execution trace feed</p>
+</header>
+
+<main class="trace-container">
+  <div id="traceContainer" class="empty">Loading traces...</div>
+</main>
 
 <script>
 const DATA_PATH = "data/trace-relationship-index.json";
@@ -58,23 +81,32 @@ async function loadTraces() {
   const container = document.getElementById("traceContainer");
 
   try {
-    const res = await fetch(DATA_PATH);
+    const res = await fetch(DATA_PATH, { cache: "no-store" });
 
     if (!res.ok) {
-      container.innerHTML = `<div class="empty">Failed to load trace data</div>`;
+      container.innerHTML = `
+        <div class="empty error">
+          Failed to load trace data<br/>
+          (${res.status})
+        </div>
+      `;
       return;
     }
 
     const data = await res.json();
 
-    if (!data.traces || data.traces.length === 0) {
-      container.innerHTML = `<div class="empty">No traces available</div>`;
+    if (!data || !Array.isArray(data.traces) || data.traces.length === 0) {
+      container.innerHTML = `
+        <div class="empty">
+          No traces available yet
+        </div>
+      `;
       return;
     }
 
     container.innerHTML = "";
 
-    // Show newest first
+    // newest first
     const traces = [...data.traces].reverse();
 
     traces.forEach(trace => {
@@ -93,9 +125,9 @@ async function loadTraces() {
         <div class="trace-meta">${status} • ${timestamp}</div>
       `;
 
-      // Navigate to detail view
+      // ✅ FIXED: consistent param name
       el.onclick = () => {
-        window.location.href = `trace-detail.html?trace_id=${encodeURIComponent(traceId)}`;
+        window.location.href = `trace-detail.html?id=${encodeURIComponent(traceId)}`;
       };
 
       container.appendChild(el);
@@ -103,7 +135,13 @@ async function loadTraces() {
 
   } catch (err) {
     console.error(err);
-    container.innerHTML = `<div class="empty">Error loading traces</div>`;
+
+    container.innerHTML = `
+      <div class="empty error">
+        Error loading traces<br/>
+        Check console
+      </div>
+    `;
   }
 }
 
