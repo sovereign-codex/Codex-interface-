@@ -5,51 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Trace Detail</title>
 
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css" />
 
   <style>
-    .container {
-      padding: 12px;
-    }
+    .container { padding: 12px; }
 
-    .section {
-      margin-bottom: 20px;
-    }
-
-    .card {
+    .panel {
       background: #1e293b;
       padding: 14px;
+      margin-bottom: 14px;
       border-radius: 12px;
-      margin-bottom: 10px;
+      border: 1px solid rgba(255,255,255,0.05);
     }
 
     .event {
-      border-left: 2px solid #3b82f6;
-      padding-left: 10px;
-      margin-bottom: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
 
-    .event-time {
-      font-size: 11px;
-      opacity: 0.6;
-    }
+    .event:last-child { border-bottom: none; }
 
-    .event-flow {
-      font-size: 13px;
-    }
-
-    .causal {
-      font-size: 13px;
-      padding: 10px;
-      border-radius: 10px;
-      background: #0f172a;
-      margin-bottom: 8px;
+    .flow-arrow {
+      opacity: 0.4;
+      margin: 6px 0;
     }
 
     .empty {
+      text-align: center;
       opacity: 0.5;
       padding: 20px;
-      text-align: center;
+    }
+
+    .error {
+      color: #f87171;
     }
   </style>
 </head>
@@ -62,94 +50,86 @@
 </header>
 
 <main class="container">
-
-  <div id="traceHeader" class="section"></div>
-
-  <div class="section">
-    <h3>Timeline</h3>
-    <div id="timeline"></div>
-  </div>
-
-  <div class="section">
-    <h3>Causal Flow</h3>
-    <div id="causal"></div>
-  </div>
-
+  <div id="traceDetail" class="empty">Loading trace...</div>
 </main>
 
 <script>
+const TRACE_BASE =
+  "https://raw.githubusercontent.com/YOUR-USERNAME/AVOT-TRACE/main/traces/";
+
+// ✅ supports both id formats
 function getTraceId() {
   const params = new URLSearchParams(window.location.search);
-  return params.get("id");
+  return params.get("id") || params.get("trace_id");
+}
+
+function buildFlow(events) {
+  return events.map((e, i) => {
+    const next = events[i + 1];
+    if (!next) return null;
+    return `<div class="flow-arrow">${e.workflow} → ${next.workflow}</div>`;
+  }).filter(Boolean).join("");
 }
 
 async function loadTrace() {
+  const container = document.getElementById("traceDetail");
   const traceId = getTraceId();
 
-  const header = document.getElementById("traceHeader");
-  const timeline = document.getElementById("timeline");
-  const causal = document.getElementById("causal");
-
   if (!traceId) {
-    header.innerHTML = `<div class="empty">No trace id</div>`;
+    container.innerHTML = `<div class="empty">No trace id</div>`;
     return;
   }
 
-  header.innerHTML = `<div class="card"><strong>${traceId}</strong></div>`;
-
   try {
-    const res = await fetch(`traces/${traceId}.json`, { cache: "no-store" });
+    const res = await fetch(`${TRACE_BASE}${traceId}.json`, { cache: "no-store" });
 
     if (!res.ok) {
-      timeline.innerHTML = `<div class="empty">Trace file not found</div>`;
+      container.innerHTML = `<div class="empty error">Trace not found (${res.status})</div>`;
       return;
     }
 
-    const data = await res.json();
-    const events = data.events || [];
+    const trace = await res.json();
 
-    if (events.length === 0) {
-      timeline.innerHTML = `<div class="empty">No events</div>`;
+    if (!trace.events || trace.events.length === 0) {
+      container.innerHTML = `<div class="empty">No events</div>`;
       return;
     }
 
-    // ---- TIMELINE ----
-    timeline.innerHTML = "";
+    const events = trace.events;
 
-    events.forEach(e => {
-      const el = document.createElement("div");
-      el.className = "event";
+    const timeline = events.map(e => `
+      <div class="event">
+        <div><strong>${e.workflow}</strong></div>
+        <div>${e.repo}</div>
+        <div style="opacity:0.6;font-size:12px">${e.timestamp}</div>
+        <div style="font-size:12px">${e.status}</div>
+      </div>
+    `).join("");
 
-      el.innerHTML = `
-        <div class="event-time">${e.timestamp}</div>
-        <div class="event-flow">${e.repo} → ${e.workflow} → ${e.status}</div>
-      `;
+    const flow = buildFlow(events);
 
-      timeline.appendChild(el);
-    });
+    container.innerHTML = `
+      <div class="panel">
+        <h3>${trace.trace_id}</h3>
+        <div style="font-size:12px;opacity:0.6">
+          ${events.length} events
+        </div>
+      </div>
 
-    // ---- CAUSAL BUILD ----
-    causal.innerHTML = "";
+      <div class="panel">
+        <h3>Timeline</h3>
+        ${timeline}
+      </div>
 
-    for (let i = 1; i < events.length; i++) {
-      const prev = events[i - 1];
-      const curr = events[i];
-
-      const el = document.createElement("div");
-      el.className = "causal";
-
-      el.innerHTML = `
-        ${prev.workflow} (${prev.status})
-        →
-        ${curr.workflow} (${curr.status})
-      `;
-
-      causal.appendChild(el);
-    }
+      <div class="panel">
+        <h3>Causal Flow</h3>
+        ${flow || "<div class='empty'>No flow yet</div>"}
+      </div>
+    `;
 
   } catch (err) {
     console.error(err);
-    timeline.innerHTML = `<div class="empty">Error loading trace</div>`;
+    container.innerHTML = `<div class="empty error">Error loading trace</div>`;
   }
 }
 
