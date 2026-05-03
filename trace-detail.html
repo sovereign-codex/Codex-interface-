@@ -24,10 +24,7 @@
       margin-top: 4px;
     }
 
-    .health {
-      font-weight: 600;
-    }
-
+    .health { font-weight: 600; }
     .good { color: #4ade80; }
     .warn { color: #facc15; }
     .bad { color: #f87171; }
@@ -52,10 +49,7 @@
       padding: 6px 0;
     }
 
-    .flow-node {
-      flex: 1;
-      font-size: 13px;
-    }
+    .flow-node { flex: 1; font-size: 13px; }
 
     .flow-link {
       font-size: 11px;
@@ -74,15 +68,32 @@
       margin-top: 6px;
     }
 
+    .cross-link {
+      padding: 8px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      background: rgba(255,255,255,0.03);
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .cross-link:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .confidence {
+      font-size: 11px;
+      opacity: 0.6;
+      margin-left: 6px;
+    }
+
     .empty {
       text-align: center;
       opacity: 0.5;
       padding: 20px;
     }
 
-    .error {
-      color: #f87171;
-    }
+    .error { color: #f87171; }
   </style>
 </head>
 
@@ -101,14 +112,16 @@
 const TRACE_BASE =
   "https://raw.githubusercontent.com/YOUR-USERNAME/AVOT-TRACE/main/traces/";
 
+const CROSS_TRACE_PATH =
+  "https://raw.githubusercontent.com/YOUR-USERNAME/Codex-net-index/main/relationships/generated/cross-trace-intelligence.json";
+
 function getTraceId() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id") || params.get("trace_id");
 }
 
-/* -------------------------
-   CAUSAL CLASSIFICATION
-------------------------- */
+/* ---------- CORE LOGIC ---------- */
+
 function classify(prev, next) {
   const ps = (prev.status || "").toLowerCase();
 
@@ -119,15 +132,11 @@ function classify(prev, next) {
   return "chained";
 }
 
-/* -------------------------
-   HEALTH SCORING
-------------------------- */
 function computeHealth(events) {
   let score = 100;
 
   events.forEach(e => {
     const s = (e.status || "").toLowerCase();
-
     if (s.includes("fail")) score -= 20;
     else if (s.includes("error")) score -= 25;
     else score += 5;
@@ -136,41 +145,27 @@ function computeHealth(events) {
   return Math.max(0, Math.min(100, score));
 }
 
-/* -------------------------
-   ANOMALY DETECTION
-------------------------- */
 function detectAnomalies(events) {
   let anomalies = [];
-
   let retryCount = 0;
 
   for (let i = 1; i < events.length; i++) {
-    const prev = events[i - 1];
-    const curr = events[i];
-
-    if (prev.workflow === curr.workflow) {
-      retryCount++;
-    }
+    if (events[i - 1].workflow === events[i].workflow) retryCount++;
   }
 
-  if (retryCount >= 2) {
-    anomalies.push(`Retry loop detected (${retryCount + 1}x)`);
-  }
+  if (retryCount >= 2) anomalies.push(`Retry loop (${retryCount + 1}x)`);
 
-  const failChain = events.filter(e =>
+  const failCount = events.filter(e =>
     (e.status || "").toLowerCase().includes("fail")
   ).length;
 
-  if (failChain >= 2) {
-    anomalies.push("Failure chain detected");
-  }
+  if (failCount >= 2) anomalies.push("Failure chain");
 
   return anomalies;
 }
 
-/* -------------------------
-   FLOW BUILDING (compressed)
-------------------------- */
+/* ---------- BUILDERS ---------- */
+
 function buildFlow(events) {
   let output = [];
   let i = 0;
@@ -187,7 +182,6 @@ function buildFlow(events) {
     }
 
     const next = events[i + count];
-
     if (!next) break;
 
     const type = classify(current, next);
@@ -208,21 +202,16 @@ function buildFlow(events) {
   return output.join("");
 }
 
-/* -------------------------
-   TIMELINE (with gap detection)
-------------------------- */
 function buildTimeline(events) {
   return events.map((e, i) => {
     let gapHTML = "";
 
     if (i > 0) {
-      const prevTime = new Date(events[i - 1].timestamp);
-      const currTime = new Date(e.timestamp);
-
-      const diff = (currTime - prevTime) / 1000;
+      const diff =
+        (new Date(e.timestamp) - new Date(events[i - 1].timestamp)) / 1000;
 
       if (diff > 10) {
-        gapHTML = `<div class="gap">⏱ ${diff}s gap</div>`;
+        gapHTML = `<div class="gap">⏱ ${Math.round(diff)}s gap</div>`;
       }
     }
 
@@ -238,9 +227,70 @@ function buildTimeline(events) {
   }).join("");
 }
 
-/* -------------------------
-   LOAD TRACE
-------------------------- */
+/* ---------- CROSS TRACE ---------- */
+
+async function loadCrossTrace(traceId) {
+  try {
+    const res = await fetch(CROSS_TRACE_PATH, { cache: "no-store" });
+    if (!res.ok) return [];
+
+    const data = await res.json();
+    return (data.relationships || []).filter(r =>
+      r.from?.id === traceId || r.to?.id === traceId
+    );
+
+  } catch {
+    return [];
+  }
+}
+
+function renderCrossTrace(traceId, rels) {
+  if (!rels.length) return `<div class="empty">No cross-trace links</div>`;
+
+  const groups = {
+    likely_triggered: [],
+    recovered_by: [],
+    same_execution_family: [],
+    possibly_related: []
+  };
+
+  rels.forEach(r => {
+    if (groups[r.type]) groups[r.type].push(r);
+  });
+
+  function group(title, items) {
+    if (!items.length) return "";
+
+    return `
+      <div class="panel">
+        <h3>${title}</h3>
+        ${items.map(r => {
+          const other = r.from.id === traceId ? r.to.id : r.from.id;
+          return `
+            <div class="cross-link" onclick="openTrace('${other}')">
+              ${other}
+              <span class="confidence">${Math.round((r.confidence||0)*100)}%</span>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  return `
+    ${group("⚡ Likely Triggers", groups.likely_triggered)}
+    ${group("🛠 Recovery", groups.recovered_by)}
+    ${group("🧬 Execution Family", groups.same_execution_family)}
+    ${group("🔗 Related", groups.possibly_related)}
+  `;
+}
+
+function openTrace(id) {
+  window.location.href = `trace-detail.html?id=${encodeURIComponent(id)}`;
+}
+
+/* ---------- LOAD ---------- */
+
 async function loadTrace() {
   const container = document.getElementById("traceDetail");
   const traceId = getTraceId();
@@ -254,37 +304,26 @@ async function loadTrace() {
     const res = await fetch(`${TRACE_BASE}${traceId}.json`, { cache: "no-store" });
 
     if (!res.ok) {
-      container.innerHTML = `<div class="empty error">Trace not found (${res.status})</div>`;
+      container.innerHTML = `<div class="empty error">Trace not found</div>`;
       return;
     }
 
     const trace = await res.json();
     const events = trace.events || [];
 
-    if (events.length === 0) {
-      container.innerHTML = `<div class="empty">No events</div>`;
-      return;
-    }
-
     const health = computeHealth(events);
     const anomalies = detectAnomalies(events);
+    const healthClass = health > 70 ? "good" : health > 40 ? "warn" : "bad";
 
-    const healthClass =
-      health > 70 ? "good" :
-      health > 40 ? "warn" : "bad";
+    const cross = await loadCrossTrace(traceId);
 
     container.innerHTML = `
       <div class="panel">
         <h3>${trace.trace_id}</h3>
-
         <div class="summary-line health ${healthClass}">
           Health: ${health}%
         </div>
-
-        <div class="summary-line">
-          ${events.length} events
-        </div>
-
+        <div class="summary-line">${events.length} events</div>
         ${anomalies.map(a => `<div class="anomaly">⚠ ${a}</div>`).join("")}
       </div>
 
@@ -297,10 +336,14 @@ async function loadTrace() {
         <h3>Causal Flow</h3>
         ${buildFlow(events) || "<div class='empty'>No flow</div>"}
       </div>
+
+      <div class="panel">
+        <h3>Cross-Trace Intelligence</h3>
+        ${renderCrossTrace(traceId, cross)}
+      </div>
     `;
 
   } catch (err) {
-    console.error(err);
     container.innerHTML = `<div class="empty error">Error loading trace</div>`;
   }
 }
