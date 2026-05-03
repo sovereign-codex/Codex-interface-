@@ -16,7 +16,8 @@
       background: #0f172a;
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,0.05);
-      touch-action: manipulation;
+      touch-action: none;
+      display: block;
     }
 
     .panel {
@@ -26,7 +27,11 @@
       border-radius: 12px;
     }
 
-    .legend { font-size: 12px; opacity: 0.7; }
+    .legend {
+      font-size: 12px;
+      opacity: 0.7;
+      line-height: 1.5;
+    }
 
     .cross-link {
       padding: 8px;
@@ -37,14 +42,26 @@
       font-size: 13px;
     }
 
-    .cross-link:hover {
-      background: rgba(255,255,255,0.08);
-    }
-
     .confidence {
       font-size: 11px;
       opacity: 0.6;
       margin-left: 6px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    button {
+      background: #334155;
+      color: #e5e7eb;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 13px;
     }
 
     .empty {
@@ -64,12 +81,16 @@
 </header>
 
 <main class="container">
-
   <canvas id="graphCanvas"></canvas>
 
   <div class="panel">
     <div class="legend">
-      Tap: focus → Tap second: path trace → Tap third: reset
+      Drag to pan • Pinch to zoom • Tap node to focus • Tap another node to trace path
+    </div>
+    <div class="button-row">
+      <button onclick="resetCamera()">Reset View</button>
+      <button onclick="resetFocus()">Clear Focus</button>
+      <button onclick="toggleHeat()">Toggle Heat</button>
     </div>
   </div>
 
@@ -77,7 +98,6 @@
     <h3>Root Cause Candidates</h3>
     <div id="rootList">Analyzing...</div>
   </div>
-
 </main>
 
 <script>
@@ -90,19 +110,32 @@ const CROSS_REL =
 const RELIABILITY =
   "https://raw.githubusercontent.com/sovereign-codex/Codex-net-index/main/data/node-reliability.json";
 
-/* -------------------------
-   STATE
-------------------------- */
+let graphRef = null;
+let reliabilityMap = {};
+let rootCandidates = [];
+
 let focusNode = null;
 let secondNode = null;
-let pathEdges = [];
-let rootCandidates = [];
-let reliabilityMap = {};
-let graphRef = null;
+let highlightNodes = new Set();
+let highlightEdges = new Set();
+
+let heatEnabled = true;
+
+let camera = { x: 0, y: 0, zoom: 1 };
+let cameraVelocity = { x: 0, y: 0 };
+
+let dragging = false;
+let lastPointer = null;
+let lastDist = null;
+
+let animatedPath = [];
+let pathWalkIndex = 0;
+let pathWalkTimer = 0;
 
 /* -------------------------
-   LOAD DATA
+   DATA
 ------------------------- */
+
 async function loadAll() {
   const [a, b, c] = await Promise.all([
     fetch(TRACE_REL, { cache: "no-store" }),
@@ -115,18 +148,15 @@ async function loadAll() {
     ...((b.ok ? await b.json() : {}).relationships || [])
   ];
 
-  const reliabilityData = c.ok ? await c.json() : { nodes: [] };
+  const reliability = c.ok ? await c.json() : { nodes: [] };
 
-  reliabilityData.nodes.forEach(n => {
+  reliability.nodes.forEach(n => {
     reliabilityMap[`${n.kind}:${n.node_id}`] = n;
   });
 
   return rels;
 }
 
-/* -------------------------
-   BUILD GRAPH
-------------------------- */
 function buildGraph(rels) {
   const nodes = {};
   const edges = [];
@@ -142,8 +172,8 @@ function buildGraph(rels) {
         id: r.from.id,
         kind: r.from.kind,
         key: fk,
-        x: Math.random(),
-        y: Math.random(),
+        x: (Math.random() - 0.5) * 2,
+        y: (Math.random() - 0.5) * 2,
         vx: 0,
         vy: 0
       };
@@ -154,8 +184,8 @@ function buildGraph(rels) {
         id: r.to.id,
         kind: r.to.kind,
         key: tk,
-        x: Math.random(),
-        y: Math.random(),
+        x: (Math.random() - 0.5) * 2,
+        y: (Math.random() - 0.5) * 2,
         vx: 0,
         vy: 0
       };
@@ -163,32 +193,51 @@ function buildGraph(rels) {
 
     edges.push({
       source: nodes[fk],
-      target: nodes[tk]
+      target: nodes[tk],
+      type: r.type || "related",
+      confidence: r.confidence || 0
     });
   });
 
   return { nodes: Object.values(nodes), edges };
 }
 
+function buildAdjacency(graph) {
+  const map = new Map();
+
+  graph.edges.forEach(e => {
+    if (!map.has(e.source)) map.set(e.source, []);
+    if (!map.has(e.target)) map.set(e.target, []);
+
+    map.get(e.source).push(e.target);
+    map.get(e.target).push(e.source);
+  });
+
+  return map;
+}
+
 /* -------------------------
-   FORCE SIM
+   FORCE ENGINE
 ------------------------- */
+
 function simulate(graph) {
   const nodes = graph.nodes;
   const edges = graph.edges;
 
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
-      let dx = nodes[i].x - nodes[j].x;
-      let dy = nodes[i].y - nodes[j].y;
-      let dist = Math.sqrt(dx*dx + dy*dy) + 0.01;
+      const a = nodes[i];
+      const b = nodes[j];
 
-      let force = 0.002 / dist;
+      let dx = a.x - b.x;
+      let dy = a.y - b.y;
+      let dist = Math.sqrt(dx * dx + dy * dy) + 0.01;
+      let force = 0.01 / dist;
 
-      nodes[i].vx += dx * force;
-      nodes[i].vy += dy * force;
-      nodes[j].vx -= dx * force;
-      nodes[j].vy -= dy * force;
+      a.vx += dx * force;
+      a.vy += dy * force;
+      b.vx -= dx * force;
+      b.vy -= dy * force;
     }
   }
 
@@ -196,23 +245,68 @@ function simulate(graph) {
     let dx = e.target.x - e.source.x;
     let dy = e.target.y - e.source.y;
 
-    e.source.vx += dx * 0.001;
-    e.source.vy += dy * 0.001;
-    e.target.vx -= dx * 0.001;
-    e.target.vy -= dy * 0.001;
+    e.source.vx += dx * 0.002;
+    e.source.vy += dy * 0.002;
+    e.target.vx -= dx * 0.002;
+    e.target.vy -= dy * 0.002;
   });
 
   nodes.forEach(n => {
+    n.vx += -n.x * 0.001;
+    n.vy += -n.y * 0.001;
+
     n.x += n.vx;
     n.y += n.vy;
-    n.vx *= 0.9;
-    n.vy *= 0.9;
+
+    n.vx *= 0.85;
+    n.vy *= 0.85;
   });
 }
 
 /* -------------------------
-   PATH FINDING
+   CAMERA
 ------------------------- */
+
+function toScreen(x, y, canvas) {
+  return {
+    x: (x - camera.x) * camera.zoom * canvas.width + canvas.width / 2,
+    y: (y - camera.y) * camera.zoom * canvas.height + canvas.height / 2
+  };
+}
+
+function screenToWorld(x, y, canvas) {
+  return {
+    x: (x - canvas.width / 2) / (canvas.width * camera.zoom) + camera.x,
+    y: (y - canvas.height / 2) / (canvas.height * camera.zoom) + camera.y
+  };
+}
+
+function focusCameraOn(node, zoom = 1.45) {
+  focusNode = node;
+  camera.targetZoom = zoom;
+}
+
+function resetCamera() {
+  camera.x = 0;
+  camera.y = 0;
+  camera.zoom = 1;
+  cameraVelocity.x = 0;
+  cameraVelocity.y = 0;
+}
+
+function resetFocus() {
+  focusNode = null;
+  secondNode = null;
+  highlightNodes.clear();
+  highlightEdges.clear();
+  animatedPath = [];
+  pathWalkIndex = 0;
+}
+
+/* -------------------------
+   PATHS
+------------------------- */
+
 function findPath(graph, start, end) {
   const queue = [[start]];
   const visited = new Set();
@@ -236,12 +330,51 @@ function findPath(graph, start, end) {
       });
     }
   }
+
   return [];
 }
 
+function highlightPath(graph, path) {
+  highlightNodes.clear();
+  highlightEdges.clear();
+
+  path.forEach(n => highlightNodes.add(n));
+
+  for (let i = 0; i < path.length - 1; i++) {
+    const a = path[i];
+    const b = path[i + 1];
+
+    const edge = graph.edges.find(e =>
+      (e.source === a && e.target === b) ||
+      (e.source === b && e.target === a)
+    );
+
+    if (edge) highlightEdges.add(edge);
+  }
+
+  animatedPath = path;
+  pathWalkIndex = 0;
+  pathWalkTimer = performance.now();
+}
+
+function animatePathWalk() {
+  if (!animatedPath.length) return;
+
+  const now = performance.now();
+
+  if (now - pathWalkTimer > 900) {
+    pathWalkIndex = Math.min(pathWalkIndex + 1, animatedPath.length - 1);
+    pathWalkTimer = now;
+
+    const node = animatedPath[pathWalkIndex];
+    if (node) focusCameraOn(node, 1.55);
+  }
+}
+
 /* -------------------------
-   ROOT DETECTION (temporal-lite)
+   ROOTS + RELIABILITY
 ------------------------- */
+
 function detectRoots(graph) {
   const scores = new Map();
 
@@ -253,135 +386,52 @@ function detectRoots(graph) {
     add(e.source, 1);
 
     const rel = reliabilityMap[e.source.key];
-    if (rel && rel.state === "critical") {
-      add(e.source, 10);
-    }
+    if (rel?.state === "critical") add(e.source, 10);
+    if (rel?.state === "degraded") add(e.source, 4);
   });
 
   return [...scores.entries()]
-    .map(([k, s]) => ({
-      node: graph.nodes.find(n => n.key === k),
-      score: s
+    .map(([key, score]) => ({
+      node: graph.nodes.find(n => n.key === key),
+      score
     }))
     .filter(x => x.node)
-    .sort((a,b)=>b.score-a.score)
-    .slice(0,5);
+    .sort((a,b) => b.score - a.score)
+    .slice(0, 5);
 }
 
-/* -------------------------
-   DRAW
-------------------------- */
-function draw(canvas, graph) {
-  const ctx = canvas.getContext("2d");
+function reliabilityColor(node) {
+  const rel = reliabilityMap[node.key];
 
-  function resize() {
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+  if (!heatEnabled || !rel) {
+    if (node.kind === "trace") return "#4ade80";
+    if (node.kind === "repo") return "#60a5fa";
+    return "#a78bfa";
   }
 
-  resize();
-  window.addEventListener("resize", resize);
-
-  function loop() {
-    simulate(graph);
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    graph.edges.forEach(e => {
-      let visible = !focusNode ||
-        e.source === focusNode ||
-        e.target === focusNode ||
-        pathEdges.includes(e);
-
-      ctx.strokeStyle = visible
-        ? pathEdges.includes(e) ? "#facc15" : "rgba(255,255,255,0.25)"
-        : "rgba(255,255,255,0.05)";
-
-      ctx.beginPath();
-      ctx.moveTo(e.source.x * canvas.width, e.source.y * canvas.height);
-      ctx.lineTo(e.target.x * canvas.width, e.target.y * canvas.height);
-      ctx.stroke();
-    });
-
-    graph.nodes.forEach(n => {
-      let visible = !focusNode ||
-        n === focusNode ||
-        graph.edges.some(e =>
-          (e.source === focusNode && e.target === n) ||
-          (e.target === focusNode && e.source === n)
-        );
-
-      ctx.globalAlpha = visible ? 1 : 0.15;
-
-      const rel = reliabilityMap[n.key];
-
-      let color = "#a78bfa";
-
-      if (rel) {
-        if (rel.state === "critical") color = "#f87171";
-        else if (rel.state === "degraded") color = "#facc15";
-        else color = "#4ade80";
-      }
-
-      if (n === focusNode) color = "#60a5fa";
-
-      ctx.beginPath();
-      ctx.arc(n.x * canvas.width, n.y * canvas.height, 6, 0, Math.PI*2);
-      ctx.fillStyle = color;
-      ctx.fill();
-
-      ctx.globalAlpha = 1;
-    });
-
-    requestAnimationFrame(loop);
-  }
-
-  loop();
-
-  canvas.addEventListener("click", e => {
-    const rect = canvas.getBoundingClientRect();
-    const mx = (e.clientX - rect.left) / canvas.width;
-    const my = (e.clientY - rect.top) / canvas.height;
-
-    let closest=null, min=0.03;
-
-    graph.nodes.forEach(n=>{
-      const dx=n.x-mx, dy=n.y-my;
-      const d=Math.sqrt(dx*dx+dy*dy);
-      if(d<min){min=d;closest=n;}
-    });
-
-    if(!closest)return;
-
-    if(!focusNode){focusNode=closest;return;}
-
-    if(!secondNode){
-      secondNode=closest;
-      const path=findPath(graph,focusNode,secondNode);
-      pathEdges=[];
-      for(let i=0;i<path.length-1;i++){
-        const a=path[i],b=path[i+1];
-        const e=graph.edges.find(x=>
-          (x.source===a&&x.target===b)||(x.source===b&&x.target===a)
-        );
-        if(e)pathEdges.push(e);
-      }
-      return;
-    }
-
-    focusNode=null;
-    secondNode=null;
-    pathEdges=[];
-  });
+  if (rel.state === "critical") return "#f87171";
+  if (rel.state === "degraded") return "#facc15";
+  return "#4ade80";
 }
 
-/* -------------------------
-   ROOT PANEL
-------------------------- */
+function reliabilityGlow(node) {
+  const rel = reliabilityMap[node.key];
+  if (!heatEnabled || !rel) return 0;
+
+  if (rel.state === "critical") return 16;
+  if (rel.state === "degraded") return 10;
+  return 4;
+}
+
+function toggleHeat() {
+  heatEnabled = !heatEnabled;
+}
+
 function renderRoots() {
   const el = document.getElementById("rootList");
 
   if (!rootCandidates.length) {
-    el.innerHTML = `<div class="empty">No roots</div>`;
+    el.innerHTML = `<div class="empty">No roots detected</div>`;
     return;
   }
 
@@ -395,27 +445,221 @@ function renderRoots() {
 
 function focusNodeByKey(key) {
   const node = graphRef.nodes.find(n => n.key === key);
-  if (node) {
-    focusNode = node;
-    secondNode = null;
-    pathEdges = [];
+  if (!node) return;
+
+  resetFocus();
+  focusCameraOn(node, 1.5);
+  highlightNodes.add(node);
+}
+
+/* -------------------------
+   DRAW
+------------------------- */
+
+function draw(canvas, graph) {
+  const ctx = canvas.getContext("2d");
+
+  function resize() {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
   }
+
+  resize();
+  window.addEventListener("resize", resize);
+
+  function frame() {
+    simulate(graph);
+    animatePathWalk();
+
+    camera.x -= cameraVelocity.x * 0.05;
+    camera.y -= cameraVelocity.y * 0.05;
+    cameraVelocity.x *= 0.9;
+    cameraVelocity.y *= 0.9;
+
+    if (focusNode) {
+      camera.x += (focusNode.x - camera.x) * 0.07;
+      camera.y += (focusNode.y - camera.y) * 0.07;
+      camera.zoom += ((camera.targetZoom || 1.4) - camera.zoom) * 0.05;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    graph.edges.forEach(e => {
+      const a = toScreen(e.source.x, e.source.y, canvas);
+      const b = toScreen(e.target.x, e.target.y, canvas);
+
+      const highlighted = highlightEdges.has(e);
+
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+
+      ctx.strokeStyle = highlighted
+        ? "#facc15"
+        : "rgba(255,255,255,0.10)";
+
+      ctx.lineWidth = highlighted ? 2.4 : 1;
+      ctx.stroke();
+    });
+
+    graph.nodes.forEach(n => {
+      const p = toScreen(n.x, n.y, canvas);
+      const highlighted = highlightNodes.has(n) || n === focusNode;
+      const glow = reliabilityGlow(n);
+
+      ctx.globalAlpha =
+        highlightNodes.size && !highlighted ? 0.18 : 1;
+
+      if (glow) {
+        ctx.shadowBlur = glow;
+        ctx.shadowColor = reliabilityColor(n);
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, highlighted ? 9 : 6, 0, Math.PI * 2);
+      ctx.fillStyle = highlighted ? "#22c55e" : reliabilityColor(n);
+      ctx.fill();
+
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+    });
+
+    requestAnimationFrame(frame);
+  }
+
+  frame();
+
+  setupInteraction(canvas, graph);
+}
+
+/* -------------------------
+   INTERACTION
+------------------------- */
+
+function nearestNode(canvas, sx, sy, graph) {
+  const world = screenToWorld(sx, sy, canvas);
+
+  let closest = null;
+  let min = 0.06 / camera.zoom;
+
+  graph.nodes.forEach(n => {
+    const dx = n.x - world.x;
+    const dy = n.y - world.y;
+    const d = Math.sqrt(dx * dx + dy * dy);
+
+    if (d < min) {
+      min = d;
+      closest = n;
+    }
+  });
+
+  return closest;
+}
+
+function setupInteraction(canvas, graph) {
+  canvas.addEventListener("click", e => {
+    const rect = canvas.getBoundingClientRect();
+    const node = nearestNode(
+      canvas,
+      e.clientX - rect.left,
+      e.clientY - rect.top,
+      graph
+    );
+
+    if (!node) return;
+
+    if (!focusNode) {
+      focusCameraOn(node, 1.45);
+      highlightNodes.clear();
+      highlightEdges.clear();
+      highlightNodes.add(node);
+      return;
+    }
+
+    if (!secondNode) {
+      secondNode = node;
+      const path = findPath(graph, focusNode, secondNode);
+      highlightPath(graph, path);
+      return;
+    }
+
+    resetFocus();
+  });
+
+  canvas.addEventListener("touchstart", e => {
+    if (e.touches.length === 1) {
+      dragging = true;
+      lastPointer = e.touches[0];
+    }
+  }, { passive: false });
+
+  canvas.addEventListener("touchmove", e => {
+    e.preventDefault();
+
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (lastDist) {
+        const delta = dist / lastDist;
+        camera.zoom *= delta;
+        camera.zoom = Math.max(0.25, Math.min(4, camera.zoom));
+      }
+
+      lastDist = dist;
+      return;
+    }
+
+    if (!dragging || !lastPointer) return;
+
+    const t = e.touches[0];
+    const dx = (t.clientX - lastPointer.clientX) / canvas.width;
+    const dy = (t.clientY - lastPointer.clientY) / canvas.height;
+
+    camera.x -= dx / camera.zoom;
+    camera.y -= dy / camera.zoom;
+
+    cameraVelocity.x = dx;
+    cameraVelocity.y = dy;
+
+    lastPointer = t;
+  }, { passive: false });
+
+  canvas.addEventListener("touchend", () => {
+    dragging = false;
+    lastPointer = null;
+    lastDist = null;
+  });
 }
 
 /* -------------------------
    INIT
 ------------------------- */
+
 async function init() {
   const canvas = document.getElementById("graphCanvas");
 
-  const rels = await loadAll();
-  const graph = buildGraph(rels);
+  try {
+    const rels = await loadAll();
 
-  graphRef = graph;
-  rootCandidates = detectRoots(graph);
+    if (!rels.length) {
+      document.body.innerHTML = `<div class="empty">No graph data available</div>`;
+      return;
+    }
 
-  draw(canvas, graph);
-  renderRoots();
+    const graph = buildGraph(rels);
+    graphRef = graph;
+
+    rootCandidates = detectRoots(graph);
+
+    draw(canvas, graph);
+    renderRoots();
+
+  } catch (err) {
+    console.error(err);
+    document.body.innerHTML = `<div class="empty">Error loading graph</div>`;
+  }
 }
 
 init();
