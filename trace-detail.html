@@ -18,6 +18,20 @@
       border: 1px solid rgba(255,255,255,0.05);
     }
 
+    .summary-line {
+      font-size: 13px;
+      opacity: 0.85;
+      margin-top: 4px;
+    }
+
+    .health {
+      font-weight: 600;
+    }
+
+    .good { color: #4ade80; }
+    .warn { color: #facc15; }
+    .bad { color: #f87171; }
+
     .event {
       padding: 10px 0;
       border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -25,9 +39,39 @@
 
     .event:last-child { border-bottom: none; }
 
-    .flow-arrow {
-      opacity: 0.4;
+    .gap {
+      font-size: 11px;
+      opacity: 0.5;
       margin: 6px 0;
+    }
+
+    .flow-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+    }
+
+    .flow-node {
+      flex: 1;
+      font-size: 13px;
+    }
+
+    .flow-link {
+      font-size: 11px;
+      opacity: 0.8;
+      white-space: nowrap;
+    }
+
+    .flow-link.triggered { color: #4ade80; }
+    .flow-link.fallback { color: #f87171; }
+    .flow-link.retry { color: #facc15; }
+    .flow-link.chained { color: #60a5fa; }
+
+    .anomaly {
+      font-size: 12px;
+      color: #f87171;
+      margin-top: 6px;
     }
 
     .empty {
@@ -57,20 +101,146 @@
 const TRACE_BASE =
   "https://raw.githubusercontent.com/YOUR-USERNAME/AVOT-TRACE/main/traces/";
 
-// ✅ supports both id formats
 function getTraceId() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id") || params.get("trace_id");
 }
 
-function buildFlow(events) {
-  return events.map((e, i) => {
-    const next = events[i + 1];
-    if (!next) return null;
-    return `<div class="flow-arrow">${e.workflow} → ${next.workflow}</div>`;
-  }).filter(Boolean).join("");
+/* -------------------------
+   CAUSAL CLASSIFICATION
+------------------------- */
+function classify(prev, next) {
+  const ps = (prev.status || "").toLowerCase();
+
+  if (ps.includes("fail") || ps.includes("error")) return "fallback";
+  if (prev.workflow === next.workflow) return "retry";
+  if (ps.includes("success") || ps.includes("stored")) return "triggered";
+
+  return "chained";
 }
 
+/* -------------------------
+   HEALTH SCORING
+------------------------- */
+function computeHealth(events) {
+  let score = 100;
+
+  events.forEach(e => {
+    const s = (e.status || "").toLowerCase();
+
+    if (s.includes("fail")) score -= 20;
+    else if (s.includes("error")) score -= 25;
+    else score += 5;
+  });
+
+  return Math.max(0, Math.min(100, score));
+}
+
+/* -------------------------
+   ANOMALY DETECTION
+------------------------- */
+function detectAnomalies(events) {
+  let anomalies = [];
+
+  let retryCount = 0;
+
+  for (let i = 1; i < events.length; i++) {
+    const prev = events[i - 1];
+    const curr = events[i];
+
+    if (prev.workflow === curr.workflow) {
+      retryCount++;
+    }
+  }
+
+  if (retryCount >= 2) {
+    anomalies.push(`Retry loop detected (${retryCount + 1}x)`);
+  }
+
+  const failChain = events.filter(e =>
+    (e.status || "").toLowerCase().includes("fail")
+  ).length;
+
+  if (failChain >= 2) {
+    anomalies.push("Failure chain detected");
+  }
+
+  return anomalies;
+}
+
+/* -------------------------
+   FLOW BUILDING (compressed)
+------------------------- */
+function buildFlow(events) {
+  let output = [];
+  let i = 0;
+
+  while (i < events.length - 1) {
+    const current = events[i];
+    let count = 1;
+
+    while (
+      i + count < events.length &&
+      events[i + count].workflow === current.workflow
+    ) {
+      count++;
+    }
+
+    const next = events[i + count];
+
+    if (!next) break;
+
+    const type = classify(current, next);
+
+    output.push(`
+      <div class="flow-row">
+        <div class="flow-node">${current.workflow}</div>
+        <div class="flow-link ${type}">
+          → ${type}${count > 1 ? " ×" + count : ""}
+        </div>
+        <div class="flow-node">${next.workflow}</div>
+      </div>
+    `);
+
+    i += count;
+  }
+
+  return output.join("");
+}
+
+/* -------------------------
+   TIMELINE (with gap detection)
+------------------------- */
+function buildTimeline(events) {
+  return events.map((e, i) => {
+    let gapHTML = "";
+
+    if (i > 0) {
+      const prevTime = new Date(events[i - 1].timestamp);
+      const currTime = new Date(e.timestamp);
+
+      const diff = (currTime - prevTime) / 1000;
+
+      if (diff > 10) {
+        gapHTML = `<div class="gap">⏱ ${diff}s gap</div>`;
+      }
+    }
+
+    return `
+      ${gapHTML}
+      <div class="event">
+        <div><strong>${e.workflow}</strong></div>
+        <div>${e.repo}</div>
+        <div style="opacity:0.6;font-size:12px">${e.timestamp}</div>
+        <div style="font-size:12px">${e.status}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+/* -------------------------
+   LOAD TRACE
+------------------------- */
 async function loadTrace() {
   const container = document.getElementById("traceDetail");
   const traceId = getTraceId();
@@ -89,41 +259,43 @@ async function loadTrace() {
     }
 
     const trace = await res.json();
+    const events = trace.events || [];
 
-    if (!trace.events || trace.events.length === 0) {
+    if (events.length === 0) {
       container.innerHTML = `<div class="empty">No events</div>`;
       return;
     }
 
-    const events = trace.events;
+    const health = computeHealth(events);
+    const anomalies = detectAnomalies(events);
 
-    const timeline = events.map(e => `
-      <div class="event">
-        <div><strong>${e.workflow}</strong></div>
-        <div>${e.repo}</div>
-        <div style="opacity:0.6;font-size:12px">${e.timestamp}</div>
-        <div style="font-size:12px">${e.status}</div>
-      </div>
-    `).join("");
-
-    const flow = buildFlow(events);
+    const healthClass =
+      health > 70 ? "good" :
+      health > 40 ? "warn" : "bad";
 
     container.innerHTML = `
       <div class="panel">
         <h3>${trace.trace_id}</h3>
-        <div style="font-size:12px;opacity:0.6">
+
+        <div class="summary-line health ${healthClass}">
+          Health: ${health}%
+        </div>
+
+        <div class="summary-line">
           ${events.length} events
         </div>
+
+        ${anomalies.map(a => `<div class="anomaly">⚠ ${a}</div>`).join("")}
       </div>
 
       <div class="panel">
         <h3>Timeline</h3>
-        ${timeline}
+        ${buildTimeline(events)}
       </div>
 
       <div class="panel">
         <h3>Causal Flow</h3>
-        ${flow || "<div class='empty'>No flow yet</div>"}
+        ${buildFlow(events) || "<div class='empty'>No flow</div>"}
       </div>
     `;
 
