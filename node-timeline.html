@@ -2,87 +2,155 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Node Timeline</title>
+
   <link rel="stylesheet" href="assets/css/style.css">
+
+  <style>
+    .container { padding: 12px; }
+
+    .panel {
+      background: #1e293b;
+      padding: 14px;
+      margin-bottom: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .trace-entry {
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.03);
+      cursor: pointer;
+    }
+
+    .trace-entry:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .trace-id {
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .trace-meta {
+      font-size: 11px;
+      opacity: 0.6;
+      margin-top: 4px;
+    }
+
+    .empty {
+      text-align: center;
+      opacity: 0.5;
+      padding: 20px;
+    }
+
+    .error { color: #f87171; }
+  </style>
 </head>
 
 <body>
 
 <header class="app-header">
-  <a href="graph-viewer.html">← Back</a>
+  <a href="graph-viewer.html" class="back-link">← Back</a>
   <h1>Node Timeline</h1>
 </header>
 
 <main class="container">
-  <div id="timelineContainer">Loading...</div>
+  <div id="timelineRoot" class="empty">Loading timeline...</div>
 </main>
 
 <script>
-const TRACE_PATH = "data/trace-relationship-index.json";
+const TRACE_INDEX_PATH =
+  "https://raw.githubusercontent.com/sovereign-codex/AVOT-TRACE/main/data/trace-index.json";
 
-function getNodeId() {
+function getNode() {
   const params = new URLSearchParams(window.location.search);
   return params.get("node");
 }
 
-async function loadTimeline() {
-  const nodeId = getNodeId();
-  const container = document.getElementById("timelineContainer");
+function openTrace(id) {
+  window.location.href = `trace-detail.html?id=${encodeURIComponent(id)}`;
+}
 
-  if (!nodeId) {
-    container.innerHTML = "No node specified.";
+function matchTrace(node, trace) {
+  return (
+    trace.trace_id === node ||
+    trace.repo === node ||
+    trace.workflow === node
+  );
+}
+
+function sortByTime(traces) {
+  return traces.sort((a, b) => {
+    const ta = new Date(a.latest || 0);
+    const tb = new Date(b.latest || 0);
+    return tb - ta;
+  });
+}
+
+function renderTimeline(node, traces) {
+  const root = document.getElementById("timelineRoot");
+
+  if (!traces.length) {
+    root.innerHTML = `<div class="empty">No activity for this node</div>`;
+    return;
+  }
+
+  const html = traces.map(t => `
+    <div class="trace-entry" onclick="openTrace('${t.trace_id}')">
+      <div class="trace-id">${t.trace_id}</div>
+      <div>${t.repo} → ${t.workflow}</div>
+      <div class="trace-meta">
+        ${t.status} • ${t.latest}
+      </div>
+    </div>
+  `).join("");
+
+  root.innerHTML = `
+    <div class="panel">
+      <h2>${node}</h2>
+      <div class="trace-meta">${traces.length} related traces</div>
+    </div>
+
+    <div class="panel">
+      <h3>Activity Timeline</h3>
+      ${html}
+    </div>
+  `;
+}
+
+async function loadTimeline() {
+  const root = document.getElementById("timelineRoot");
+  const node = getNode();
+
+  if (!node) {
+    root.innerHTML = `<div class="empty">No node specified</div>`;
     return;
   }
 
   try {
-    const res = await fetch(TRACE_PATH);
-    const data = await res.json();
+    const res = await fetch(TRACE_INDEX_PATH, { cache: "no-store" });
 
-    let traces = data.traces || [];
-
-    // 🔥 FILTER traces touching this node
-    traces = traces.filter(t =>
-      t.repo === nodeId ||
-      t.context?.thread === nodeId ||
-      t.context?.avot === nodeId
-    );
-
-    // 🔥 SORT by time
-    traces.sort((a, b) =>
-      new Date(a.timestamp || 0) - new Date(b.timestamp || 0)
-    );
-
-    if (!traces.length) {
-      container.innerHTML = `<div class="trace-card">No traces found for ${nodeId}</div>`;
+    if (!res.ok) {
+      root.innerHTML = `<div class="empty error">Failed to load traces</div>`;
       return;
     }
 
-    container.innerHTML = `
-      <div class="trace-card">
-        <h2>Node: ${nodeId}</h2>
-        <p>${traces.length} related traces</p>
-      </div>
+    const data = await res.json();
+    const traces = data.traces || [];
 
-      ${traces.map(t => `
-        <div class="trace-card timeline-item"
-             onclick="openTrace('${t.trace_id}')">
-          <strong>${t.trace_id}</strong><br>
-          <small>${t.timestamp || "no time"}</small><br>
-          Repo: ${t.repo}<br>
-          Status: ${t.status}
-        </div>
-      `).join("")}
-    `;
+    const filtered = traces.filter(t => matchTrace(node, t));
+    const sorted = sortByTime(filtered);
+
+    renderTimeline(node, sorted);
 
   } catch (err) {
-    container.innerHTML = "Failed to load timeline.";
     console.error(err);
+    root.innerHTML = `<div class="empty error">Error loading timeline</div>`;
   }
-}
-
-function openTrace(traceId) {
-  window.location.href = `trace-detail.html?trace_id=${traceId}`;
 }
 
 loadTimeline();
