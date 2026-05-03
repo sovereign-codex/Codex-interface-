@@ -2,40 +2,235 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Codex Graph Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>System Graph</title>
+
   <link rel="stylesheet" href="assets/css/style.css">
+
+  <style>
+    .container { padding: 12px; }
+
+    .panel {
+      background: #1e293b;
+      padding: 14px;
+      margin-bottom: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .graph-node {
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .graph-node:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .node-title {
+      font-weight: 600;
+      word-break: break-all;
+    }
+
+    .node-kind {
+      font-size: 11px;
+      opacity: 0.6;
+      margin-top: 3px;
+    }
+
+    .edge {
+      font-size: 13px;
+      padding: 8px;
+      margin-bottom: 6px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 8px;
+    }
+
+    .confidence {
+      font-size: 11px;
+      opacity: 0.6;
+    }
+
+    .highlight {
+      border: 1px solid #60a5fa;
+      box-shadow: 0 0 12px rgba(96,165,250,0.25);
+    }
+
+    .empty {
+      opacity: 0.5;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .error { color: #f87171; }
+  </style>
 </head>
+
 <body>
-  <header class="app-header">
-    <a class="back-link" href="index.html">← Back</a>
-    <h1>Graph Viewer</h1>
-    <p class="sub">Lightweight relationship explorer</p>
-  </header>
-  <main class="container">
-    <section class="panel">
+
+<header class="app-header">
+  <a href="index.html" class="back-link">← Back</a>
+  <h1>System Graph</h1>
+  <p class="sub">Live relationships across traces, repos, AVOTs, and flows</p>
+</header>
+
+<main class="container">
+  <div id="graphRoot" class="empty">Loading graph...</div>
+</main>
+
+<script>
+const TRACE_REL_PATH =
+  "https://raw.githubusercontent.com/YOUR-USERNAME/Codex-net-index/main/relationships/generated/trace-relationships.json";
+
+const CROSS_TRACE_PATH =
+  "https://raw.githubusercontent.com/YOUR-USERNAME/Codex-net-index/main/relationships/generated/cross-trace-intelligence.json";
+
+function getFocus() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("focus");
+}
+
+function normalizeNode(kind, id) {
+  return {
+    key: `${kind}:${id}`,
+    kind,
+    id
+  };
+}
+
+function addNode(map, kind, id) {
+  if (!id) return;
+  const node = normalizeNode(kind, id);
+  if (!map.has(node.key)) map.set(node.key, node);
+}
+
+function relationToEdge(r) {
+  return {
+    type: r.type || "related",
+    from: r.from,
+    to: r.to,
+    confidence: r.confidence || 0
+  };
+}
+
+async function fetchRelationships() {
+  const [traceRes, crossRes] = await Promise.all([
+    fetch(TRACE_REL_PATH, { cache: "no-store" }),
+    fetch(CROSS_TRACE_PATH, { cache: "no-store" })
+  ]);
+
+  const traceData = traceRes.ok ? await traceRes.json() : { relationships: [] };
+  const crossData = crossRes.ok ? await crossRes.json() : { relationships: [] };
+
+  return [
+    ...(traceData.relationships || []),
+    ...(crossData.relationships || [])
+  ];
+}
+
+function buildGraph(relationships) {
+  const nodeMap = new Map();
+  const edges = [];
+
+  relationships.forEach(r => {
+    if (!r.from || !r.to) return;
+
+    addNode(nodeMap, r.from.kind || "unknown", r.from.id);
+    addNode(nodeMap, r.to.kind || "unknown", r.to.id);
+
+    edges.push(relationToEdge(r));
+  });
+
+  return {
+    nodes: [...nodeMap.values()],
+    edges
+  };
+}
+
+function openNode(node) {
+  if (node.kind === "trace") {
+    window.location.href = `trace-detail.html?id=${encodeURIComponent(node.id)}`;
+    return;
+  }
+
+  window.location.href = `node-timeline.html?node=${encodeURIComponent(node.id)}`;
+}
+
+function renderGraph(graph) {
+  const root = document.getElementById("graphRoot");
+  const focus = getFocus();
+
+  if (!graph.nodes.length) {
+    root.innerHTML = `<div class="empty">No graph relationships found</div>`;
+    return;
+  }
+
+  const nodesHTML = graph.nodes.map(node => {
+    const isFocus = focus && node.id === focus;
+
+    return `
+      <div class="graph-node ${isFocus ? "highlight" : ""}"
+           onclick='openNode(${JSON.stringify(node)})'>
+        <div class="node-title">${node.id}</div>
+        <div class="node-kind">${node.kind}</div>
+      </div>
+    `;
+  }).join("");
+
+  const edgesHTML = graph.edges.slice(0, 200).map(edge => `
+    <div class="edge">
+      <strong>${edge.from.id}</strong>
+      → ${edge.type} →
+      <strong>${edge.to.id}</strong>
+      <div class="confidence">${Math.round(edge.confidence * 100)}% confidence</div>
+    </div>
+  `).join("");
+
+  root.innerHTML = `
+    <div class="panel">
+      <h2>Graph Summary</h2>
+      <div>${graph.nodes.length} nodes</div>
+      <div>${graph.edges.length} relationships</div>
+      ${focus ? `<div class="confidence">Focused node: ${focus}</div>` : ""}
+    </div>
+
+    <div class="panel">
       <h2>Nodes</h2>
-      <div id="nodesList"></div>
-    </section>
-    <section class="panel">
-      <h2>Relationships</h2>
-      <div id="edgesList"></div>
-    </section>
-  </main>
-  <script src="assets/js/app.js"></script>
-  <script>
-    fetch("data/sample-graph.json")
-      .then(r => r.json())
-      .then(data => {
-        const nodesHtml = data.nodes.map(n =>
-          `<div class="list-item"><strong>${n.id}</strong><br><span class="muted">${n.type}</span></div>`
-        ).join("");
-        const edgesHtml = data.edges.map(e =>
-          `<div class="list-item"><strong>${e.source}</strong> → <strong>${e.target}</strong><br><span class="muted">${e.relationship}</span></div>`
-        ).join("");
-        document.getElementById("nodesList").innerHTML = nodesHtml;
-        document.getElementById("edgesList").innerHTML = edgesHtml;
-      });
-  </script>
+      ${nodesHTML}
+    </div>
+
+    <div class="panel">
+      <h2>Edges</h2>
+      ${edgesHTML || "<div class='empty'>No edges</div>"}
+    </div>
+  `;
+
+  if (focus) {
+    setTimeout(() => {
+      const el = document.querySelector(".highlight");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 100);
+  }
+}
+
+async function loadGraph() {
+  const root = document.getElementById("graphRoot");
+
+  try {
+    const relationships = await fetchRelationships();
+    const graph = buildGraph(relationships);
+    renderGraph(graph);
+  } catch (err) {
+    console.error(err);
+    root.innerHTML = `<div class="empty error">Error loading graph</div>`;
+  }
+}
+
+loadGraph();
+</script>
+
 </body>
 </html>
