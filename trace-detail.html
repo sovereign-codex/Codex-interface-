@@ -69,12 +69,13 @@
     }
 
     .cross-link {
-      padding: 8px;
-      border-radius: 8px;
-      margin-bottom: 6px;
-      background: rgba(255,255,255,0.03);
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      background: rgba(255,255,255,0.04);
       cursor: pointer;
       font-size: 13px;
+      transition: 0.15s;
     }
 
     .cross-link:hover {
@@ -112,16 +113,19 @@
 const TRACE_BASE =
   "https://raw.githubusercontent.com/sovereign-codex/AVOT-TRACE/main/traces/";
 
+const TRACE_INDEX =
+  "https://raw.githubusercontent.com/sovereign-codex/AVOT-TRACE/main/data/trace-index.json";
+
 const CROSS_TRACE_PATH =
   "https://raw.githubusercontent.com/sovereign-codex/Codex-net-index/main/relationships/generated/cross-trace-intelligence.json";
 
+/* ---------- PARAM ---------- */
 function getTraceId() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id") || params.get("trace_id");
 }
 
-/* ---------- CORE LOGIC ---------- */
-
+/* ---------- CORE ---------- */
 function classify(prev, next) {
   const ps = (prev.status || "").toLowerCase();
 
@@ -164,8 +168,7 @@ function detectAnomalies(events) {
   return anomalies;
 }
 
-/* ---------- BUILDERS ---------- */
-
+/* ---------- BUILD ---------- */
 function buildFlow(events) {
   let output = [];
   let i = 0;
@@ -228,7 +231,6 @@ function buildTimeline(events) {
 }
 
 /* ---------- CROSS TRACE ---------- */
-
 async function loadCrossTrace(traceId) {
   try {
     const res = await fetch(CROSS_TRACE_PATH, { cache: "no-store" });
@@ -289,14 +291,48 @@ function openTrace(id) {
   window.location.href = `trace-detail.html?id=${encodeURIComponent(id)}`;
 }
 
-/* ---------- LOAD ---------- */
+/* ---------- TRACE PICKER (FIX) ---------- */
+async function loadRecentTraces(container) {
+  try {
+    const res = await fetch(TRACE_INDEX, { cache: "no-store" });
 
+    if (!res.ok) {
+      container.innerHTML = `<div class="empty">No trace index found</div>`;
+      return;
+    }
+
+    const data = await res.json();
+    const traces = (data.traces || []).slice(-10).reverse();
+
+    if (!traces.length) {
+      container.innerHTML = `<div class="empty">No traces available</div>`;
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="panel">
+        <h3>Select a Trace</h3>
+        ${traces.map(t => `
+          <div class="cross-link" onclick="openTrace('${t.trace_id}')">
+            ${t.trace_id}
+            <span class="confidence">${t.status || ""}</span>
+          </div>
+        `).join("")}
+      </div>
+    `;
+
+  } catch {
+    container.innerHTML = `<div class="empty error">Error loading traces</div>`;
+  }
+}
+
+/* ---------- MAIN LOAD ---------- */
 async function loadTrace() {
   const container = document.getElementById("traceDetail");
   const traceId = getTraceId();
 
   if (!traceId) {
-    container.innerHTML = `<div class="empty">No trace id</div>`;
+    loadRecentTraces(container);
     return;
   }
 
@@ -343,7 +379,7 @@ async function loadTrace() {
       </div>
     `;
 
-  } catch (err) {
+  } catch {
     container.innerHTML = `<div class="empty error">Error loading trace</div>`;
   }
 }
