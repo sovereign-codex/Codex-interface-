@@ -10,62 +10,48 @@
   <style>
     .container { padding: 12px; }
 
+    canvas {
+      width: 100%;
+      height: 65vh;
+      background: #0f172a;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.05);
+      touch-action: manipulation;
+    }
+
     .panel {
       background: #1e293b;
       padding: 14px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.05);
     }
 
-    .graph-node {
-      background: rgba(255,255,255,0.04);
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 8px;
-      cursor: pointer;
-    }
+    .legend { font-size: 12px; opacity: 0.7; }
 
-    .graph-node:hover {
-      background: rgba(255,255,255,0.08);
-    }
-
-    .node-title {
-      font-weight: 600;
-      word-break: break-all;
-    }
-
-    .node-kind {
-      font-size: 11px;
-      opacity: 0.6;
-      margin-top: 3px;
-    }
-
-    .edge {
-      font-size: 13px;
+    .cross-link {
       padding: 8px;
+      border-radius: 8px;
       margin-bottom: 6px;
       background: rgba(255,255,255,0.03);
-      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .cross-link:hover {
+      background: rgba(255,255,255,0.08);
     }
 
     .confidence {
       font-size: 11px;
       opacity: 0.6;
-    }
-
-    .highlight {
-      border: 1px solid #60a5fa;
-      box-shadow: 0 0 12px rgba(96,165,250,0.25);
+      margin-left: 6px;
     }
 
     .empty {
-      opacity: 0.5;
       text-align: center;
       padding: 20px;
+      opacity: 0.5;
     }
-
-    .error { color: #f87171; }
   </style>
 </head>
 
@@ -74,162 +60,365 @@
 <header class="app-header">
   <a href="index.html" class="back-link">← Back</a>
   <h1>System Graph</h1>
-  <p class="sub">Live relationships across traces, repos, AVOTs, and flows</p>
+  <p class="sub">Interactive intelligence network</p>
 </header>
 
 <main class="container">
-  <div id="graphRoot" class="empty">Loading graph...</div>
+
+  <canvas id="graphCanvas"></canvas>
+
+  <div class="panel">
+    <div class="legend">
+      Tap: focus → Tap second: path trace → Tap third: reset
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Root Cause Candidates</h3>
+    <div id="rootList">Analyzing...</div>
+  </div>
+
 </main>
 
 <script>
-const TRACE_REL_PATH =
-  "https://raw.githubusercontent.com/YOUR-USERNAME/Codex-net-index/main/relationships/generated/trace-relationships.json";
+const TRACE_REL =
+  "https://raw.githubusercontent.com/sovereign-codex/Codex-net-index/main/relationships/generated/trace-relationships.json";
 
-const CROSS_TRACE_PATH =
-  "https://raw.githubusercontent.com/YOUR-USERNAME/Codex-net-index/main/relationships/generated/cross-trace-intelligence.json";
+const CROSS_REL =
+  "https://raw.githubusercontent.com/sovereign-codex/Codex-net-index/main/relationships/generated/cross-trace-intelligence.json";
 
-function getFocus() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("focus");
-}
+const RELIABILITY =
+  "https://raw.githubusercontent.com/sovereign-codex/Codex-net-index/main/data/node-reliability.json";
 
-function normalizeNode(kind, id) {
-  return {
-    key: `${kind}:${id}`,
-    kind,
-    id
-  };
-}
+/* -------------------------
+   STATE
+------------------------- */
+let focusNode = null;
+let secondNode = null;
+let pathEdges = [];
+let rootCandidates = [];
+let reliabilityMap = {};
+let graphRef = null;
 
-function addNode(map, kind, id) {
-  if (!id) return;
-  const node = normalizeNode(kind, id);
-  if (!map.has(node.key)) map.set(node.key, node);
-}
-
-function relationToEdge(r) {
-  return {
-    type: r.type || "related",
-    from: r.from,
-    to: r.to,
-    confidence: r.confidence || 0
-  };
-}
-
-async function fetchRelationships() {
-  const [traceRes, crossRes] = await Promise.all([
-    fetch(TRACE_REL_PATH, { cache: "no-store" }),
-    fetch(CROSS_TRACE_PATH, { cache: "no-store" })
+/* -------------------------
+   LOAD DATA
+------------------------- */
+async function loadAll() {
+  const [a, b, c] = await Promise.all([
+    fetch(TRACE_REL, { cache: "no-store" }),
+    fetch(CROSS_REL, { cache: "no-store" }),
+    fetch(RELIABILITY, { cache: "no-store" })
   ]);
 
-  const traceData = traceRes.ok ? await traceRes.json() : { relationships: [] };
-  const crossData = crossRes.ok ? await crossRes.json() : { relationships: [] };
-
-  return [
-    ...(traceData.relationships || []),
-    ...(crossData.relationships || [])
+  const rels = [
+    ...((a.ok ? await a.json() : {}).relationships || []),
+    ...((b.ok ? await b.json() : {}).relationships || [])
   ];
-}
 
-function buildGraph(relationships) {
-  const nodeMap = new Map();
-  const edges = [];
+  const reliabilityData = c.ok ? await c.json() : { nodes: [] };
 
-  relationships.forEach(r => {
-    if (!r.from || !r.to) return;
-
-    addNode(nodeMap, r.from.kind || "unknown", r.from.id);
-    addNode(nodeMap, r.to.kind || "unknown", r.to.id);
-
-    edges.push(relationToEdge(r));
+  reliabilityData.nodes.forEach(n => {
+    reliabilityMap[`${n.kind}:${n.node_id}`] = n;
   });
 
-  return {
-    nodes: [...nodeMap.values()],
-    edges
-  };
+  return rels;
 }
 
-function openNode(node) {
-  if (node.kind === "trace") {
-    window.location.href = `trace-detail.html?id=${encodeURIComponent(node.id)}`;
+/* -------------------------
+   BUILD GRAPH
+------------------------- */
+function buildGraph(rels) {
+  const nodes = {};
+  const edges = [];
+
+  rels.forEach(r => {
+    if (!r.from || !r.to) return;
+
+    const fk = `${r.from.kind}:${r.from.id}`;
+    const tk = `${r.to.kind}:${r.to.id}`;
+
+    if (!nodes[fk]) {
+      nodes[fk] = {
+        id: r.from.id,
+        kind: r.from.kind,
+        key: fk,
+        x: Math.random(),
+        y: Math.random(),
+        vx: 0,
+        vy: 0
+      };
+    }
+
+    if (!nodes[tk]) {
+      nodes[tk] = {
+        id: r.to.id,
+        kind: r.to.kind,
+        key: tk,
+        x: Math.random(),
+        y: Math.random(),
+        vx: 0,
+        vy: 0
+      };
+    }
+
+    edges.push({
+      source: nodes[fk],
+      target: nodes[tk]
+    });
+  });
+
+  return { nodes: Object.values(nodes), edges };
+}
+
+/* -------------------------
+   FORCE SIM
+------------------------- */
+function simulate(graph) {
+  const nodes = graph.nodes;
+  const edges = graph.edges;
+
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      let dx = nodes[i].x - nodes[j].x;
+      let dy = nodes[i].y - nodes[j].y;
+      let dist = Math.sqrt(dx*dx + dy*dy) + 0.01;
+
+      let force = 0.002 / dist;
+
+      nodes[i].vx += dx * force;
+      nodes[i].vy += dy * force;
+      nodes[j].vx -= dx * force;
+      nodes[j].vy -= dy * force;
+    }
+  }
+
+  edges.forEach(e => {
+    let dx = e.target.x - e.source.x;
+    let dy = e.target.y - e.source.y;
+
+    e.source.vx += dx * 0.001;
+    e.source.vy += dy * 0.001;
+    e.target.vx -= dx * 0.001;
+    e.target.vy -= dy * 0.001;
+  });
+
+  nodes.forEach(n => {
+    n.x += n.vx;
+    n.y += n.vy;
+    n.vx *= 0.9;
+    n.vy *= 0.9;
+  });
+}
+
+/* -------------------------
+   PATH FINDING
+------------------------- */
+function findPath(graph, start, end) {
+  const queue = [[start]];
+  const visited = new Set();
+
+  while (queue.length) {
+    const path = queue.shift();
+    const node = path[path.length - 1];
+
+    if (node === end) return path;
+
+    if (!visited.has(node)) {
+      visited.add(node);
+
+      graph.edges.forEach(e => {
+        if (e.source === node && !visited.has(e.target)) {
+          queue.push([...path, e.target]);
+        }
+        if (e.target === node && !visited.has(e.source)) {
+          queue.push([...path, e.source]);
+        }
+      });
+    }
+  }
+  return [];
+}
+
+/* -------------------------
+   ROOT DETECTION (temporal-lite)
+------------------------- */
+function detectRoots(graph) {
+  const scores = new Map();
+
+  function add(n, v) {
+    scores.set(n.key, (scores.get(n.key) || 0) + v);
+  }
+
+  graph.edges.forEach(e => {
+    add(e.source, 1);
+
+    const rel = reliabilityMap[e.source.key];
+    if (rel && rel.state === "critical") {
+      add(e.source, 10);
+    }
+  });
+
+  return [...scores.entries()]
+    .map(([k, s]) => ({
+      node: graph.nodes.find(n => n.key === k),
+      score: s
+    }))
+    .filter(x => x.node)
+    .sort((a,b)=>b.score-a.score)
+    .slice(0,5);
+}
+
+/* -------------------------
+   DRAW
+------------------------- */
+function draw(canvas, graph) {
+  const ctx = canvas.getContext("2d");
+
+  function resize() {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+  }
+
+  resize();
+  window.addEventListener("resize", resize);
+
+  function loop() {
+    simulate(graph);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    graph.edges.forEach(e => {
+      let visible = !focusNode ||
+        e.source === focusNode ||
+        e.target === focusNode ||
+        pathEdges.includes(e);
+
+      ctx.strokeStyle = visible
+        ? pathEdges.includes(e) ? "#facc15" : "rgba(255,255,255,0.25)"
+        : "rgba(255,255,255,0.05)";
+
+      ctx.beginPath();
+      ctx.moveTo(e.source.x * canvas.width, e.source.y * canvas.height);
+      ctx.lineTo(e.target.x * canvas.width, e.target.y * canvas.height);
+      ctx.stroke();
+    });
+
+    graph.nodes.forEach(n => {
+      let visible = !focusNode ||
+        n === focusNode ||
+        graph.edges.some(e =>
+          (e.source === focusNode && e.target === n) ||
+          (e.target === focusNode && e.source === n)
+        );
+
+      ctx.globalAlpha = visible ? 1 : 0.15;
+
+      const rel = reliabilityMap[n.key];
+
+      let color = "#a78bfa";
+
+      if (rel) {
+        if (rel.state === "critical") color = "#f87171";
+        else if (rel.state === "degraded") color = "#facc15";
+        else color = "#4ade80";
+      }
+
+      if (n === focusNode) color = "#60a5fa";
+
+      ctx.beginPath();
+      ctx.arc(n.x * canvas.width, n.y * canvas.height, 6, 0, Math.PI*2);
+      ctx.fillStyle = color;
+      ctx.fill();
+
+      ctx.globalAlpha = 1;
+    });
+
+    requestAnimationFrame(loop);
+  }
+
+  loop();
+
+  canvas.addEventListener("click", e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) / canvas.width;
+    const my = (e.clientY - rect.top) / canvas.height;
+
+    let closest=null, min=0.03;
+
+    graph.nodes.forEach(n=>{
+      const dx=n.x-mx, dy=n.y-my;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<min){min=d;closest=n;}
+    });
+
+    if(!closest)return;
+
+    if(!focusNode){focusNode=closest;return;}
+
+    if(!secondNode){
+      secondNode=closest;
+      const path=findPath(graph,focusNode,secondNode);
+      pathEdges=[];
+      for(let i=0;i<path.length-1;i++){
+        const a=path[i],b=path[i+1];
+        const e=graph.edges.find(x=>
+          (x.source===a&&x.target===b)||(x.source===b&&x.target===a)
+        );
+        if(e)pathEdges.push(e);
+      }
+      return;
+    }
+
+    focusNode=null;
+    secondNode=null;
+    pathEdges=[];
+  });
+}
+
+/* -------------------------
+   ROOT PANEL
+------------------------- */
+function renderRoots() {
+  const el = document.getElementById("rootList");
+
+  if (!rootCandidates.length) {
+    el.innerHTML = `<div class="empty">No roots</div>`;
     return;
   }
 
-  window.location.href = `node-timeline.html?node=${encodeURIComponent(node.id)}`;
-}
-
-function renderGraph(graph) {
-  const root = document.getElementById("graphRoot");
-  const focus = getFocus();
-
-  if (!graph.nodes.length) {
-    root.innerHTML = `<div class="empty">No graph relationships found</div>`;
-    return;
-  }
-
-  const nodesHTML = graph.nodes.map(node => {
-    const isFocus = focus && node.id === focus;
-
-    return `
-      <div class="graph-node ${isFocus ? "highlight" : ""}"
-           onclick='openNode(${JSON.stringify(node)})'>
-        <div class="node-title">${node.id}</div>
-        <div class="node-kind">${node.kind}</div>
-      </div>
-    `;
-  }).join("");
-
-  const edgesHTML = graph.edges.slice(0, 200).map(edge => `
-    <div class="edge">
-      <strong>${edge.from.id}</strong>
-      → ${edge.type} →
-      <strong>${edge.to.id}</strong>
-      <div class="confidence">${Math.round(edge.confidence * 100)}% confidence</div>
+  el.innerHTML = rootCandidates.map(r => `
+    <div class="cross-link" onclick="focusNodeByKey('${r.node.key}')">
+      ${r.node.id}
+      <span class="confidence">score ${r.score}</span>
     </div>
   `).join("");
+}
 
-  root.innerHTML = `
-    <div class="panel">
-      <h2>Graph Summary</h2>
-      <div>${graph.nodes.length} nodes</div>
-      <div>${graph.edges.length} relationships</div>
-      ${focus ? `<div class="confidence">Focused node: ${focus}</div>` : ""}
-    </div>
-
-    <div class="panel">
-      <h2>Nodes</h2>
-      ${nodesHTML}
-    </div>
-
-    <div class="panel">
-      <h2>Edges</h2>
-      ${edgesHTML || "<div class='empty'>No edges</div>"}
-    </div>
-  `;
-
-  if (focus) {
-    setTimeout(() => {
-      const el = document.querySelector(".highlight");
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 100);
+function focusNodeByKey(key) {
+  const node = graphRef.nodes.find(n => n.key === key);
+  if (node) {
+    focusNode = node;
+    secondNode = null;
+    pathEdges = [];
   }
 }
 
-async function loadGraph() {
-  const root = document.getElementById("graphRoot");
+/* -------------------------
+   INIT
+------------------------- */
+async function init() {
+  const canvas = document.getElementById("graphCanvas");
 
-  try {
-    const relationships = await fetchRelationships();
-    const graph = buildGraph(relationships);
-    renderGraph(graph);
-  } catch (err) {
-    console.error(err);
-    root.innerHTML = `<div class="empty error">Error loading graph</div>`;
-  }
+  const rels = await loadAll();
+  const graph = buildGraph(rels);
+
+  graphRef = graph;
+  rootCandidates = detectRoots(graph);
+
+  draw(canvas, graph);
+  renderRoots();
 }
 
-loadGraph();
+init();
 </script>
 
 </body>
