@@ -15,39 +15,43 @@
       padding: 14px;
       margin-bottom: 14px;
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.05);
     }
 
-    .trace-entry {
-      padding: 10px;
-      margin-bottom: 8px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.03);
-      cursor: pointer;
+    .event {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
 
-    .trace-entry:hover {
-      background: rgba(255,255,255,0.08);
-    }
+    .event:last-child { border-bottom: none; }
 
-    .trace-id {
-      font-weight: 600;
-      font-size: 13px;
-    }
-
-    .trace-meta {
-      font-size: 11px;
+    .meta {
+      font-size: 12px;
       opacity: 0.6;
-      margin-top: 4px;
     }
+
+    .status-good { color: #4ade80; }
+    .status-warn { color: #facc15; }
+    .status-bad { color: #f87171; }
+
+    .score {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .trend {
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .stable { color: #4ade80; }
+    .degraded { color: #facc15; }
+    .critical { color: #f87171; }
 
     .empty {
       text-align: center;
       opacity: 0.5;
       padding: 20px;
     }
-
-    .error { color: #f87171; }
   </style>
 </head>
 
@@ -59,101 +63,152 @@
 </header>
 
 <main class="container">
-  <div id="timelineRoot" class="empty">Loading timeline...</div>
+  <div id="content" class="empty">Loading...</div>
 </main>
 
 <script>
-const TRACE_INDEX_PATH =
+const TRACE_INDEX =
   "https://raw.githubusercontent.com/sovereign-codex/AVOT-TRACE/main/data/trace-index.json";
 
-function getNode() {
+const TRACE_BASE =
+  "https://raw.githubusercontent.com/sovereign-codex/AVOT-TRACE/main/traces/";
+
+const RELIABILITY =
+  "https://raw.githubusercontent.com/sovereign-codex/Codex-net-index/main/data/node-reliability.json";
+
+/* -------------------------
+   UTIL
+------------------------- */
+function getNodeId() {
   const params = new URLSearchParams(window.location.search);
   return params.get("node");
 }
 
-function openTrace(id) {
-  window.location.href = `trace-detail.html?id=${encodeURIComponent(id)}`;
+function classifyStatus(status) {
+  const s = (status || "").toLowerCase();
+
+  if (s.includes("fail") || s.includes("error")) return "status-bad";
+  if (s.includes("warn") || s.includes("unknown")) return "status-warn";
+  return "status-good";
 }
 
-function matchTrace(node, trace) {
-  return (
-    trace.trace_id === node ||
-    trace.repo === node ||
-    trace.workflow === node
-  );
-}
+/* -------------------------
+   TREND DETECTION
+------------------------- */
+function detectTrend(events) {
+  const recent = events.slice(-5);
 
-function sortByTime(traces) {
-  return traces.sort((a, b) => {
-    const ta = new Date(a.latest || 0);
-    const tb = new Date(b.latest || 0);
-    return tb - ta;
+  let score = 0;
+
+  recent.forEach(e => {
+    const s = (e.status || "").toLowerCase();
+
+    if (s.includes("fail")) score -= 2;
+    else if (s.includes("warn")) score -= 1;
+    else score += 1;
   });
+
+  if (score >= 3) return { label: "Improving", class: "stable" };
+  if (score <= -3) return { label: "Degrading", class: "critical" };
+  return { label: "Unstable", class: "degraded" };
 }
 
-function renderTimeline(node, traces) {
-  const root = document.getElementById("timelineRoot");
+/* -------------------------
+   LOAD NODE DATA
+------------------------- */
+async function loadNode() {
+  const nodeId = getNodeId();
+  const container = document.getElementById("content");
 
-  if (!traces.length) {
-    root.innerHTML = `<div class="empty">No activity for this node</div>`;
-    return;
-  }
-
-  const html = traces.map(t => `
-    <div class="trace-entry" onclick="openTrace('${t.trace_id}')">
-      <div class="trace-id">${t.trace_id}</div>
-      <div>${t.repo} → ${t.workflow}</div>
-      <div class="trace-meta">
-        ${t.status} • ${t.latest}
-      </div>
-    </div>
-  `).join("");
-
-  root.innerHTML = `
-    <div class="panel">
-      <h2>${node}</h2>
-      <div class="trace-meta">${traces.length} related traces</div>
-    </div>
-
-    <div class="panel">
-      <h3>Activity Timeline</h3>
-      ${html}
-    </div>
-  `;
-}
-
-async function loadTimeline() {
-  const root = document.getElementById("timelineRoot");
-  const node = getNode();
-
-  if (!node) {
-    root.innerHTML = `<div class="empty">No node specified</div>`;
+  if (!nodeId) {
+    container.innerHTML = `<div class="empty">No node selected</div>`;
     return;
   }
 
   try {
-    const res = await fetch(TRACE_INDEX_PATH, { cache: "no-store" });
+    const [indexRes, reliabilityRes] = await Promise.all([
+      fetch(TRACE_INDEX, { cache: "no-store" }),
+      fetch(RELIABILITY, { cache: "no-store" })
+    ]);
 
-    if (!res.ok) {
-      root.innerHTML = `<div class="empty error">Failed to load traces</div>`;
+    const index = indexRes.ok ? await indexRes.json() : { traces: [] };
+    const reliability = reliabilityRes.ok ? await reliabilityRes.json() : { nodes: [] };
+
+    const relNode = reliability.nodes.find(n =>
+      n.node_id === nodeId
+    );
+
+    /* -------------------------
+       COLLECT EVENTS
+    ------------------------- */
+    let allEvents = [];
+
+    for (const t of index.traces || []) {
+      if (!t.trace_id) continue;
+
+      const res = await fetch(`${TRACE_BASE}${t.trace_id}.json`, { cache: "no-store" });
+      if (!res.ok) continue;
+
+      const trace = await res.json();
+
+      trace.events.forEach(e => {
+        if (e.repo === nodeId || e.workflow === nodeId) {
+          allEvents.push(e);
+        }
+      });
+    }
+
+    if (!allEvents.length) {
+      container.innerHTML = `<div class="empty">No activity for node</div>`;
       return;
     }
 
-    const data = await res.json();
-    const traces = data.traces || [];
+    // sort by time
+    allEvents.sort((a,b)=> new Date(a.timestamp) - new Date(b.timestamp));
 
-    const filtered = traces.filter(t => matchTrace(node, t));
-    const sorted = sortByTime(filtered);
+    const trend = detectTrend(allEvents);
 
-    renderTimeline(node, sorted);
+    /* -------------------------
+       RENDER
+    ------------------------- */
+    container.innerHTML = `
+      <div class="panel">
+        <h3>${nodeId}</h3>
+
+        ${relNode ? `
+          <div class="score">${relNode.score}</div>
+          <div class="${relNode.state}">${relNode.state.toUpperCase()}</div>
+
+          <div class="meta">
+            events: ${relNode.events} • failures: ${relNode.failures} • warnings: ${relNode.warnings}
+          </div>
+        ` : `<div class="meta">No reliability data</div>`}
+
+        <div class="trend ${trend.class}">
+          Trend: ${trend.label}
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Event Timeline</h3>
+        ${allEvents.map(e => `
+          <div class="event">
+            <div><strong>${e.workflow}</strong></div>
+            <div class="meta">${e.repo}</div>
+            <div class="meta">${e.timestamp}</div>
+            <div class="${classifyStatus(e.status)}">${e.status}</div>
+          </div>
+        `).join("")}
+      </div>
+    `;
 
   } catch (err) {
     console.error(err);
-    root.innerHTML = `<div class="empty error">Error loading timeline</div>`;
+    container.innerHTML = `<div class="empty">Error loading node</div>`;
   }
 }
 
-loadTimeline();
+loadNode();
 </script>
 
 </body>
