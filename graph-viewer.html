@@ -26,9 +26,7 @@ canvas {
   border-radius: 12px;
 }
 
-button {
-  margin: 6px;
-}
+button { margin: 6px; }
 </style>
 </head>
 
@@ -58,69 +56,86 @@ button {
 </main>
 
 <script>
-const TRACE_REL =
-"https://raw.githubusercontent.com/sovereign-codex/Codex-net-index/main/relationships/generated/trace-relationships.json";
-
-const CROSS_REL =
-"https://raw.githubusercontent.com/sovereign-codex/Codex-net-index/main/relationships/generated/cross-trace-intelligence.json";
 
 /* =========================
-   CAMERA SYSTEM
+   DATA SOURCES (NEW)
 ========================= */
-let camera = {
-  x: 0,
-  y: 0,
-  zoom: 1
-};
+const GRAPH_URL =
+"https://raw.githubusercontent.com/sovereign-codex/Codex-net-index/main/data/system-graph.json";
+
+const RELIABILITY_URL =
+"https://raw.githubusercontent.com/sovereign-codex/Codex-net-index/main/data/node-reliability.json";
+
+/* =========================
+   CAMERA
+========================= */
+let camera = { x: 0, y: 0, zoom: 1 };
 
 let dragging = false;
 let lastTouch = null;
+
+let heatEnabled = false;
 
 /* =========================
    LOAD DATA
 ========================= */
 async function loadData() {
-  const [a,b] = await Promise.all([
-    fetch(TRACE_REL),
-    fetch(CROSS_REL)
+  const [g, r] = await Promise.all([
+    fetch(GRAPH_URL),
+    fetch(RELIABILITY_URL)
   ]);
 
-  const j1 = a.ok ? await a.json() : {relationships:[]};
-  const j2 = b.ok ? await b.json() : {relationships:[]};
+  const graph = g.ok ? await g.json() : {nodes:[],edges:[]};
+  const rel = r.ok ? await r.json() : {nodes:[]};
 
-  return [...j1.relationships, ...j2.relationships];
+  return {graph, rel};
 }
 
 /* =========================
-   GRAPH BUILD
+   BUILD GRAPH
 ========================= */
-function buildGraph(rels) {
+function buildGraph(data) {
   const nodes = {};
   const edges = [];
 
-  rels.forEach(r => {
-    const fk = `${r.from.kind}:${r.from.id}`;
-    const tk = `${r.to.kind}:${r.to.id}`;
-
-    if (!nodes[fk]) {
-      nodes[fk] = {id:r.from.id,kind:r.from.kind,x:Math.random()*2-1,y:Math.random()*2-1,vx:0,vy:0};
-    }
-
-    if (!nodes[tk]) {
-      nodes[tk] = {id:r.to.id,kind:r.to.kind,x:Math.random()*2-1,y:Math.random()*2-1,vx:0,vy:0};
-    }
-
-    edges.push({source:nodes[fk],target:nodes[tk]});
+  data.graph.nodes.forEach(n => {
+    nodes[n.key] = {
+      ...n,
+      x: Math.random()*2-1,
+      y: Math.random()*2-1,
+      vx: 0,
+      vy: 0
+    };
   });
 
-  return {nodes:Object.values(nodes),edges};
+  data.graph.edges.forEach(e => {
+    if (nodes[e.source] && nodes[e.target]) {
+      edges.push({
+        source: nodes[e.source],
+        target: nodes[e.target],
+        type: e.type
+      });
+    }
+  });
+
+  // attach reliability
+  const reliabilityMap = {};
+  data.rel.nodes.forEach(n => {
+    reliabilityMap[n.key] = n.score;
+  });
+
+  Object.values(nodes).forEach(n => {
+    n.health = reliabilityMap[n.key] || 100;
+  });
+
+  return {nodes:Object.values(nodes), edges};
 }
 
 /* =========================
-   STABLE FORCE SIM
+   STABLE SIMULATION
 ========================= */
 function simulate(graph) {
-  const centerForce = 0.002;
+  const centerForce = 0.001;
 
   graph.nodes.forEach(n => {
     n.vx += -n.x * centerForce;
@@ -134,9 +149,9 @@ function simulate(graph) {
 
       let dx = a.x - b.x;
       let dy = a.y - b.y;
-      let dist = Math.sqrt(dx*dx+dy*dy)+0.01;
+      let dist = Math.sqrt(dx*dx+dy*dy)+0.05;
 
-      let force = 0.003 / dist;
+      let force = 0.002 / dist;
 
       a.vx += dx*force;
       a.vy += dy*force;
@@ -149,22 +164,27 @@ function simulate(graph) {
     let dx = e.target.x - e.source.x;
     let dy = e.target.y - e.source.y;
 
-    e.source.vx += dx*0.002;
-    e.source.vy += dy*0.002;
-    e.target.vx -= dx*0.002;
-    e.target.vy -= dy*0.002;
+    e.source.vx += dx*0.0015;
+    e.source.vy += dy*0.0015;
+    e.target.vx -= dx*0.0015;
+    e.target.vy -= dy*0.0015;
   });
 
   graph.nodes.forEach(n=>{
     n.x += n.vx;
     n.y += n.vy;
-    n.vx *= 0.85;
-    n.vy *= 0.85;
+
+    // damping + clamp (prevents "fly away")
+    n.vx *= 0.8;
+    n.vy *= 0.8;
+
+    n.x = Math.max(-5, Math.min(5, n.x));
+    n.y = Math.max(-5, Math.min(5, n.y));
   });
 }
 
 /* =========================
-   FOCUS + PATH
+   PATH FINDING
 ========================= */
 let focusNode = null;
 let pathTarget = null;
@@ -221,7 +241,7 @@ function draw(canvas, graph) {
       path = findPath(graph,focusNode,pathTarget);
     }
 
-    // edges
+    // EDGES
     graph.edges.forEach(e=>{
       const a = worldToScreen(e.source.x,e.source.y);
       const b = worldToScreen(e.target.x,e.target.y);
@@ -237,16 +257,24 @@ function draw(canvas, graph) {
       ctx.stroke();
     });
 
-    // nodes
+    // NODES
     graph.nodes.forEach(n=>{
       const p = worldToScreen(n.x,n.y);
 
       ctx.beginPath();
       ctx.arc(p.x,p.y,6,0,Math.PI*2);
 
-      if (n === focusNode) ctx.fillStyle="#facc15";
-      else if (n.kind==="trace") ctx.fillStyle="#4ade80";
-      else ctx.fillStyle="#60a5fa";
+      if (heatEnabled) {
+        const g = Math.floor((n.health/100)*255);
+        const r = 255-g;
+        ctx.fillStyle = `rgb(${r},${g},80)`;
+      } else if (n === focusNode) {
+        ctx.fillStyle="#facc15";
+      } else if (n.kind==="trace") {
+        ctx.fillStyle="#4ade80";
+      } else {
+        ctx.fillStyle="#60a5fa";
+      }
 
       ctx.fill();
     });
@@ -257,7 +285,7 @@ function draw(canvas, graph) {
   loop();
 
   /* =========================
-     TOUCH / CLICK
+     INTERACTION
   ========================= */
   canvas.addEventListener("click", e=>{
     const rect = canvas.getBoundingClientRect();
@@ -266,7 +294,7 @@ function draw(canvas, graph) {
     const my = (e.clientY-rect.top - canvas.height/2)/camera.zoom + camera.y;
 
     let closest=null;
-    let minDist=0.05;
+    let minDist=0.08;
 
     graph.nodes.forEach(n=>{
       let dx=n.x-mx;
@@ -285,7 +313,7 @@ function draw(canvas, graph) {
       focusNode = closest;
       camera.x = closest.x;
       camera.y = closest.y;
-      camera.zoom = 1.5;
+      camera.zoom = 1.4;
     } else if (!pathTarget){
       pathTarget = closest;
     } else {
@@ -311,7 +339,7 @@ function draw(canvas, graph) {
 }
 
 /* =========================
-   UI ACTIONS
+   UI
 ========================= */
 function resetView(){
   camera = {x:0,y:0,zoom:1};
@@ -323,11 +351,11 @@ function clearFocus(){
 }
 
 function toggleHeat(){
-  alert("Heat layer coming next");
+  heatEnabled = !heatEnabled;
 }
 
 /* =========================
-   ROOT CAUSE (simple)
+   ROOT CAUSE
 ========================= */
 function renderRoot(graph){
   const box = document.getElementById("rootCauses");
@@ -349,15 +377,15 @@ function renderRoot(graph){
 async function init(){
   const canvas = document.getElementById("graphCanvas");
 
-  const rels = await loadData();
-  const graph = buildGraph(rels);
+  const data = await loadData();
+  const graph = buildGraph(data);
 
   draw(canvas, graph);
   renderRoot(graph);
 }
 
 init();
-</script>
 
+</script>
 </body>
 </html>
