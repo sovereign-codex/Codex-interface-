@@ -1,82 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Trace Viewer</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trace Viewer</title>
 
-  <link rel="stylesheet" href="assets/css/style.css" />
+<link rel="stylesheet" href="assets/css/style.css" />
 
-  <style>
-    .trace-container {
-      padding: 12px;
-    }
+<style>
+.trace-container { padding: 12px; }
 
-    .trace-card {
-      background: #1e293b;
-      padding: 14px;
-      margin-bottom: 12px;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: 0.15s ease;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
+.trace-card {
+  background: #1e293b;
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.04);
+}
 
-    .trace-card:active {
-      transform: scale(0.98);
-    }
+.trace-id { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+.trace-flow { font-size: 13px; opacity: 0.9; }
 
-    .trace-card:hover {
-      background: #334155;
-    }
+.trace-meta {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 6px;
+}
 
-    .trace-id {
-      font-weight: 600;
-      font-size: 14px;
-      margin-bottom: 4px;
-      word-break: break-all;
-    }
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
 
-    .trace-flow {
-      font-size: 13px;
-      opacity: 0.9;
-    }
+.chip {
+  background: #17233d;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
 
-    .trace-meta {
-      font-size: 11px;
-      opacity: 0.6;
-      margin-top: 6px;
-    }
+.flag {
+  font-size: 10px;
+  margin-left: 6px;
+  opacity: 0.7;
+}
 
-    .trace-status {
-      margin-left: 6px;
-      font-weight: 500;
-    }
+.score {
+  font-size: 11px;
+  opacity: 0.6;
+  float: right;
+}
 
-    .ok { color: #4ade80; }
-    .fail { color: #f87171; }
-    .warn { color: #facc15; }
+button {
+  margin-right: 6px;
+  margin-bottom: 10px;
+}
 
-    .empty {
-      opacity: 0.5;
-      font-size: 13px;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .error {
-      color: #f87171;
-    }
-
-    .retry-btn {
-      margin-top: 10px;
-      padding: 6px 10px;
-      border-radius: 6px;
-      background: #334155;
-      display: inline-block;
-      font-size: 12px;
-    }
-  </style>
+.empty {
+  text-align: center;
+  padding: 20px;
+  opacity: 0.5;
+}
+</style>
 </head>
 
 <body>
@@ -88,101 +77,186 @@
 </header>
 
 <main class="trace-container">
-  <div id="traceContainer" class="empty">Loading traces...</div>
+
+<div id="filters"></div>
+
+<div>
+  <button onclick="setQuick('all')">All</button>
+  <button onclick="setQuick('fail')">Failures</button>
+  <button onclick="setQuick('recent')">Recent</button>
+</div>
+
+<div id="traceContainer" class="empty">Loading traces...</div>
+
 </main>
 
 <script>
-// 🔴 PRIMARY SOURCE (LIVE SYSTEM)
-const REMOTE_PATH =
-  "https://raw.githubusercontent.com/sovereign-codex/AVOT-TRACE/main/data/trace-index.json";
+const DATA_PATH = "data/trace-index.json";
 
-// 🟡 FALLBACK (local testing only)
-const LOCAL_PATH = "data/trace-index.json";
-
-// toggle fallback automatically if needed
-async function fetchWithFallback() {
-  try {
-    const res = await fetch(REMOTE_PATH, { cache: "no-store" });
-    if (res.ok) return await res.json();
-  } catch (e) {}
-
-  // fallback
-  const res2 = await fetch(LOCAL_PATH, { cache: "no-store" });
-  if (res2.ok) return await res2.json();
-
-  throw new Error("Both remote and local fetch failed");
+/* =========================
+   PARAMS
+========================= */
+function getParams() {
+  const p = new URLSearchParams(window.location.search);
+  return {
+    node: p.get("node"),
+    status: p.get("status"),
+    repo: p.get("repo")
+  };
 }
 
-function statusClass(status = "") {
-  const s = status.toLowerCase();
-  if (s.includes("fail") || s.includes("error")) return "fail";
-  if (s.includes("warn") || s.includes("retry")) return "warn";
-  return "ok";
+/* =========================
+   FILTER LOGIC
+========================= */
+function applyFilters(traces, filters) {
+  let result = [...traces];
+
+  if (filters.node) {
+    result = result.filter(t =>
+      (t.nodes || []).includes(filters.node)
+    );
+  }
+
+  if (filters.status) {
+    result = result.filter(t =>
+      (t.status || "").includes(filters.status)
+    );
+  }
+
+  if (filters.repo) {
+    result = result.filter(t =>
+      (t.repo || "").includes(filters.repo)
+    );
+  }
+
+  return result;
 }
 
-function renderError(container, msg) {
-  container.innerHTML = `
-    <div class="empty error">
-      ${msg}<br/>
-      <div class="retry-btn" onclick="loadTraces()">Retry</div>
+/* =========================
+   QUICK MODES
+========================= */
+function setQuick(mode) {
+  const url = new URL(window.location);
+
+  if (mode === "all") {
+    url.search = "";
+  }
+
+  if (mode === "fail") {
+    url.searchParams.set("status", "fail");
+  }
+
+  if (mode === "recent") {
+    url.search = "";
+    url.searchParams.set("recent", "1");
+  }
+
+  window.location.href = url.toString();
+}
+
+/* =========================
+   FILTER CHIPS
+========================= */
+function renderFilters(filters) {
+  const box = document.getElementById("filters");
+
+  let chips = [];
+
+  if (filters.node) chips.push(`node: ${filters.node}`);
+  if (filters.status) chips.push(`status: ${filters.status}`);
+  if (filters.repo) chips.push(`repo: ${filters.repo}`);
+
+  if (!chips.length) {
+    box.innerHTML = "";
+    return;
+  }
+
+  box.innerHTML = `
+    <div class="chips">
+      ${chips.map(c => `<div class="chip">${c}</div>`).join("")}
     </div>
   `;
 }
 
+/* =========================
+   RENDER
+========================= */
+function renderTraces(traces) {
+  const container = document.getElementById("traceContainer");
+
+  if (!traces.length) {
+    container.innerHTML = `<div class="empty">No matching traces</div>`;
+    return;
+  }
+
+  container.innerHTML = "";
+
+  traces.forEach(trace => {
+    const el = document.createElement("div");
+    el.className = "trace-card";
+
+    const flags = (trace.flags || []).map(f =>
+      `<span class="flag">⚠ ${f}</span>`
+    ).join("");
+
+    el.innerHTML = `
+      <div class="trace-id">
+        ${trace.trace_id}
+        <span class="score">${trace.score}</span>
+      </div>
+
+      <div class="trace-flow">
+        ${trace.repo} → ${trace.workflow}
+      </div>
+
+      <div class="trace-meta">
+        ${trace.latest} • ${trace.phase}
+        ${flags}
+      </div>
+    `;
+
+    el.onclick = () => {
+      window.location.href =
+        `trace-detail.html?id=${encodeURIComponent(trace.trace_id)}`;
+    };
+
+    container.appendChild(el);
+  });
+}
+
+/* =========================
+   LOAD
+========================= */
 async function loadTraces() {
   const container = document.getElementById("traceContainer");
-  container.innerHTML = `<div class="empty">Loading traces...</div>`;
 
   try {
-    const data = await fetchWithFallback();
+    const res = await fetch(DATA_PATH, { cache: "no-store" });
 
-    if (!data || !Array.isArray(data.traces) || data.traces.length === 0) {
-      container.innerHTML = `<div class="empty">No traces available yet</div>`;
+    if (!res.ok) {
+      container.innerHTML = `<div class="empty">Failed to load</div>`;
       return;
     }
 
-    container.innerHTML = "";
+    const data = await res.json();
+    const filters = getParams();
 
-    const traces = [...data.traces].reverse();
+    let traces = data.traces || [];
 
-    traces.forEach(trace => {
-      const el = document.createElement("div");
-      el.className = "trace-card";
+    traces = applyFilters(traces, filters);
 
-      const traceId = trace.trace_id || "unknown";
-      const repo = trace.repo || "unknown-repo";
-      const workflow = trace.workflow || "unknown-workflow";
-      const status = trace.status || "unknown";
-      const timestamp = trace.latest || "";
-      const count = trace.event_count || 0;
+    if (new URLSearchParams(window.location.search).get("recent")) {
+      traces = traces.slice(0, 10);
+    }
 
-      el.innerHTML = `
-        <div class="trace-id">${traceId}</div>
-        <div class="trace-flow">${repo} → ${workflow}</div>
-        <div class="trace-meta">
-          ${timestamp}
-          <span class="trace-status ${statusClass(status)}">${status}</span>
-          • ${count} events
-        </div>
-      `;
-
-      el.onclick = () => {
-        window.location.href = `trace-detail.html?id=${encodeURIComponent(traceId)}`;
-      };
-
-      container.appendChild(el);
-    });
+    renderFilters(filters);
+    renderTraces(traces);
 
   } catch (err) {
-    console.error(err);
-    renderError(container, "Error loading traces");
+    container.innerHTML = `<div class="empty">Error loading traces</div>`;
   }
 }
 
-// 🔁 Light polling (keeps interface alive)
-setInterval(loadTraces, 10000);
-
-// initial load
 loadTraces();
 </script>
 
