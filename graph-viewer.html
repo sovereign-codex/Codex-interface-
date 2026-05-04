@@ -12,7 +12,7 @@
 
 canvas {
   width: 100%;
-  height: 60vh;
+  height: 58vh;
   background: #0f172a;
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.05);
@@ -26,7 +26,32 @@ canvas {
   border-radius: 12px;
 }
 
-button { margin: 6px; }
+button {
+  margin: 4px;
+}
+
+.small {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.range {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.node-info {
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.root-item {
+  padding: 8px;
+  border-radius: 8px;
+  margin: 6px 0;
+  background: rgba(255,255,255,0.04);
+  cursor: pointer;
+}
 </style>
 </head>
 
@@ -35,7 +60,7 @@ button { margin: 6px; }
 <header class="app-header">
   <a href="index.html" class="back-link">← Back</a>
   <h1>System Graph</h1>
-  <p class="sub">Interactive intelligence network</p>
+  <p class="sub">Temporal intelligence network</p>
 </header>
 
 <main class="container">
@@ -43,12 +68,32 @@ button { margin: 6px; }
 <canvas id="graphCanvas"></canvas>
 
 <div class="panel">
-  <div>Drag to pan • Pinch to zoom • Tap node to focus • Tap second node to trace path</div>
+  <div class="small">
+    Drag to pan • Tap node to focus • Tap focused node again to open traces • Tap second node to trace path
+  </div>
   <div>
-    <button onclick="resetView()">Reset</button>
+    <button onclick="resetView()">Reset View</button>
     <button onclick="clearFocus()">Clear Focus</button>
     <button onclick="toggleHeat()">Toggle Heat</button>
+    <button onclick="toggleGhosts()">Toggle Ghosts</button>
   </div>
+</div>
+
+<div class="panel">
+  <h3>Time Playback</h3>
+  <input id="timeSlider" class="range" type="range" min="0" max="1000" value="1000">
+  <div class="small" id="timeLabel">Loading time range...</div>
+  <div>
+    <button onclick="play()">▶ Play</button>
+    <button onclick="pause()">⏸ Pause</button>
+    <button onclick="live()">LIVE</button>
+    <button onclick="replayFocus()">Replay Focus</button>
+  </div>
+</div>
+
+<div id="focusPanel" class="panel">
+  <h3>Focus</h3>
+  <div class="small">Tap a node to inspect it.</div>
 </div>
 
 <div id="rootCauses" class="panel"></div>
@@ -56,155 +101,260 @@ button { margin: 6px; }
 </main>
 
 <script>
-
 /* =========================
-   DATA SOURCES (NEW)
+   DATA SOURCES
 ========================= */
 const GRAPH_URL =
-"https://raw.githubusercontent.com/sovereign-codex/Codex-net-index/main/data/system-graph.json";
+  "https://raw.githubusercontent.com/sovereign-codex/Codex-net-index/main/data/system-graph.json";
 
 const RELIABILITY_URL =
-"https://raw.githubusercontent.com/sovereign-codex/Codex-net-index/main/data/node-reliability.json";
+  "https://raw.githubusercontent.com/sovereign-codex/Codex-net-index/main/data/node-reliability.json";
 
 /* =========================
-   CAMERA
+   GLOBAL STATE
 ========================= */
-let camera = { x: 0, y: 0, zoom: 1 };
+let ALL_NODES = [];
+let ALL_EDGES = [];
+let GRAPH = { nodes: [], edges: [] };
 
-let dragging = false;
-let lastTouch = null;
+let camera = { x: 0, y: 0, zoom: 110 };
+let focusNode = null;
+let pathTarget = null;
 
 let heatEnabled = false;
+let ghostsEnabled = true;
+let playing = false;
+let replayMode = false;
+
+let minTime = null;
+let maxTime = null;
+let currentTime = null;
+
+let lastTouch = null;
+let lastPinchDistance = null;
+
+const pulseMap = new Map();
+
+/* =========================
+   HELPERS
+========================= */
+function parseTime(value) {
+  if (!value) return Date.now();
+  const t = new Date(value).getTime();
+  return Number.isFinite(t) ? t : Date.now();
+}
+
+function clamp(v, min, max) {
+  return Math.max(min, Math.min(max, v));
+}
+
+function nodeKey(kind, id) {
+  return `${kind}:${id}`;
+}
+
+function edgeTime(edge) {
+  return parseTime(
+    edge.evidence?.timestamp ||
+    edge.evidence?.to_timestamp ||
+    edge.evidence?.from_timestamp ||
+    edge.timestamp
+  );
+}
+
+function formatTime(ts) {
+  if (!ts) return "";
+  return new Date(ts).toISOString().replace(".000Z", "Z");
+}
 
 /* =========================
    LOAD DATA
 ========================= */
 async function loadData() {
   const [g, r] = await Promise.all([
-    fetch(GRAPH_URL),
-    fetch(RELIABILITY_URL)
+    fetch(GRAPH_URL, { cache: "no-store" }),
+    fetch(RELIABILITY_URL, { cache: "no-store" })
   ]);
 
-  const graph = g.ok ? await g.json() : {nodes:[],edges:[]};
-  const rel = r.ok ? await r.json() : {nodes:[]};
+  const graphData = g.ok ? await g.json() : { nodes: [], edges: [] };
+  const reliabilityData = r.ok ? await r.json() : { nodes: [] };
 
-  return {graph, rel};
-}
-
-/* =========================
-   BUILD GRAPH
-========================= */
-function buildGraph(data) {
-  const nodes = {};
-  const edges = [];
-
-  data.graph.nodes.forEach(n => {
-    nodes[n.key] = {
-      ...n,
-      x: Math.random()*2-1,
-      y: Math.random()*2-1,
-      vx: 0,
-      vy: 0
-    };
-  });
-
-  data.graph.edges.forEach(e => {
-    if (nodes[e.source] && nodes[e.target]) {
-      edges.push({
-        source: nodes[e.source],
-        target: nodes[e.target],
-        type: e.type
-      });
-    }
-  });
-
-  // attach reliability
   const reliabilityMap = {};
-  data.rel.nodes.forEach(n => {
-    reliabilityMap[n.key] = n.score;
+  (reliabilityData.nodes || []).forEach(n => {
+    reliabilityMap[n.key] = n;
   });
 
-  Object.values(nodes).forEach(n => {
-    n.health = reliabilityMap[n.key] || 100;
-  });
+  ALL_NODES = (graphData.nodes || []).map(n => ({
+    ...n,
+    x: Math.random() * 2 - 1,
+    y: Math.random() * 2 - 1,
+    vx: 0,
+    vy: 0,
+    health: reliabilityMap[n.key]?.score ?? 100,
+    reliability: reliabilityMap[n.key] || null,
+    activeCount: 0
+  }));
 
-  return {nodes:Object.values(nodes), edges};
+  const nodeMap = {};
+  ALL_NODES.forEach(n => nodeMap[n.key] = n);
+
+  ALL_EDGES = (graphData.edges || [])
+    .filter(e => nodeMap[e.source] && nodeMap[e.target])
+    .map(e => ({
+      ...e,
+      sourceNode: nodeMap[e.source],
+      targetNode: nodeMap[e.target],
+      _ts: edgeTime(e),
+      ghostAlpha: 0
+    }));
+
+  if (!ALL_EDGES.length) {
+    minTime = Date.now();
+    maxTime = Date.now();
+  } else {
+    minTime = Math.min(...ALL_EDGES.map(e => e._ts));
+    maxTime = Math.max(...ALL_EDGES.map(e => e._ts));
+  }
+
+  currentTime = maxTime;
 }
 
 /* =========================
-   STABLE SIMULATION
+   GRAPH BUILD BY TIME
+========================= */
+function rebuildGraph() {
+  const visibleEdges = ALL_EDGES.filter(e => {
+    if (replayMode && focusNode) {
+      return (
+        e.sourceNode === focusNode ||
+        e.targetNode === focusNode ||
+        (pathTarget && findPathRaw(focusNode, pathTarget).includes(e.sourceNode) && findPathRaw(focusNode, pathTarget).includes(e.targetNode))
+      ) && e._ts <= currentTime;
+    }
+
+    return e._ts <= currentTime;
+  });
+
+  const activeNodeSet = new Set();
+
+  visibleEdges.forEach(e => {
+    activeNodeSet.add(e.sourceNode);
+    activeNodeSet.add(e.targetNode);
+    e.ghostAlpha = 1;
+    pulseMap.set(e.sourceNode.key, 1);
+    pulseMap.set(e.targetNode.key, 1);
+  });
+
+  ALL_NODES.forEach(n => {
+    n.activeCount = visibleEdges.filter(e => e.sourceNode === n || e.targetNode === n).length;
+  });
+
+  GRAPH = {
+    nodes: ALL_NODES.filter(n => activeNodeSet.has(n)),
+    edges: visibleEdges
+  };
+
+  renderRoot(GRAPH);
+  renderFocus();
+}
+
+/* =========================
+   SIMULATION
 ========================= */
 function simulate(graph) {
-  const centerForce = 0.001;
-
   graph.nodes.forEach(n => {
-    n.vx += -n.x * centerForce;
-    n.vy += -n.y * centerForce;
+    n.vx += -n.x * 0.001;
+    n.vy += -n.y * 0.001;
   });
 
-  for (let i=0;i<graph.nodes.length;i++){
-    for (let j=i+1;j<graph.nodes.length;j++){
-      let a = graph.nodes[i];
-      let b = graph.nodes[j];
+  for (let i = 0; i < graph.nodes.length; i++) {
+    for (let j = i + 1; j < graph.nodes.length; j++) {
+      const a = graph.nodes[i];
+      const b = graph.nodes[j];
 
-      let dx = a.x - b.x;
-      let dy = a.y - b.y;
-      let dist = Math.sqrt(dx*dx+dy*dy)+0.05;
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      const dist = Math.sqrt(dx * dx + dy * dy) + 0.05;
+      const force = 0.002 / dist;
 
-      let force = 0.002 / dist;
-
-      a.vx += dx*force;
-      a.vy += dy*force;
-      b.vx -= dx*force;
-      b.vy -= dy*force;
+      a.vx += dx * force;
+      a.vy += dy * force;
+      b.vx -= dx * force;
+      b.vy -= dy * force;
     }
   }
 
-  graph.edges.forEach(e=>{
-    let dx = e.target.x - e.source.x;
-    let dy = e.target.y - e.source.y;
+  graph.edges.forEach(e => {
+    const a = e.sourceNode;
+    const b = e.targetNode;
 
-    e.source.vx += dx*0.0015;
-    e.source.vy += dy*0.0015;
-    e.target.vx -= dx*0.0015;
-    e.target.vy -= dy*0.0015;
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const strength = 0.0015 * (e.weight || 1);
+
+    a.vx += dx * strength;
+    a.vy += dy * strength;
+    b.vx -= dx * strength;
+    b.vy -= dy * strength;
   });
 
-  graph.nodes.forEach(n=>{
+  graph.nodes.forEach(n => {
     n.x += n.vx;
     n.y += n.vy;
 
-    // damping + clamp (prevents "fly away")
-    n.vx *= 0.8;
-    n.vy *= 0.8;
+    n.vx *= 0.82;
+    n.vy *= 0.82;
 
-    n.x = Math.max(-5, Math.min(5, n.x));
-    n.y = Math.max(-5, Math.min(5, n.y));
+    n.x = clamp(n.x, -5, 5);
+    n.y = clamp(n.y, -5, 5);
   });
 }
 
 /* =========================
    PATH FINDING
 ========================= */
-let focusNode = null;
-let pathTarget = null;
+function findPathRaw(start, end) {
+  if (!start || !end) return [];
 
-function findPath(graph, start, end) {
-  let visited = new Set();
-  let queue = [[start]];
+  const visited = new Set();
+  const queue = [[start]];
 
   while (queue.length) {
-    let path = queue.shift();
-    let node = path[path.length-1];
+    const path = queue.shift();
+    const node = path[path.length - 1];
 
     if (node === end) return path;
 
     if (!visited.has(node)) {
       visited.add(node);
 
-      graph.edges.forEach(e=>{
-        if (e.source===node) queue.push([...path,e.target]);
-        if (e.target===node) queue.push([...path,e.source]);
+      ALL_EDGES.forEach(e => {
+        if (e.sourceNode === node) queue.push([...path, e.targetNode]);
+        if (e.targetNode === node) queue.push([...path, e.sourceNode]);
+      });
+    }
+  }
+
+  return [];
+}
+
+function findPath(graph, start, end) {
+  if (!start || !end) return [];
+
+  const visited = new Set();
+  const queue = [[start]];
+
+  while (queue.length) {
+    const path = queue.shift();
+    const node = path[path.length - 1];
+
+    if (node === end) return path;
+
+    if (!visited.has(node)) {
+      visited.add(node);
+
+      graph.edges.forEach(e => {
+        if (e.sourceNode === node) queue.push([...path, e.targetNode]);
+        if (e.targetNode === node) queue.push([...path, e.sourceNode]);
       });
     }
   }
@@ -215,68 +365,120 @@ function findPath(graph, start, end) {
 /* =========================
    DRAW
 ========================= */
-function draw(canvas, graph) {
+function draw(canvas) {
   const ctx = canvas.getContext("2d");
 
   function resize() {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
   }
+
   resize();
   window.addEventListener("resize", resize);
 
-  function worldToScreen(x,y){
+  function worldToScreen(x, y) {
     return {
-      x:(x-camera.x)*camera.zoom + canvas.width/2,
-      y:(y-camera.y)*camera.zoom + canvas.height/2
+      x: (x - camera.x) * camera.zoom + canvas.width / 2,
+      y: (y - camera.y) * camera.zoom + canvas.height / 2
     };
   }
 
-  function loop(){
-    simulate(graph);
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+  function screenToWorld(x, y) {
+    return {
+      x: (x - canvas.width / 2) / camera.zoom + camera.x,
+      y: (y - canvas.height / 2) / camera.zoom + camera.y
+    };
+  }
 
-    let path = [];
-    if (focusNode && pathTarget) {
-      path = findPath(graph,focusNode,pathTarget);
+  function loop() {
+    simulate(GRAPH);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const path = focusNode && pathTarget
+      ? findPath(GRAPH, focusNode, pathTarget)
+      : [];
+
+    /* Ghost trails */
+    if (ghostsEnabled) {
+      ALL_EDGES.forEach(e => {
+        if (e._ts > currentTime) return;
+
+        e.ghostAlpha *= 0.985;
+        if (e.ghostAlpha < 0.04) return;
+
+        const a = worldToScreen(e.sourceNode.x, e.sourceNode.y);
+        const b = worldToScreen(e.targetNode.x, e.targetNode.y);
+
+        ctx.strokeStyle = `rgba(157,215,255,${e.ghostAlpha * 0.12})`;
+        ctx.lineWidth = 1;
+
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      });
     }
 
-    // EDGES
-    graph.edges.forEach(e=>{
-      const a = worldToScreen(e.source.x,e.source.y);
-      const b = worldToScreen(e.target.x,e.target.y);
+    /* Edges */
+    GRAPH.edges.forEach(e => {
+      const a = worldToScreen(e.sourceNode.x, e.sourceNode.y);
+      const b = worldToScreen(e.targetNode.x, e.targetNode.y);
 
-      let highlight = path.includes(e.source) && path.includes(e.target);
+      const highlighted =
+        path.includes(e.sourceNode) && path.includes(e.targetNode);
 
-      ctx.strokeStyle = highlight ? "#4ade80" : "rgba(255,255,255,0.1)";
-      ctx.lineWidth = highlight ? 2 : 1;
+      let color = "rgba(255,255,255,0.12)";
+      if (e.type === "triggered") color = "rgba(74,222,128,0.55)";
+      if (e.type === "fallback") color = "rgba(248,113,113,0.55)";
+      if (e.type === "retry") color = "rgba(250,204,21,0.55)";
+      if (e.type === "chained") color = "rgba(96,165,250,0.45)";
+
+      ctx.strokeStyle = highlighted ? "#4ade80" : color;
+      ctx.lineWidth = highlighted ? 3 : Math.min(4, 1 + (e.weight || 1) * 0.4);
 
       ctx.beginPath();
-      ctx.moveTo(a.x,a.y);
-      ctx.lineTo(b.x,b.y);
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
       ctx.stroke();
     });
 
-    // NODES
-    graph.nodes.forEach(n=>{
-      const p = worldToScreen(n.x,n.y);
+    /* Nodes */
+    GRAPH.nodes.forEach(n => {
+      const p = worldToScreen(n.x, n.y);
+
+      const pulse = pulseMap.get(n.key) || 0;
+      const baseSize = 5 + Math.sqrt(n.activeCount || n.weight || 1);
+      const size = baseSize + pulse * 7;
+
+      pulseMap.set(n.key, pulse * 0.88);
 
       ctx.beginPath();
-      ctx.arc(p.x,p.y,6,0,Math.PI*2);
+      ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
 
       if (heatEnabled) {
-        const g = Math.floor((n.health/100)*255);
-        const r = 255-g;
-        ctx.fillStyle = `rgb(${r},${g},80)`;
+        const green = Math.floor((n.health / 100) * 255);
+        const red = 255 - green;
+        ctx.fillStyle = `rgb(${red},${green},90)`;
       } else if (n === focusNode) {
-        ctx.fillStyle="#facc15";
-      } else if (n.kind==="trace") {
-        ctx.fillStyle="#4ade80";
+        ctx.fillStyle = "#facc15";
+      } else if (n.kind === "trace") {
+        ctx.fillStyle = "#4ade80";
+      } else if (n.kind === "workflow") {
+        ctx.fillStyle = "#60a5fa";
       } else {
-        ctx.fillStyle="#60a5fa";
+        ctx.fillStyle = "#9dd7ff";
       }
 
       ctx.fill();
+
+      if (pulse > 0.1) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, size + pulse * 10, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(157,215,255,${pulse * 0.45})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
     });
 
     requestAnimationFrame(loop);
@@ -284,108 +486,274 @@ function draw(canvas, graph) {
 
   loop();
 
-  /* =========================
-     INTERACTION
-  ========================= */
-  canvas.addEventListener("click", e=>{
+  /* Click */
+  canvas.addEventListener("click", e => {
     const rect = canvas.getBoundingClientRect();
+    const point = screenToWorld(e.clientX - rect.left, e.clientY - rect.top);
 
-    const mx = (e.clientX-rect.left - canvas.width/2)/camera.zoom + camera.x;
-    const my = (e.clientY-rect.top - canvas.height/2)/camera.zoom + camera.y;
+    let closest = null;
+    let minDist = 0.11;
 
-    let closest=null;
-    let minDist=0.08;
+    GRAPH.nodes.forEach(n => {
+      const dx = n.x - point.x;
+      const dy = n.y - point.y;
+      const d = Math.sqrt(dx * dx + dy * dy);
 
-    graph.nodes.forEach(n=>{
-      let dx=n.x-mx;
-      let dy=n.y-my;
-      let d=Math.sqrt(dx*dx+dy*dy);
-
-      if (d<minDist){
-        minDist=d;
-        closest=n;
+      if (d < minDist) {
+        minDist = d;
+        closest = n;
       }
     });
 
     if (!closest) return;
 
-    if (!focusNode){
+    if (focusNode === closest) {
+      window.location.href =
+        `trace-viewer.html?node=${encodeURIComponent(closest.key)}`;
+      return;
+    }
+
+    if (!focusNode) {
       focusNode = closest;
       camera.x = closest.x;
       camera.y = closest.y;
-      camera.zoom = 1.4;
-    } else if (!pathTarget){
-      pathTarget = closest;
-    } else {
-      focusNode = null;
-      pathTarget = null;
+      camera.zoom = 145;
+      pulseMap.set(closest.key, 1);
+      renderFocus();
+      return;
     }
+
+    if (!pathTarget) {
+      pathTarget = closest;
+      pulseMap.set(closest.key, 1);
+      renderFocus();
+      return;
+    }
+
+    focusNode = closest;
+    pathTarget = null;
+    camera.x = closest.x;
+    camera.y = closest.y;
+    pulseMap.set(closest.key, 1);
+    renderFocus();
   });
 
-  canvas.addEventListener("touchmove", e=>{
-    if (e.touches.length===1){
-      let t=e.touches[0];
+  /* Touch pan / pinch zoom */
+  canvas.addEventListener("touchmove", e => {
+    e.preventDefault();
 
-      if (lastTouch){
-        camera.x -= (t.clientX-lastTouch.x)/200;
-        camera.y -= (t.clientY-lastTouch.y)/200;
+    if (e.touches.length === 1) {
+      const t = e.touches[0];
+
+      if (lastTouch) {
+        camera.x -= (t.clientX - lastTouch.x) / camera.zoom;
+        camera.y -= (t.clientY - lastTouch.y) / camera.zoom;
       }
 
-      lastTouch = {x:t.clientX,y:t.clientY};
+      lastTouch = { x: t.clientX, y: t.clientY };
     }
-  });
 
-  canvas.addEventListener("touchend", ()=> lastTouch=null);
+    if (e.touches.length === 2) {
+      const a = e.touches[0];
+      const b = e.touches[1];
+
+      const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+
+      if (lastPinchDistance) {
+        const scale = dist / lastPinchDistance;
+        camera.zoom = clamp(camera.zoom * scale, 50, 320);
+      }
+
+      lastPinchDistance = dist;
+    }
+  }, { passive: false });
+
+  canvas.addEventListener("touchend", () => {
+    lastTouch = null;
+    lastPinchDistance = null;
+  });
 }
 
 /* =========================
-   UI
+   UI ACTIONS
 ========================= */
-function resetView(){
-  camera = {x:0,y:0,zoom:1};
+function resetView() {
+  camera = { x: 0, y: 0, zoom: 110 };
 }
 
-function clearFocus(){
+function clearFocus() {
   focusNode = null;
   pathTarget = null;
+  replayMode = false;
+  renderFocus();
 }
 
-function toggleHeat(){
+function toggleHeat() {
   heatEnabled = !heatEnabled;
 }
 
+function toggleGhosts() {
+  ghostsEnabled = !ghostsEnabled;
+}
+
+function play() {
+  playing = true;
+
+  function step() {
+    if (!playing) return;
+
+    const range = maxTime - minTime || 1;
+    currentTime += range / 300;
+
+    if (currentTime >= maxTime) {
+      currentTime = maxTime;
+      playing = false;
+    }
+
+    syncSlider();
+    rebuildGraph();
+
+    requestAnimationFrame(step);
+  }
+
+  step();
+}
+
+function pause() {
+  playing = false;
+}
+
+function live() {
+  playing = false;
+  replayMode = false;
+  currentTime = maxTime;
+  syncSlider();
+  rebuildGraph();
+}
+
+function replayFocus() {
+  if (!focusNode) return;
+
+  replayMode = true;
+  playing = false;
+
+  const relevant = ALL_EDGES.filter(e =>
+    e.sourceNode === focusNode || e.targetNode === focusNode
+  );
+
+  if (!relevant.length) return;
+
+  minTime = Math.min(...relevant.map(e => e._ts));
+  maxTime = Math.max(...relevant.map(e => e._ts));
+  currentTime = minTime;
+
+  syncSlider();
+  rebuildGraph();
+  play();
+}
+
+function syncSlider() {
+  const slider = document.getElementById("timeSlider");
+  const label = document.getElementById("timeLabel");
+
+  const range = maxTime - minTime || 1;
+  const pct = ((currentTime - minTime) / range) * 1000;
+
+  slider.value = clamp(pct, 0, 1000);
+
+  label.textContent = `${formatTime(currentTime)} / ${formatTime(maxTime)}`;
+}
+
+function setupTimeline() {
+  const slider = document.getElementById("timeSlider");
+
+  slider.addEventListener("input", () => {
+    playing = false;
+
+    const pct = Number(slider.value) / 1000;
+    currentTime = minTime + (maxTime - minTime) * pct;
+
+    syncSlider();
+    rebuildGraph();
+  });
+
+  syncSlider();
+}
+
 /* =========================
-   ROOT CAUSE
+   PANELS
 ========================= */
-function renderRoot(graph){
+function renderFocus() {
+  const box = document.getElementById("focusPanel");
+
+  if (!focusNode) {
+    box.innerHTML = `
+      <h3>Focus</h3>
+      <div class="small">Tap a node to inspect it.</div>
+    `;
+    return;
+  }
+
+  box.innerHTML = `
+    <h3>Focus</h3>
+    <div class="node-info">
+      <strong>${focusNode.id}</strong><br>
+      Kind: ${focusNode.kind}<br>
+      Key: ${focusNode.key}<br>
+      Health: ${focusNode.health}%<br>
+      Active Links: ${focusNode.activeCount || 0}<br>
+      ${pathTarget ? `Path Target: ${pathTarget.id}<br>` : ""}
+      <br>
+      <button onclick="window.location.href='trace-viewer.html?node=${encodeURIComponent(focusNode.key)}'">
+        Open Related Traces
+      </button>
+    </div>
+  `;
+}
+
+function renderRoot(graph) {
   const box = document.getElementById("rootCauses");
 
-  const scores = graph.nodes.map(n=>{
-    let degree = graph.edges.filter(e=>e.source===n||e.target===n).length;
-    return {id:n.id,score:degree};
-  }).sort((a,b)=>b.score-a.score).slice(0,5);
+  const scores = graph.nodes
+    .map(n => ({
+      id: n.id,
+      key: n.key,
+      score: (n.activeCount || 0) + Math.max(0, 100 - (n.health || 100)) / 20
+    }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5);
 
   box.innerHTML = `
     <h3>Root Cause Candidates</h3>
-    ${scores.map(s=>`<div>${s.id} (score ${s.score})</div>`).join("")}
+    ${scores.map(s => `
+      <div class="root-item" onclick="window.location.href='trace-viewer.html?node=${encodeURIComponent(s.key)}'">
+        ${s.id} <span class="small">score ${s.score.toFixed(1)}</span>
+      </div>
+    `).join("")}
   `;
 }
 
 /* =========================
    INIT
 ========================= */
-async function init(){
+async function init() {
   const canvas = document.getElementById("graphCanvas");
 
-  const data = await loadData();
-  const graph = buildGraph(data);
-
-  draw(canvas, graph);
-  renderRoot(graph);
+  try {
+    await loadData();
+    rebuildGraph();
+    draw(canvas);
+    setupTimeline();
+    renderFocus();
+  } catch (err) {
+    console.error(err);
+    document.getElementById("rootCauses").innerHTML =
+      `<div class="empty">Graph data failed to load.</div>`;
+  }
 }
 
 init();
-
 </script>
+
 </body>
 </html>
