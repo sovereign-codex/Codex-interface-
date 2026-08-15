@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tymehall.org/schemas/office-review.schema.json",
+  "title": "TYME Hall Office Review Packet",
+  "type": "object",
+  "required": ["id", "branch_id", "question", "epistemic_review", "institutional_review", "execution_review", "decision", "reviewed_at"],
+  "properties": {
+    "id": {"type": "string"},
+    "branch_id": {"type": "string"},
+    "question": {"const": "Given everything the institution currently knows, what state should this branch enter next?"},
+    "epistemic_review": {
+      "type": "object",
+      "required": ["assertions", "evidence", "uncertainties"],
+      "properties": {
+        "assertions": {"type": "array", "items": {"type": "string"}},
+        "evidence": {"type": "array", "items": {"type": "string"}},
+        "counterevidence": {"type": "array", "items": {"type": "string"}},
+        "uncertainties": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "institutional_review": {
+      "type": "object",
+      "required": ["affected_nodes", "authority"],
+      "properties": {
+        "affected_nodes": {"type": "array", "items": {"type": "string"}},
+        "authority": {"type": "string"},
+        "dependencies": {"type": "array", "items": {"type": "string"}},
+        "conflicts": {"type": "array", "items": {"type": "string"}},
+        "consent_boundaries": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "execution_review": {
+      "type": "object",
+      "required": ["proposed_change", "success_evidence"],
+      "properties": {
+        "proposed_change": {"type": "string"},
+        "targets": {"type": "array", "items": {"type": "string"}},
+        "tests": {"type": "array", "items": {"type": "string"}},
+        "success_evidence": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "decision": {"enum": ["return", "hold", "experiment", "approve-execution", "integrate", "supersede", "archive"]},
+    "decision_rationale": {"type": "string"},
+    "canon_delta": {"type": ["string", "null"]},
+    "reviewers": {"type": "array", "items": {"type": "string"}},
+    "reviewed_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": true
+}

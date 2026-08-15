@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tymehall.org/schemas/trail-event.schema.json",
+  "title": "TYME Hall Trail Event",
+  "type": "object",
+  "required": ["id", "branch_id", "timestamp", "actor", "event_type", "summary", "provenance"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "branch_id": {"type": "string", "minLength": 1},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "actor": {
+      "type": "object",
+      "required": ["type", "id"],
+      "properties": {
+        "type": {"enum": ["human", "avot", "external-intelligence", "system"]},
+        "id": {"type": "string"}
+      }
+    },
+    "event_type": {
+      "enum": ["signal", "evidence", "counterevidence", "hypothesis", "artifact", "experiment", "comment", "decision", "transition", "execution", "trace", "canon_delta", "supersession"]
+    },
+    "from_state": {"type": ["string", "null"]},
+    "to_state": {"type": ["string", "null"]},
+    "summary": {"type": "string", "minLength": 1},
+    "provenance": {
+      "type": "object",
+      "required": ["source", "observed_at"],
+      "properties": {
+        "source": {"type": "string"},
+        "observed_at": {"type": "string", "format": "date-time"}
+      },
+      "additionalProperties": true
+    },
+    "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "payload": {"type": "object"}
+  },
+  "additionalProperties": true
+}

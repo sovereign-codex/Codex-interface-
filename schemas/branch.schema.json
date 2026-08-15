@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tymehall.org/schemas/branch.schema.json",
+  "title": "TYME Hall Branch",
+  "type": "object",
+  "required": ["id", "title", "origin", "intent", "state", "epistemic_status", "created_at", "updated_at"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "work_id": {"type": ["string", "null"]},
+    "title": {"type": "string", "minLength": 1},
+    "summary": {"type": "string"},
+    "work_class": {"type": ["string", "null"]},
+    "branch_type": {"type": ["string", "null"]},
+    "origin": {
+      "type": "object",
+      "required": ["actor_type", "source"],
+      "properties": {
+        "actor_type": {"enum": ["human", "avot", "external-intelligence", "system", "office"]},
+        "actor_id": {"type": "string"},
+        "source": {"type": "string"},
+        "signal": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "intent": {"type": "string", "minLength": 1},
+    "state": {"enum": ["signal", "exploring", "framed", "testing", "proposed", "review", "approved", "executing", "observing", "integrated", "held", "returned", "superseded", "archived"]},
+    "source_state": {"type": ["string", "null"]},
+    "current_office": {"type": ["string", "null"]},
+    "next_office": {"type": ["string", "null"]},
+    "next_valid_action": {"type": ["string", "null"]},
+    "flow_state": {"type": ["string", "null"]},
+    "disposition": {"type": ["string", "null"]},
+    "epistemic_status": {"enum": ["observation", "pattern", "hypothesis", "experiment", "interpretation", "working_model", "candidate", "canon_candidate", "canon", "mixed"]},
+    "authority_envelope": {
+      "type": "object",
+      "properties": {
+        "mode": {"type": "string"},
+        "approval_source": {"type": ["string", "null"]},
+        "approval_reference": {"type": ["string", "null"]},
+        "may_observe": {"type": "boolean"},
+        "may_contribute": {"type": "boolean"},
+        "may_propose": {"type": "boolean"},
+        "may_execute": {"type": "boolean"},
+        "review_required": {"type": "boolean"},
+        "human_gate_required": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "forbidden_actions": {"type": "array", "items": {"type": "string"}},
+    "stewards": {"type": "array", "items": {"type": "string"}},
+    "participants": {"type": "array", "items": {"type": "string"}},
+    "atlas_relations": {"type": "array", "items": {"type": "string"}},
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "counterevidence": {"type": "array", "items": {"type": "string"}},
+    "hypotheses": {"type": "array", "items": {"type": "string"}},
+    "unresolved_questions": {"type": "array", "items": {"type": "string"}},
+    "artifacts": {"type": "array", "items": {"type": "string"}},
+    "implementation_targets": {"type": "array", "items": {"type": "string"}},
+    "repository_embodiments": {"type": "array", "items": {"type": "string"}},
+    "source_records": {"type": "array", "items": {"type": "string"}},
+    "trail": {"type": "string"},
+    "parent_branch": {"type": ["string", "null"]},
+    "supersedes": {"type": "array", "items": {"type": "string"}},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": true
+}

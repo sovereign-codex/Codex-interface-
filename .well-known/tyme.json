@@ -1,5 +1,5 @@
 {
-  "schema": "tyme-hall-bootstrap/0.1",
+  "schema": "tyme-hall-bootstrap/0.2-review",
   "name": "Tyme Hall",
   "canonical_domain": "https://tymehall.org",
   "purpose": "Public orientation and institutional-memory threshold for the Sovereign Intelligence ecosystem.",
@@ -7,16 +7,28 @@
     "classes": ["canon", "hypothesis", "experiment", "interpretation", "archive"],
     "rule": "Presence in the Hall does not imply validation. Preserve provenance and uncertainty."
   },
+  "institutional_model": {
+    "sequence": ["signal", "work", "branch", "maturation", "office_review", "transition", "execution", "trace", "institutional_state"],
+    "work": "intentional institutional contribution",
+    "branch": "bounded evolving path of a Work",
+    "trail": "append-only lineage of meaningful Branch events"
+  },
   "entrypoints": {
     "human": "/",
     "orientation": "/orientation/",
     "map": "/map/",
     "state": "/state/",
+    "work": "/work/",
     "trails": "/trails/",
     "canon": "/canon/",
     "contribute": "/contribute/",
     "terminal": "/terminal/"
   },
+  "machine_records": {
+    "first_work": "/work/hall-work-001.json",
+    "first_branch_source": "https://github.com/sovereign-codex/Codex-interface-/blob/hall/branch-lifecycle/branches/hall-branch-lifecycle.json",
+    "work_schema_source": "https://github.com/sovereign-codex/Codex-interface-/blob/hall/branch-lifecycle/schemas/work.schema.json"
+  },
   "source": "https://github.com/sovereign-codex/Codex-interface-",
-  "status": "bootstrap-deployment-ready"
+  "status": "branch-lifecycle-review"
 }

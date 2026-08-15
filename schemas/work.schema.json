@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tymehall.org/schemas/work.schema.json",
+  "title": "TYME Hall Work",
+  "type": "object",
+  "required": ["id", "title", "work_type", "objective", "status", "current_office", "next_valid_action", "authority_level", "created_at", "updated_at"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "work_type": {"type": "string", "minLength": 1},
+    "objective": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "minLength": 1},
+    "source_surface": {"type": "string"},
+    "destination_surface": {"type": "string"},
+    "participants": {"type": "array", "items": {"type": "string"}},
+    "current_office": {"type": "string", "minLength": 1},
+    "next_office": {"type": ["string", "null"]},
+    "produced_artifacts": {"type": "array", "items": {"type": "string"}},
+    "related_works": {"type": "array", "items": {"type": "string"}},
+    "branches": {"type": "array", "items": {"type": "string"}},
+    "review_path": {"type": "array", "items": {"type": "string"}},
+    "authority_level": {"type": "string", "minLength": 1},
+    "lineage": {"type": "array", "items": {"type": "string"}},
+    "blockers": {"type": "array", "items": {"type": "string"}},
+    "next_valid_action": {"type": "string", "minLength": 1},
+    "do_not_do": {"type": "array", "items": {"type": "string"}},
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "acceptance_criteria": {"type": "array", "items": {"type": "string"}},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": true
+}
