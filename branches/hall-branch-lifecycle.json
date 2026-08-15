@@ -1,50 +1,78 @@
 {
   "id": "hall-branch-lifecycle",
+  "work_id": "hall-temporal-participability",
   "title": "Establish Branch + Trail + Office Review as the temporal counterpart to the Institutional Atlas",
   "summary": "Formalize maturation, adjudication, execution, trace, and institutional-state transitions so the Hall exposes participable work rather than only repository endpoints.",
+  "work_class": "Specification Work",
+  "branch_type": "architecture",
   "origin": {
     "actor_type": "human",
     "actor_id": "Shepherd",
     "source": "Sovereign Intelligence Office dialogue",
     "signal": "External evaluation could orient and traverse the public portal but could not identify a responsible contribution because active institutional work and maturation were not visible."
   },
-  "intent": "Make institutional change legible through one Branch lifecycle shared by Notion/Office, Hall projections, GitHub execution, and Trace.",
-  "state": "framed",
-  "epistemic_status": "mixed",
+  "intent": "Make institutional change legible through a Work/Branch lifecycle shared by Notion/Office, Hall projections, GitHub execution, and Trace.",
+  "state": "proposed",
+  "source_state": "PROMOTION_REVIEW_REQUIRED",
+  "current_office": "Promotion Reviewer",
+  "next_office": "PR Synthesist",
+  "next_valid_action": "Review the reconciled architecture and normalized schema for readiness to build the first Hall /work or /trails projection.",
+  "flow_state": "awaiting_architecture_review",
+  "disposition": "PROMOTION_CANDIDATE",
+  "epistemic_status": "candidate",
   "authority_envelope": {
+    "mode": "bounded_branch_mutation",
+    "approval_source": "current_human_instruction",
+    "approval_reference": "Proceed",
     "may_observe": true,
     "may_contribute": true,
     "may_propose": true,
-    "may_execute": false,
-    "review_required": true
+    "may_execute": true,
+    "review_required": true,
+    "human_gate_required": true
   },
+  "forbidden_actions": ["merge_pr", "canon_promotion", "activate_automation", "wholesale_notion_migration"],
   "stewards": ["Shepherd"],
   "participants": ["ChatGPT"],
-  "atlas_relations": ["Hall", "Office", "Atlas", "Trails", "MoDev", "TYME", "QIL", "AVOT", "Trace", "Canon"],
+  "atlas_relations": ["Hall", "Office", "System Atlas", "Objective Atlas", "Knowledge Atlas", "Emergence Atlas", "Runtime Atlas", "Trails", "MoDev", "TYME", "QIL", "AVOT", "Trace", "Canon"],
   "evidence": [
-    "Notion Sovereign Intelligence HQ is the operating workspace above the repository layer.",
-    "Notion TYME Hall record describes HQ as the current internal workspace equivalent of Hall.",
+    "WORK_REGISTRY_SPEC explicitly defines Work as the primary operating primitive and packet as non-superclass.",
+    "COUNCIL_STATE_MACHINE defines detailed Office states, transition fields, gates, and reflection loop.",
+    "OFFICE_RUNTIME_PROTOCOL defines supervised state-driven handoffs and Work Registry as future source of truth for movement.",
+    "Branch Lifecycle Doctrine distinguishes Git branch purpose/lifecycle from execution, authority, disposition, and flow state.",
+    "FABRICATOR_PACKET_PROTOCOL_v1 provides bounded execution authority and evidence-bearing return semantics.",
+    "OFFICE_FIELD_BLUEPRINT defines Office/Hall/Terminal roles and the conduction path from orientation through evidence return to institutional memory.",
     "External portal evaluation reported that orientation and repository traversal work but active contribution targets are not visible."
   ],
   "counterevidence": [],
   "hypotheses": [
-    "A normalized Branch/Trail lifecycle can make participable institutional work discoverable without reducing the institution to a manually maintained backlog."
+    "A normalized Work/Branch/Trail lifecycle can make participable institutional work discoverable without reducing the institution to a manually maintained backlog."
   ],
   "unresolved_questions": [
-    "Which existing Notion databases and pages should map directly to Branch fields versus remain source artifacts?",
-    "Which lifecycle states should be binding Canon versus operational vocabulary?",
-    "What minimum Hall projection is sufficient for a second external-intelligence evaluation?"
+    "Which existing Notion records should become directly queryable source records versus remain linked doctrine/artifacts?",
+    "Should the first Hall projection be /work, /trails, or a single combined branch view?",
+    "What minimum contribution contract is sufficient for a second external-intelligence evaluation?"
   ],
   "artifacts": [
     "architecture/BRANCH_LIFECYCLE.md",
+    "architecture/NOTION_OFFICE_MAPPING.md",
     "schemas/branch.schema.json",
     "schemas/trail-event.schema.json",
     "schemas/office-review.schema.json"
   ],
   "implementation_targets": ["Notion/Office", "tymehall.org", "Codex-interface-", "Trace"],
+  "repository_embodiments": ["sovereign-codex/Codex-interface-@hall/branch-lifecycle", "sovereign-codex/Codex-interface-#3"],
+  "source_records": [
+    "Notion:WORK_REGISTRY_SPEC",
+    "Notion:COUNCIL_STATE_MACHINE",
+    "Notion:OFFICE_RUNTIME_PROTOCOL",
+    "Notion:Branch Lifecycle Doctrine",
+    "Notion:FABRICATOR_PACKET_PROTOCOL_v1",
+    "Notion:OFFICE_FIELD_BLUEPRINT_v0.1"
+  ],
   "trail": "branches/hall-branch-lifecycle.trail.jsonl",
   "parent_branch": null,
   "supersedes": [],
   "created_at": "2026-08-15T12:13:00-07:00",
-  "updated_at": "2026-08-15T12:13:00-07:00"
+  "updated_at": "2026-08-15T12:30:00-07:00"
 }
