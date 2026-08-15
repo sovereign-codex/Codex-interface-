@@ -1,0 +1,22 @@
+{
+  "schema": "tyme-hall-bootstrap/0.1",
+  "name": "Tyme Hall",
+  "canonical_domain": "https://tymehall.org",
+  "purpose": "Public orientation and institutional-memory threshold for the Sovereign Intelligence ecosystem.",
+  "epistemic_policy": {
+    "classes": ["canon", "hypothesis", "experiment", "interpretation", "archive"],
+    "rule": "Presence in the Hall does not imply validation. Preserve provenance and uncertainty."
+  },
+  "entrypoints": {
+    "human": "/",
+    "orientation": "/orientation/",
+    "map": "/map/",
+    "state": "/state/",
+    "trails": "/trails/",
+    "canon": "/canon/",
+    "contribute": "/contribute/",
+    "terminal": "/terminal/"
+  },
+  "source": "https://github.com/sovereign-codex/Codex-interface-",
+  "status": "bootstrap-deployment-ready"
+}
