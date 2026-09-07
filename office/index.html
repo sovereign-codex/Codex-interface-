@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="description" content="Tyme Hall Office is a read-only projection of approved current institutional state.">
+  <title>Office · Tyme Hall</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<header class="app-header"><a class="back-link" href="../">← Foyer</a><h1>Office</h1><p class="muted">Present institutional state · read-only · non-authorizing</p></header>
+<main class="container">
+  <section class="panel hero">
+    <p class="muted">PUBLIC PROJECTION</p>
+    <h2>Where are we now?</h2>
+    <p>This surface reports approved institutional state. It does not create institutional state, grant authority, or expose private deliberation.</p>
+    <p><a class="back-link" href="state.json">Inspect the machine-readable Office state →</a></p>
+  </section>
+  <section id="notice" class="panel"><h2>Notice</h2><p>Loading approved public state…</p></section>
+  <section id="now" class="panel"><h2>Now</h2></section>
+  <section id="changed" class="panel"><h2>What changed</h2></section>
+  <section id="active" class="panel"><h2>Active</h2></section>
+  <section id="next" class="panel"><h2>Next</h2></section>
+  <section id="waiting" class="panel"><h2>Waiting / review</h2></section>
+  <section id="returns" class="panel"><h2>Recent returns</h2></section>
+  <section id="entry" class="panel"><h2>Valid entry</h2></section>
+  <noscript><section class="panel"><p>This renderer needs JavaScript to display <code>state.json</code>. The machine-readable state remains directly inspectable at that path.</p></section></noscript>
+</main>
+<script>
+(function () {
+  function addItem(parent, item) {
+    const article = document.createElement('article');
+    const h = document.createElement('h3');
+    h.textContent = item.title;
+    const p = document.createElement('p');
+    p.textContent = item.summary || item.description || '';
+    article.appendChild(h);
+    article.appendChild(p);
+    if (item.posture) {
+      const meta = document.createElement('p');
+      meta.className = 'muted';
+      meta.textContent = 'Posture: ' + item.posture;
+      article.appendChild(meta);
+    }
+    const refs = [].concat(item.public_refs || [], item.public_evidence_refs || []);
+    if (item.public_ref) refs.unshift(item.public_ref);
+    if (refs.length) {
+      const ul = document.createElement('ul');
+      ul.className = 'simple-list';
+      Array.from(new Set(refs)).forEach(function (href) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = href;
+        a.textContent = 'Inspect public reference';
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+      article.appendChild(ul);
+    }
+    parent.appendChild(article);
+  }
+
+  function fill(id, items) {
+    const el = document.getElementById(id);
+    (items || []).forEach(function (item) { addItem(el, item); });
+  }
+
+  fetch('state.json', {cache: 'no-store'})
+    .then(function (r) { if (!r.ok) throw new Error('state unavailable'); return r.json(); })
+    .then(function (state) {
+      document.querySelector('#notice p').textContent = state.public_notice;
+      addItem(document.getElementById('now'), state.current_priority);
+      fill('changed', state.change_log);
+      fill('active', state.active_matters);
+      fill('next', state.next);
+      fill('waiting', [].concat(state.waiting || [], state.human_review || []));
+      fill('returns', state.recent_returns);
+      fill('entry', state.contribution_entry_points);
+    })
+    .catch(function () {
+      document.querySelector('#notice p').textContent = 'The rendered projection could not load. Inspect state.json directly and report this as a public-state failure.';
+    });
+})();
+</script>
+</body>
+</html>

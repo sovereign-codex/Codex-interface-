@@ -1,11 +1,19 @@
 {
-  "schema": "tyme-hall-bootstrap/0.3-publication",
+  "schema": "tyme-hall-bootstrap/0.4-cold-start-review",
   "name": "Tyme Hall",
   "canonical_domain": "https://tymehall.org",
-  "purpose": "Public orientation and institutional-memory threshold for the Sovereign Intelligence ecosystem.",
+  "purpose": "Public read-surface for present institutional state, inherited canon, active experimentation, relational navigation and governed contribution in the Sovereign Intelligence ecosystem.",
+  "review_cycle": "external-context-zero-02",
   "epistemic_policy": {
     "classes": ["canon", "hypothesis", "experiment", "interpretation", "archive"],
-    "rule": "Presence in the Hall does not imply validation. Preserve provenance and uncertainty."
+    "rule": "Presence in the Hall does not imply validation. Preserve provenance and uncertainty, and report contradictions rather than resolving them by assumption."
+  },
+  "public_surface_primitive": {
+    "office": "present approved institutional state; read-only and non-authorizing",
+    "scrolls": "reviewed public inheritance that crossed an explicit publication boundary",
+    "laboratory": "active becoming; hypotheses, experiments and bounded work remain non-canonical unless separately promoted",
+    "constellation": "relational navigation derived from retained institutional relationships rather than a second authority source",
+    "contribution": "governed paths for challenge, correction, reproduction and participation without automatic authority"
   },
   "institutional_model": {
     "sequence": ["signal", "work", "branch", "maturation", "office_review", "transition", "execution", "trace", "institutional_state"],
@@ -16,15 +24,16 @@
   },
   "entrypoints": {
     "human": "/",
-    "orientation": "/orientation/",
-    "map": "/map/",
-    "state": "/state/",
-    "work": "/work/",
-    "trails": "/trails/",
+    "office": "/office/",
     "scrolls": "/scrolls/",
+    "laboratory": "/laboratory/",
+    "constellation": "/constellation/",
+    "contribution": "/contribute/",
+    "orientation": "/orientation/",
+    "work": "/work/",
     "canon": "/canon/",
-    "contribute": "/contribute/",
-    "terminal": "/terminal/"
+    "terminal": "/terminal/",
+    "legacy_state": "/state/"
   },
   "publications": {
     "institution": "Sovereign Intelligence Research Institute",
@@ -40,11 +49,17 @@
     }
   },
   "machine_records": {
+    "public_office_state": "/office/state.json",
+    "public_office_schema": "/schemas/public_office_state.v0.schema.json",
     "first_work": "/work/hall-work-001.json",
     "first_publication": "/scrolls/AGI-0001/publication.json",
     "first_branch_source": "https://github.com/sovereign-codex/Codex-interface-/blob/hall/branch-lifecycle/branches/hall-branch-lifecycle.json",
     "work_schema_source": "https://github.com/sovereign-codex/Codex-interface-/blob/hall/branch-lifecycle/schemas/work.schema.json"
   },
+  "validation": {
+    "context_zero_protocol": "https://github.com/sovereign-codex/Codex-interface-/blob/main/validation/CONTEXT_ZERO_PROTOCOL.md",
+    "rule": "Do not coach an evaluator after a cold-start run begins. Misunderstandings are validation data."
+  },
   "source": "https://github.com/sovereign-codex/Codex-interface-",
-  "status": "first-scroll-publication"
+  "status": "cold-start-review-cycle-02"
 }
