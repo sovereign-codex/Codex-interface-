@@ -1,5 +1,5 @@
 {
-  "schema": "tyme-hall-bootstrap/0.2-review",
+  "schema": "tyme-hall-bootstrap/0.3-publication",
   "name": "Tyme Hall",
   "canonical_domain": "https://tymehall.org",
   "purpose": "Public orientation and institutional-memory threshold for the Sovereign Intelligence ecosystem.",
@@ -11,7 +11,8 @@
     "sequence": ["signal", "work", "branch", "maturation", "office_review", "transition", "execution", "trace", "institutional_state"],
     "work": "intentional institutional contribution",
     "branch": "bounded evolving path of a Work",
-    "trail": "append-only lineage of meaningful Branch events"
+    "trail": "append-only lineage of meaningful Branch events",
+    "scroll": "reviewed public inheritance with explicit identity, provenance, epistemic posture and stewardship"
   },
   "entrypoints": {
     "human": "/",
@@ -20,15 +21,30 @@
     "state": "/state/",
     "work": "/work/",
     "trails": "/trails/",
+    "scrolls": "/scrolls/",
     "canon": "/canon/",
     "contribute": "/contribute/",
     "terminal": "/terminal/"
   },
+  "publications": {
+    "institution": "Sovereign Intelligence Research Institute",
+    "first_publication": {
+      "publication_number": 1,
+      "scroll_id": "AGI-0001",
+      "version": "0.1.0",
+      "title": "AGI Manifesto Scroll - Autonomous Governing Intelligence",
+      "public_posture": "PUBLISHED_CANONICAL",
+      "published_at": "2026-09-07",
+      "human_url": "/scrolls/AGI-0001/",
+      "machine_record": "/scrolls/AGI-0001/publication.json"
+    }
+  },
   "machine_records": {
     "first_work": "/work/hall-work-001.json",
+    "first_publication": "/scrolls/AGI-0001/publication.json",
     "first_branch_source": "https://github.com/sovereign-codex/Codex-interface-/blob/hall/branch-lifecycle/branches/hall-branch-lifecycle.json",
     "work_schema_source": "https://github.com/sovereign-codex/Codex-interface-/blob/hall/branch-lifecycle/schemas/work.schema.json"
   },
   "source": "https://github.com/sovereign-codex/Codex-interface-",
-  "status": "branch-lifecycle-review"
+  "status": "first-scroll-publication"
 }
