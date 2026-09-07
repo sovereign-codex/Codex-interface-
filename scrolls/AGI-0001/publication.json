@@ -2,7 +2,6 @@
   "schema": "tyme-hall-scroll-publication/0.1.0",
   "institution": {
     "name": "Sovereign Intelligence Research Institute",
-    "short_name": "Sovereign Intelligence Institute",
     "publication_number": 1
   },
   "scroll": {
@@ -17,7 +16,7 @@
   },
   "authority": {
     "publication_authorized": true,
-    "authorized_by": "Shepherd - human publication authority",
+    "authorized_by": "human_publication_authority",
     "system_self_authorizing": false,
     "institutional_effect": "public_inheritance_only"
   },
