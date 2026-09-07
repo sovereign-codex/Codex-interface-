@@ -1,0 +1,163 @@
+{
+  "contract": "public_office_state_v0",
+  "snapshot_id": "public-office:2026-09-07:cold-start-002",
+  "generated_at": "2026-09-07T20:04:00Z",
+  "authority_posture": "non_authorizing",
+  "institutional_effect": "none",
+  "projection": {
+    "source_state_digest": "sha256:ab181109522847daecd46dc5370af9838317e176ce07a050bbbda2e1ddfcf62e",
+    "internal_source_refs_exposed": false,
+    "sensitive_material_exposed": false,
+    "projection_policy": "public_projection_v0"
+  },
+  "current_priority": {
+    "id": "external-cold-start-review-002",
+    "title": "Prepare TYME Hall for independent context-zero review",
+    "summary": "Align the public doorway, current-state projection, machine bootstrap and contribution path so an external human or machine can reconstruct the institution without private coaching.",
+    "posture": "NOW",
+    "public_evidence_refs": [
+      "https://github.com/sovereign-codex/Codex-interface-/blob/main/validation/CONTEXT_ZERO_PROTOCOL.md",
+      "https://github.com/sovereign-codex/Tyme-Lab/blob/main/docs/architecture/TYME_HALL_PUBLIC_SURFACE_DOCTRINE_V0.md"
+    ],
+    "public_refs": [
+      "https://tymehall.org/"
+    ]
+  },
+  "active_matters": [
+    {
+      "id": "office-projection",
+      "title": "Public Office projection",
+      "summary": "A read-only Office surface is being used to expose approved present state without making the public interface an authority source.",
+      "posture": "ACTIVE",
+      "public_evidence_refs": [
+        "https://github.com/sovereign-codex/Tyme-Lab/blob/main/schemas/public_office_state.v0.schema.json"
+      ],
+      "public_refs": [
+        "https://tymehall.org/office/"
+      ]
+    },
+    {
+      "id": "cold-start-validation",
+      "title": "Context-zero validation",
+      "summary": "Independent reviewers receive only the public Hall and are expected to report ambiguity, unsupported inference, stale state and broken provenance rather than being coached toward intended answers.",
+      "posture": "ACTIVE",
+      "public_evidence_refs": [
+        "https://github.com/sovereign-codex/Codex-interface-/blob/main/validation/CONTEXT_ZERO_PROTOCOL.md"
+      ],
+      "public_refs": []
+    }
+  ],
+  "change_log": [
+    {
+      "id": "agi-0001-published",
+      "title": "SIRI Publication 001 published",
+      "summary": "AGI-0001 crossed the explicit publication gate and is preserved as PUBLISHED_CANONICAL with public provenance and machine-readable publication metadata.",
+      "posture": "GRADUATED",
+      "public_evidence_refs": [
+        "https://github.com/sovereign-codex/Codex-interface-/blob/main/scrolls/AGI-0001/publication.json"
+      ],
+      "public_refs": [
+        "https://tymehall.org/scrolls/AGI-0001/"
+      ]
+    },
+    {
+      "id": "public-surface-doctrine",
+      "title": "Public surface doctrine frozen",
+      "summary": "Office, Scrolls, Laboratory, Constellation and Contribution are the five public relationships to institutional knowledge used for the next review cycle.",
+      "posture": "GRADUATED",
+      "public_evidence_refs": [
+        "https://github.com/sovereign-codex/Tyme-Lab/blob/main/docs/architecture/TYME_HALL_PUBLIC_SURFACE_DOCTRINE_V0.md"
+      ],
+      "public_refs": []
+    }
+  ],
+  "next": [
+    {
+      "id": "run-independent-reviewers",
+      "title": "Run independent cold-start reviewers",
+      "summary": "Evaluate human and machine reconstruction from the public entry point without revealing internal history or intended interpretations.",
+      "posture": "NEXT",
+      "public_evidence_refs": [
+        "https://github.com/sovereign-codex/Codex-interface-/blob/main/validation/CONTEXT_ZERO_PROTOCOL.md"
+      ],
+      "public_refs": [
+        "https://tymehall.org/"
+      ]
+    }
+  ],
+  "waiting": [
+    {
+      "id": "automatic-office-generation",
+      "title": "Automatic Office generation",
+      "summary": "Automatic mutation or publication remains withheld until the read-only projection survives external review and the source/projection boundary is proven.",
+      "posture": "WAITING",
+      "public_evidence_refs": [
+        "https://github.com/sovereign-codex/Tyme-Lab/blob/main/docs/architecture/TYME_HALL_PUBLIC_SURFACE_DOCTRINE_V0.md"
+      ],
+      "public_refs": []
+    }
+  ],
+  "human_review": [
+    {
+      "id": "cold-start-release-review",
+      "title": "Review cold-start release candidate",
+      "summary": "Confirm public state accuracy, safe references, epistemic boundaries and doorway coherence before promotion to the production branch.",
+      "posture": "REVIEW",
+      "public_evidence_refs": [
+        "https://github.com/sovereign-codex/Codex-interface-"
+      ],
+      "public_refs": []
+    }
+  ],
+  "recent_returns": [
+    {
+      "id": "public-office-contract-return",
+      "title": "Public Office contract validated in Tyme-Lab",
+      "summary": "The public Office schema, fail-closed validator, tests and minimal fixture are retained on Tyme-Lab main as the contract basis for this renderer.",
+      "posture": "RETURNED",
+      "public_evidence_refs": [
+        "https://github.com/sovereign-codex/Tyme-Lab/blob/main/schemas/public_office_state.v0.schema.json",
+        "https://github.com/sovereign-codex/Tyme-Lab/blob/main/validators/public_office_state_v0.py"
+      ],
+      "public_refs": []
+    }
+  ],
+  "surface_updates": [
+    {
+      "surface": "office",
+      "change": "Read-only public current-state projection prepared for external cold-start review.",
+      "public_ref": "https://tymehall.org/office/"
+    },
+    {
+      "surface": "scrolls",
+      "change": "The first canonical SIRI Scroll is publicly inspectable with machine-readable publication metadata.",
+      "public_ref": "https://tymehall.org/scrolls/AGI-0001/"
+    },
+    {
+      "surface": "laboratory",
+      "change": "Experimental work remains explicitly non-canonical and is exposed only where its evidence posture can be stated clearly.",
+      "public_ref": "https://tymehall.org/laboratory/"
+    },
+    {
+      "surface": "constellation",
+      "change": "Relational navigation remains derived from preserved system relationships rather than becoming a second authority source.",
+      "public_ref": "https://tymehall.org/constellation/"
+    },
+    {
+      "surface": "contribution",
+      "change": "Challenge, correction and reproduction remain valid entry paths without implying institutional authority.",
+      "public_ref": "https://tymehall.org/contribute/"
+    }
+  ],
+  "contribution_entry_points": [
+    {
+      "id": "challenge-public-claim",
+      "title": "Challenge a public claim or boundary",
+      "description": "Trace the public evidence, identify a contradiction, unsupported inference, reproducibility problem, stale state or unclear definition, and return the correction through the public repository path.",
+      "entry_surface": "contribution",
+      "authority_posture": "none",
+      "public_ref": "https://tymehall.org/contribute/"
+    }
+  ],
+  "public_notice": "This is a read-only public projection of approved institutional state. It does not grant authority, expose private deliberation, or replace repository and governance sources of truth. External reviewers should report contradictions instead of resolving them by assumption."
+}
