@@ -1,7 +1,7 @@
 {
   "contract": "public_office_state_v0",
-  "snapshot_id": "public-office:2026-09-07:cold-start-002",
-  "generated_at": "2026-09-07T20:04:00Z",
+  "snapshot_id": "public-office:2026-09-07:post-promotion-002",
+  "generated_at": "2026-09-07T20:40:43Z",
   "authority_posture": "non_authorizing",
   "institutional_effect": "none",
   "projection": {
@@ -12,12 +12,12 @@
   },
   "current_priority": {
     "id": "external-cold-start-review-002",
-    "title": "Prepare TYME Hall for independent context-zero review",
-    "summary": "Align the public doorway, current-state projection, machine bootstrap and contribution path so an external human or machine can reconstruct the institution without private coaching.",
+    "title": "Run independent context-zero review",
+    "summary": "The Cycle 02 public doorway is promoted to main. The next institutional task is to verify production reachability and let unfamiliar human and machine reviewers reconstruct the Hall without private coaching.",
     "posture": "NOW",
     "public_evidence_refs": [
       "https://github.com/sovereign-codex/Codex-interface-/blob/main/validation/CONTEXT_ZERO_PROTOCOL.md",
-      "https://github.com/sovereign-codex/Tyme-Lab/blob/main/docs/architecture/TYME_HALL_PUBLIC_SURFACE_DOCTRINE_V0.md"
+      "https://github.com/sovereign-codex/Codex-interface-/commit/92736442645b17edd1e02740bd0c0fa0d0527272"
     ],
     "public_refs": [
       "https://tymehall.org/"
@@ -27,7 +27,7 @@
     {
       "id": "office-projection",
       "title": "Public Office projection",
-      "summary": "A read-only Office surface is being used to expose approved present state without making the public interface an authority source.",
+      "summary": "A read-only Office surface exposes approved present state without making the public interface an authority source.",
       "posture": "ACTIVE",
       "public_evidence_refs": [
         "https://github.com/sovereign-codex/Tyme-Lab/blob/main/schemas/public_office_state.v0.schema.json"
@@ -48,6 +48,18 @@
     }
   ],
   "change_log": [
+    {
+      "id": "cycle-02-promoted",
+      "title": "Cold-start Cycle 02 promoted to main",
+      "summary": "PR #5 was promoted through the human repository gate as squash commit 92736442645b17edd1e02740bd0c0fa0d0527272. Source promotion is complete; production reachability remains independently unverified.",
+      "posture": "GRADUATED",
+      "public_evidence_refs": [
+        "https://github.com/sovereign-codex/Codex-interface-/commit/92736442645b17edd1e02740bd0c0fa0d0527272"
+      ],
+      "public_refs": [
+        "https://tymehall.org/"
+      ]
+    },
     {
       "id": "agi-0001-published",
       "title": "SIRI Publication 001 published",
@@ -72,6 +84,18 @@
     }
   ],
   "next": [
+    {
+      "id": "verify-production-reachability",
+      "title": "Verify production reachability",
+      "summary": "Confirm the promoted Hall paths resolve from an independent external network before treating the public deployment as verified.",
+      "posture": "NEXT",
+      "public_evidence_refs": [
+        "https://github.com/sovereign-codex/Codex-interface-/commit/92736442645b17edd1e02740bd0c0fa0d0527272"
+      ],
+      "public_refs": [
+        "https://tymehall.org/"
+      ]
+    },
     {
       "id": "run-independent-reviewers",
       "title": "Run independent cold-start reviewers",
@@ -99,17 +123,27 @@
   ],
   "human_review": [
     {
-      "id": "cold-start-release-review",
-      "title": "Review cold-start release candidate",
-      "summary": "Confirm public state accuracy, safe references, epistemic boundaries and doorway coherence before promotion to the production branch.",
+      "id": "cold-start-findings-review",
+      "title": "Review independent cold-start findings",
+      "summary": "After the uncoached reviews, classify observed failures and approve only corrections that repair demonstrated reconstruction defects rather than expanding the public concept set.",
       "posture": "REVIEW",
       "public_evidence_refs": [
-        "https://github.com/sovereign-codex/Codex-interface-"
+        "https://github.com/sovereign-codex/Codex-interface-/blob/main/validation/CONTEXT_ZERO_PROTOCOL.md"
       ],
       "public_refs": []
     }
   ],
   "recent_returns": [
+    {
+      "id": "cycle-02-promotion-return",
+      "title": "Cycle 02 source promotion returned",
+      "summary": "The validated Cycle 02 candidate crossed the human repository gate and is retained on main; deployment verification and independent reconstruction remain open gates.",
+      "posture": "RETURNED",
+      "public_evidence_refs": [
+        "https://github.com/sovereign-codex/Codex-interface-/commit/92736442645b17edd1e02740bd0c0fa0d0527272"
+      ],
+      "public_refs": []
+    },
     {
       "id": "public-office-contract-return",
       "title": "Public Office contract validated in Tyme-Lab",
@@ -125,12 +159,12 @@
   "surface_updates": [
     {
       "surface": "office",
-      "change": "Read-only public current-state projection prepared for external cold-start review.",
+      "change": "Cycle 02 source promotion is complete; Office now reports production verification and independent cold-start evaluation as the active frontier.",
       "public_ref": "https://tymehall.org/office/"
     },
     {
       "surface": "scrolls",
-      "change": "The first canonical SIRI Scroll is publicly inspectable with machine-readable publication metadata.",
+      "change": "The first canonical SIRI Scroll remains publicly inspectable with machine-readable publication metadata.",
       "public_ref": "https://tymehall.org/scrolls/AGI-0001/"
     },
     {
