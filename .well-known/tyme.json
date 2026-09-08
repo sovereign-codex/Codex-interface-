@@ -18,7 +18,7 @@
   "institutional_model": {
     "sequence": ["signal", "work", "branch", "maturation", "office_review", "transition", "execution", "trace", "institutional_state"],
     "work": "intentional institutional contribution",
-    "branch": "bounded evolving path of a Work",
+    "branch": "bounded evolving path of a Work through alternatives, evidence, review, execution and return",
     "trail": "append-only lineage of meaningful Branch events",
     "scroll": "reviewed public inheritance with explicit identity, provenance, epistemic posture and stewardship"
   },
@@ -53,8 +53,8 @@
     "public_office_schema": "/schemas/public_office_state.v0.schema.json",
     "first_work": "/work/hall-work-001.json",
     "first_publication": "/scrolls/AGI-0001/publication.json",
-    "first_branch_source": "https://github.com/sovereign-codex/Codex-interface-/blob/hall/branch-lifecycle/branches/hall-branch-lifecycle.json",
-    "work_schema_source": "https://github.com/sovereign-codex/Codex-interface-/blob/hall/branch-lifecycle/schemas/work.schema.json"
+    "first_branch_source": "https://github.com/sovereign-codex/Codex-interface-/blob/main/branches/hall-branch-lifecycle.json",
+    "work_schema_source": "https://github.com/sovereign-codex/Codex-interface-/blob/main/schemas/work.schema.json"
   },
   "validation": {
     "context_zero_protocol": "https://github.com/sovereign-codex/Codex-interface-/blob/main/validation/CONTEXT_ZERO_PROTOCOL.md",

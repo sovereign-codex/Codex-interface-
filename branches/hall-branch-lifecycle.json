@@ -1,6 +1,7 @@
 {
   "id": "hall-branch-lifecycle",
-  "work_id": "hall-temporal-participability",
+  "work_id": "HALL-WORK-001",
+  "legacy_work_id": "hall-temporal-participability",
   "title": "Establish Branch + Trail + Office Review as the temporal counterpart to the Institutional Atlas",
   "summary": "Formalize maturation, adjudication, execution, trace, and institutional-state transitions so the Hall exposes participable work rather than only repository endpoints.",
   "work_class": "Specification Work",
@@ -12,22 +13,22 @@
     "signal": "External evaluation could orient and traverse the public portal but could not identify a responsible contribution because active institutional work and maturation were not visible."
   },
   "intent": "Make institutional change legible through a Work/Branch lifecycle shared by Notion/Office, Hall projections, GitHub execution, and Trace.",
-  "state": "proposed",
-  "source_state": "PROMOTION_REVIEW_REQUIRED",
-  "current_office": "Promotion Reviewer",
-  "next_office": "PR Synthesist",
-  "next_valid_action": "Review the reconciled architecture and normalized schema for readiness to build the first Hall /work or /trails projection.",
-  "flow_state": "awaiting_architecture_review",
-  "disposition": "PROMOTION_CANDIDATE",
-  "epistemic_status": "candidate",
+  "state": "integrated",
+  "source_state": "MERGED_TO_MAIN",
+  "current_office": null,
+  "next_office": null,
+  "next_valid_action": "Treat the merged lifecycle as inherited working infrastructure and route current Cycle 02 participation through the public Office and Contribution surfaces rather than reopening PR #3 as active work.",
+  "flow_state": "returned_to_institutional_state",
+  "disposition": "INTEGRATED",
+  "epistemic_status": "working_model",
   "authority_envelope": {
-    "mode": "bounded_branch_mutation",
-    "approval_source": "current_human_instruction",
-    "approval_reference": "Proceed",
+    "mode": "inherited_non_authorizing",
+    "approval_source": "human_repository_gate",
+    "approval_reference": "PR #3 / a4d01eebcaa35459857a367d7316dbd1a98aed32",
     "may_observe": true,
     "may_contribute": true,
     "may_propose": true,
-    "may_execute": true,
+    "may_execute": false,
     "review_required": true,
     "human_gate_required": true
   },
@@ -42,7 +43,8 @@
     "Branch Lifecycle Doctrine distinguishes Git branch purpose/lifecycle from execution, authority, disposition, and flow state.",
     "FABRICATOR_PACKET_PROTOCOL_v1 provides bounded execution authority and evidence-bearing return semantics.",
     "OFFICE_FIELD_BLUEPRINT defines Office/Hall/Terminal roles and the conduction path from orientation through evidence return to institutional memory.",
-    "External portal evaluation reported that orientation and repository traversal work but active contribution targets are not visible."
+    "External portal evaluation reported that orientation and repository traversal work but active contribution targets are not visible.",
+    "PR #3 merged through the human repository gate as a4d01eebcaa35459857a367d7316dbd1a98aed32."
   ],
   "counterevidence": [],
   "hypotheses": [
@@ -50,18 +52,18 @@
   ],
   "unresolved_questions": [
     "Which existing Notion records should become directly queryable source records versus remain linked doctrine/artifacts?",
-    "Should the first Hall projection be /work, /trails, or a single combined branch view?",
-    "What minimum contribution contract is sufficient for a second external-intelligence evaluation?"
+    "What minimum contribution contract is sufficient for later external-intelligence participation beyond the Cycle 02 cold-start review?"
   ],
   "artifacts": [
     "architecture/BRANCH_LIFECYCLE.md",
     "architecture/NOTION_OFFICE_MAPPING.md",
     "schemas/branch.schema.json",
     "schemas/trail-event.schema.json",
-    "schemas/office-review.schema.json"
+    "schemas/office-review.schema.json",
+    "work/index.html"
   ],
   "implementation_targets": ["Notion/Office", "tymehall.org", "Codex-interface-", "Trace"],
-  "repository_embodiments": ["sovereign-codex/Codex-interface-@hall/branch-lifecycle", "sovereign-codex/Codex-interface-#3"],
+  "repository_embodiments": ["sovereign-codex/Codex-interface-@hall/branch-lifecycle", "sovereign-codex/Codex-interface-#3", "sovereign-codex/Codex-interface-@a4d01eebcaa35459857a367d7316dbd1a98aed32"],
   "source_records": [
     "Notion:WORK_REGISTRY_SPEC",
     "Notion:COUNCIL_STATE_MACHINE",
@@ -74,5 +76,5 @@
   "parent_branch": null,
   "supersedes": [],
   "created_at": "2026-08-15T12:13:00-07:00",
-  "updated_at": "2026-08-15T12:30:00-07:00"
+  "updated_at": "2026-09-08T03:47:00-07:00"
 }
