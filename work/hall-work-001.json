@@ -1,5 +1,6 @@
 {
   "id": "HALL-WORK-001",
+  "legacy_ids": ["hall-temporal-participability"],
   "title": "Establish the Hall Branch Lifecycle",
   "work_type": "architecture",
   "objective": "Formalize how institutional Work matures through Branch lineage, Office review, execution, Trace, and institutional-state return, and expose the first participable Hall projection.",
@@ -18,6 +19,7 @@
     "External intelligence participation test identified no discoverable actionable work",
     "Office doctrine reconciliation preserved Work as semantic superclass",
     "Branch lifecycle rooted as temporal counterpart to Atlas",
+    "The early branch record used legacy Work identifier hall-temporal-participability; Cycle 02 preflight normalized the public relation to HALL-WORK-001 while retaining the legacy identifier",
     "PR #3 crossed the human repository gate and merged as a4d01eebcaa35459857a367d7316dbd1a98aed32",
     "Cycle 02 preflight corrected the stale public projection without erasing the earlier review state"
   ],
@@ -27,5 +29,5 @@
   "evidence": ["architecture/BRANCH_LIFECYCLE.md", "branches/hall-branch-lifecycle.trail.jsonl", "validation/CONTEXT_ZERO_PROTOCOL.md", "https://github.com/sovereign-codex/Codex-interface-/pull/3", "https://github.com/sovereign-codex/Codex-interface-/commit/a4d01eebcaa35459857a367d7316dbd1a98aed32"],
   "acceptance_criteria": ["Context-zero evaluator can explain Work versus Branch", "Evaluator can distinguish inherited integrated work from active current work", "Evaluator can identify evidence and authority boundary without guessing", "Evaluator can find the current contribution path without being directed to a closed review task"],
   "created_at": "2026-08-15T12:13:00-07:00",
-  "updated_at": "2026-09-08T03:31:00-07:00"
+  "updated_at": "2026-09-08T03:47:00-07:00"
 }
