@@ -1,23 +1,23 @@
 {
   "contract": "public_office_state_v0",
-  "snapshot_id": "public-office:2026-09-07:post-promotion-002",
-  "generated_at": "2026-09-07T20:40:43Z",
+  "snapshot_id": "public-office:2026-09-08:cycle-02-preflight-003",
+  "generated_at": "2026-09-08T10:31:00Z",
   "authority_posture": "non_authorizing",
   "institutional_effect": "none",
   "projection": {
-    "source_state_digest": "sha256:ab181109522847daecd46dc5370af9838317e176ce07a050bbbda2e1ddfcf62e",
+    "source_state_digest": "sha256:fdb5c3c342a8ff1f2bb106e2fdbec6c75f43a85308fb5eb29be4cf16442eeefc",
     "internal_source_refs_exposed": false,
     "sensitive_material_exposed": false,
     "projection_policy": "public_projection_v0"
   },
   "current_priority": {
-    "id": "external-cold-start-review-002",
-    "title": "Run independent context-zero review",
-    "summary": "The Cycle 02 public doorway is promoted to main. The next institutional task is to verify production reachability and let unfamiliar human and machine reviewers reconstruct the Hall without private coaching.",
+    "id": "external-cold-start-preflight-002",
+    "title": "Verify and freeze the Cycle 02 public path",
+    "summary": "Cycle 02 source promotion and the post-promotion Office correction are complete. Before an unfamiliar participant enters, independently verify production reachability and freeze the repaired public state so the review measures inheritance rather than a known deployment or state contradiction.",
     "posture": "NOW",
     "public_evidence_refs": [
-      "https://github.com/sovereign-codex/Codex-interface-/blob/main/validation/CONTEXT_ZERO_PROTOCOL.md",
-      "https://github.com/sovereign-codex/Codex-interface-/commit/92736442645b17edd1e02740bd0c0fa0d0527272"
+      "https://github.com/sovereign-codex/Codex-interface-/commit/92736442645b17edd1e02740bd0c0fa0d0527272",
+      "https://github.com/sovereign-codex/Codex-interface-/commit/d736b45429aa9c60f9fce991cb3e81c397a5bfec"
     ],
     "public_refs": [
       "https://tymehall.org/"
@@ -61,6 +61,18 @@
       ]
     },
     {
+      "id": "office-post-promotion-corrected",
+      "title": "Post-promotion Office state returned",
+      "summary": "PR #6 corrected the stale pre-promotion Office projection after PR #5 crossed the human repository gate. The prior state remains preserved in repository history rather than being rewritten.",
+      "posture": "RETURNED",
+      "public_evidence_refs": [
+        "https://github.com/sovereign-codex/Codex-interface-/commit/d736b45429aa9c60f9fce991cb3e81c397a5bfec"
+      ],
+      "public_refs": [
+        "https://tymehall.org/office/"
+      ]
+    },
+    {
       "id": "agi-0001-published",
       "title": "SIRI Publication 001 published",
       "summary": "AGI-0001 crossed the explicit publication gate and is preserved as PUBLISHED_CANONICAL with public provenance and machine-readable publication metadata.",
@@ -85,21 +97,9 @@
   ],
   "next": [
     {
-      "id": "verify-production-reachability",
-      "title": "Verify production reachability",
-      "summary": "Confirm the promoted Hall paths resolve from an independent external network before treating the public deployment as verified.",
-      "posture": "NEXT",
-      "public_evidence_refs": [
-        "https://github.com/sovereign-codex/Codex-interface-/commit/92736442645b17edd1e02740bd0c0fa0d0527272"
-      ],
-      "public_refs": [
-        "https://tymehall.org/"
-      ]
-    },
-    {
       "id": "run-independent-reviewers",
       "title": "Run independent cold-start reviewers",
-      "summary": "Evaluate human and machine reconstruction from the public entry point without revealing internal history or intended interpretations.",
+      "summary": "After reachability is verified and the public state is frozen, evaluate human and machine reconstruction from the public entry point without revealing internal history or intended interpretations.",
       "posture": "NEXT",
       "public_evidence_refs": [
         "https://github.com/sovereign-codex/Codex-interface-/blob/main/validation/CONTEXT_ZERO_PROTOCOL.md"
@@ -135,6 +135,16 @@
   ],
   "recent_returns": [
     {
+      "id": "office-post-promotion-return",
+      "title": "Post-promotion Office correction returned",
+      "summary": "The public Office was reconciled after source promotion through PR #6; Cycle 02 preflight now treats reachability and final state freeze as the remaining gate before an external participant enters.",
+      "posture": "RETURNED",
+      "public_evidence_refs": [
+        "https://github.com/sovereign-codex/Codex-interface-/commit/d736b45429aa9c60f9fce991cb3e81c397a5bfec"
+      ],
+      "public_refs": []
+    },
+    {
       "id": "cycle-02-promotion-return",
       "title": "Cycle 02 source promotion returned",
       "summary": "The validated Cycle 02 candidate crossed the human repository gate and is retained on main; deployment verification and independent reconstruction remain open gates.",
@@ -159,7 +169,7 @@
   "surface_updates": [
     {
       "surface": "office",
-      "change": "Cycle 02 source promotion is complete; Office now reports production verification and independent cold-start evaluation as the active frontier.",
+      "change": "Cycle 02 preflight is active: source promotion and the post-promotion Office correction are complete; external review begins only after custom-domain reachability and final state freeze are verified.",
       "public_ref": "https://tymehall.org/office/"
     },
     {
