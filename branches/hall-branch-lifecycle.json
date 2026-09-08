@@ -1,6 +1,7 @@
 {
   "id": "hall-branch-lifecycle",
-  "work_id": "hall-temporal-participability",
+  "work_id": "HALL-WORK-001",
+  "legacy_work_id": "hall-temporal-participability",
   "title": "Establish Branch + Trail + Office Review as the temporal counterpart to the Institutional Atlas",
   "summary": "Formalize maturation, adjudication, execution, trace, and institutional-state transitions so the Hall exposes participable work rather than only repository endpoints.",
   "work_class": "Specification Work",
@@ -75,5 +76,5 @@
   "parent_branch": null,
   "supersedes": [],
   "created_at": "2026-08-15T12:13:00-07:00",
-  "updated_at": "2026-09-08T03:31:00-07:00"
+  "updated_at": "2026-09-08T03:47:00-07:00"
 }
