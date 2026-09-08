@@ -1,7 +1,11 @@
 # Hall Branch Lifecycle
 
-Status: architecture proposal
-Branch: `hall/branch-lifecycle`
+**Current posture:** integrated working architecture  
+**Historical origin:** `hall/branch-lifecycle`  
+**Promotion evidence:** PR #3 → `a4d01eebcaa35459857a367d7316dbd1a98aed32`  
+**Canon posture:** not promoted to Canon
+
+> **Lineage note:** The sections below preserve proposal-era design language and the original implementation slice as historical reasoning. The architecture crossed the human repository gate and was integrated into `main`; current lifecycle state is carried by `branches/hall-branch-lifecycle.json` and its append-only Trail rather than inferred from proposal wording in this document.
 
 ## Purpose
 
