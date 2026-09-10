@@ -20,23 +20,24 @@
     .candidate-output{white-space:pre-wrap;overflow-wrap:anywhere;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;line-height:1.45}
     .hidden{display:none}
     select{width:100%;margin-top:6px;border-radius:12px;border:1px solid var(--border);background:#0d1527;color:var(--text);padding:12px;font-size:16px}
-    @media (min-width:560px){.choice-grid{grid-template-columns:repeat(3,1fr)}}
+    @media (min-width:560px){.choice-grid{grid-template-columns:1fr}}
+    @media (min-width:700px){.choice-grid{grid-template-columns:repeat(3,1fr)}}
   </style>
 </head>
 <body>
 <header class="app-header">
   <a class="back-link" href="../../index.html">← Current Foyer</a>
   <h1>Meet the question in more than one way</h1>
-  <p class="muted">Candidate CIT learning projection · source review only</p>
+  <p class="muted">Tyme Hall learning projection candidate · source review only</p>
 </header>
 <main class="container">
   <section class="panel candidate-banner">
-    <p><strong>This is not the live Tyme Hall.</strong> It is a review candidate derived from a validated Tyme-Lab rehearsal. Nothing on this surface is submitted to the Hall, no account is created, and no participant is ranked.</p>
+    <p><strong>This is not the live Tyme Hall.</strong> It is a review candidate derived from a validated laboratory rehearsal. Nothing on this surface is submitted to the Hall, no account is created, and no participant is ranked.</p>
   </section>
 
   <section class="panel hero">
     <h2>Start with something you want to understand</h2>
-    <p>You do not need to know TYME vocabulary first. Choose a sample question, then move among speaking, seeing, trying, making and optionally sharing. The question stays the same while the representation changes.</p>
+    <p>You do not need to know project vocabulary first. Choose a sample question, then move among speaking, seeing, trying, making and optionally sharing. The question stays the same while the representation changes.</p>
     <label for="seedSelect">Sample encounter</label>
     <select id="seedSelect" aria-label="Sample encounter"></select>
     <div class="state-line" id="stateLine"></div>
@@ -56,7 +57,7 @@
     <div id="talkPanel" class="interaction-box">
       <button id="hearButton" type="button">Hear Steward</button>
       <button id="stopVoiceButton" type="button">Stop voice</button>
-      <p class="muted">Voice is only a renderer. This candidate does not request microphone access.</p>
+      <p class="muted">Voice is only another way to present the same encounter. This candidate does not request microphone access.</p>
     </div>
 
     <div id="tryPanel" class="interaction-box hidden" aria-live="polite">
@@ -73,8 +74,8 @@
     </div>
 
     <div id="sharePanel" class="interaction-box hidden">
-      <p><strong>Sharing remains optional.</strong> In this candidate, “share” can only create a local Contribution Candidate preview. It cannot submit, publish, grant authority, or create a Contribution Trail.</p>
-      <button id="previewCandidateButton" type="button">Preview contribution candidate</button>
+      <p><strong>Sharing remains optional.</strong> In this candidate, “share” can only prepare a local contribution preview. It cannot submit, publish, grant authority, or create an institutional contribution record.</p>
+      <button id="previewCandidateButton" type="button">Preview contribution</button>
       <button id="keepPrivateButton" type="button">Keep private</button>
       <div id="candidateOutput" class="output candidate-output hidden"></div>
     </div>
@@ -90,18 +91,18 @@
 
   <section class="panel">
     <h2>What this candidate is testing</h2>
-    <p>The same semantic encounter should remain coherent across audio, text, interactive and making surfaces. Assistance mode must stay explicit. A successful action must not silently become a capability claim. Contribution must remain optional and pre-institutional.</p>
+    <p>The same question should remain coherent across audio, text, interactive and making surfaces. The assistance relationship must stay explicit. A successful action must not silently become a capability claim. Contribution must remain optional and reviewable before it becomes institutional memory.</p>
   </section>
 
   <section class="panel">
-    <h2>Source and authority</h2>
-    <p>This projection traces to the merged Tyme-Lab rehearsal at commit <code>aa25b07162638d090526cf873eb837137bd6939c</code>. The projection itself remains a candidate. Presence in this repository does not make its content Canon, production-ready, or institutionally authoritative.</p>
+    <h2>Source and boundaries</h2>
+    <p>This projection traces to the merged Tyme-Lab rehearsal at commit <code>aa25b07162638d090526cf873eb837137bd6939c</code>. The projection itself remains a candidate. Presence in this repository does not make its content production-ready or institutionally authoritative.</p>
     <a class="back-link" href="https://github.com/sovereign-codex/Tyme-Lab/tree/aa25b07162638d090526cf873eb837137bd6939c/institutional-cognition/cit-multimodal-learning-continuum/v0.1/rehearsal">Inspect source rehearsal →</a>
   </section>
 </main>
 
 <script type="module">
-import { SEEDS, VERBS, ASSISTANCE_MODES, ProjectionSession } from "./state.mjs";
+import { SEEDS, ASSISTANCE_MODES, ProjectionSession } from "./state.mjs";
 
 const el = id => document.getElementById(id);
 const seedSelect = el("seedSelect");
@@ -126,11 +127,9 @@ function renderState(){
   const s = session.state;
   stateLine.innerHTML = "";
   [
-    `encounter: ${session.seed.label}`,
+    `question: ${session.seed.label}`,
     `assistance: ${modeLabel(s.assistance_mode)}`,
-    `authority: ${s.claim_authority}`,
-    `local evidence: ${s.evidence.length}`,
-    `Hall event: ${s.hall_event_emitted ? "yes" : "no"}`
+    `local notes: ${s.evidence.length + (s.reflection ? 1 : 0)}`
   ].forEach(text => {
     const span = document.createElement("span");
     span.className = "state-pill";
