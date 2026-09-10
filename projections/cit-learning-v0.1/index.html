@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="description" content="Candidate Tyme Hall interaction surface for meeting one question through voice, text, interaction, making and optional contribution without learner ranking or automatic authority.">
+  <title>Learning Continuum Candidate · Tyme Hall</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .candidate-banner{border:1px solid var(--accent);background:#101b31}
+    .verb-bar{display:grid;grid-template-columns:repeat(5,minmax(56px,1fr));gap:8px;position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));padding:8px;background:rgba(11,18,32,.94);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:16px;z-index:10;overflow-x:auto}
+    .verb-bar button,.mode-bar button,.choice-grid button{background:#17233d;border:1px solid var(--border);color:var(--text)}
+    .verb-bar button[aria-pressed="true"],.mode-bar button[aria-pressed="true"]{outline:2px solid var(--accent2);font-weight:700}
+    .mode-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .choice-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px}
+    .state-line{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .state-pill{font-size:.78rem;padding:6px 9px;border:1px solid var(--border);border-radius:999px;color:var(--muted)}
+    .learning-card{min-height:210px}
+    .interaction-box{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+    .candidate-output{white-space:pre-wrap;overflow-wrap:anywhere;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;line-height:1.45}
+    .hidden{display:none}
+    select{width:100%;margin-top:6px;border-radius:12px;border:1px solid var(--border);background:#0d1527;color:var(--text);padding:12px;font-size:16px}
+    @media (min-width:560px){.choice-grid{grid-template-columns:repeat(3,1fr)}}
+  </style>
+</head>
+<body>
+<header class="app-header">
+  <a class="back-link" href="../../index.html">← Current Foyer</a>
+  <h1>Meet the question in more than one way</h1>
+  <p class="muted">Candidate CIT learning projection · source review only</p>
+</header>
+<main class="container">
+  <section class="panel candidate-banner">
+    <p><strong>This is not the live Tyme Hall.</strong> It is a review candidate derived from a validated Tyme-Lab rehearsal. Nothing on this surface is submitted to the Hall, no account is created, and no participant is ranked.</p>
+  </section>
+
+  <section class="panel hero">
+    <h2>Start with something you want to understand</h2>
+    <p>You do not need to know TYME vocabulary first. Choose a sample question, then move among speaking, seeing, trying, making and optionally sharing. The question stays the same while the representation changes.</p>
+    <label for="seedSelect">Sample encounter</label>
+    <select id="seedSelect" aria-label="Sample encounter"></select>
+    <div class="state-line" id="stateLine"></div>
+  </section>
+
+  <section class="panel">
+    <h2>How should assistance relate to this encounter?</h2>
+    <p class="muted">You control this relationship. Changing a view or renderer does not silently change it.</p>
+    <div class="mode-bar" id="modeBar"></div>
+  </section>
+
+  <section class="panel learning-card">
+    <p class="muted" id="activeVerbLabel">TALK</p>
+    <h2 id="seedTitle"></h2>
+    <p id="viewText"></p>
+
+    <div id="talkPanel" class="interaction-box">
+      <button id="hearButton" type="button">Hear Steward</button>
+      <button id="stopVoiceButton" type="button">Stop voice</button>
+      <p class="muted">Voice is only a renderer. This candidate does not request microphone access.</p>
+    </div>
+
+    <div id="tryPanel" class="interaction-box hidden" aria-live="polite">
+      <p><strong>Try it</strong></p>
+      <div id="tryControls"></div>
+      <div id="tryOutput" class="output hidden"></div>
+    </div>
+
+    <div id="makePanel" class="interaction-box hidden">
+      <label for="participantInput">Make, explain, repair, or reflect</label>
+      <textarea id="participantInput" placeholder="Your words stay in this page only. Nothing is transmitted."></textarea>
+      <button id="addEvidenceButton" type="button">Keep as local evidence</button>
+      <button id="saveReflectionButton" type="button">Keep as local reflection</button>
+    </div>
+
+    <div id="sharePanel" class="interaction-box hidden">
+      <p><strong>Sharing remains optional.</strong> In this candidate, “share” can only create a local Contribution Candidate preview. It cannot submit, publish, grant authority, or create a Contribution Trail.</p>
+      <button id="previewCandidateButton" type="button">Preview contribution candidate</button>
+      <button id="keepPrivateButton" type="button">Keep private</button>
+      <div id="candidateOutput" class="output candidate-output hidden"></div>
+    </div>
+
+    <div class="verb-bar" id="verbBar" aria-label="Ways to meet the encounter">
+      <button type="button" data-verb="talk">TALK</button>
+      <button type="button" data-verb="see">SEE</button>
+      <button type="button" data-verb="try">TRY</button>
+      <button type="button" data-verb="make">MAKE</button>
+      <button type="button" data-verb="share">SHARE</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>What this candidate is testing</h2>
+    <p>The same semantic encounter should remain coherent across audio, text, interactive and making surfaces. Assistance mode must stay explicit. A successful action must not silently become a capability claim. Contribution must remain optional and pre-institutional.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Source and authority</h2>
+    <p>This projection traces to the merged Tyme-Lab rehearsal at commit <code>aa25b07162638d090526cf873eb837137bd6939c</code>. The projection itself remains a candidate. Presence in this repository does not make its content Canon, production-ready, or institutionally authoritative.</p>
+    <a class="back-link" href="https://github.com/sovereign-codex/Tyme-Lab/tree/aa25b07162638d090526cf873eb837137bd6939c/institutional-cognition/cit-multimodal-learning-continuum/v0.1/rehearsal">Inspect source rehearsal →</a>
+  </section>
+</main>
+
+<script type="module">
+import { SEEDS, VERBS, ASSISTANCE_MODES, ProjectionSession } from "./state.mjs";
+
+const el = id => document.getElementById(id);
+const seedSelect = el("seedSelect");
+const modeBar = el("modeBar");
+const verbBar = el("verbBar");
+const stateLine = el("stateLine");
+const seedTitle = el("seedTitle");
+const activeVerbLabel = el("activeVerbLabel");
+const viewText = el("viewText");
+const tryPanel = el("tryPanel");
+const tryControls = el("tryControls");
+const tryOutput = el("tryOutput");
+const makePanel = el("makePanel");
+const sharePanel = el("sharePanel");
+const participantInput = el("participantInput");
+const candidateOutput = el("candidateOutput");
+let session;
+
+function modeLabel(mode){ return mode === "co_create" ? "CO-CREATE" : mode.toUpperCase(); }
+
+function renderState(){
+  const s = session.state;
+  stateLine.innerHTML = "";
+  [
+    `encounter: ${session.seed.label}`,
+    `assistance: ${modeLabel(s.assistance_mode)}`,
+    `authority: ${s.claim_authority}`,
+    `local evidence: ${s.evidence.length}`,
+    `Hall event: ${s.hall_event_emitted ? "yes" : "no"}`
+  ].forEach(text => {
+    const span = document.createElement("span");
+    span.className = "state-pill";
+    span.textContent = text;
+    stateLine.appendChild(span);
+  });
+}
+
+function renderModes(){
+  modeBar.innerHTML = "";
+  ASSISTANCE_MODES.forEach(mode => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = modeLabel(mode);
+    button.setAttribute("aria-pressed", String(session.state.assistance_mode === mode));
+    button.addEventListener("click", () => {
+      session.setAssistanceMode(mode);
+      renderAll();
+    });
+    modeBar.appendChild(button);
+  });
+}
+
+function recordTry(result){
+  tryOutput.textContent = result.observation + (Array.isArray(result.output) ? ` Output: ${result.output.join(", ")}.` : "");
+  tryOutput.classList.remove("hidden");
+  renderState();
+}
+
+function choiceButton(label, handler){
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = label;
+  button.addEventListener("click", handler);
+  return button;
+}
+
+function renderTry(){
+  tryControls.innerHTML = "";
+  tryOutput.classList.add("hidden");
+  tryOutput.textContent = "";
+  if(session.state.active_verb !== "try") return;
+
+  if(session.seed.id === "sound-symbol-b"){
+    const wrap = document.createElement("div");
+    wrap.className = "choice-grid";
+    ["ball","sun","cat"].forEach(choice => wrap.appendChild(choiceButton(choice[0].toUpperCase()+choice.slice(1), () => recordTry(session.runTry({choice})))));
+    tryControls.appendChild(wrap);
+    return;
+  }
+
+  if(session.seed.id === "loop-repetition"){
+    const label = document.createElement("label");
+    label.htmlFor = "loopBound";
+    label.textContent = "Upper bound: ";
+    const value = document.createElement("strong");
+    value.textContent = "3";
+    label.appendChild(value);
+    const range = document.createElement("input");
+    range.id = "loopBound";
+    range.type = "range";
+    range.min = "1";
+    range.max = "8";
+    range.value = "3";
+    range.addEventListener("input", () => { value.textContent = range.value; });
+    const run = choiceButton("Run loop", () => recordTry(session.runTry({upper_bound:Number(range.value)})));
+    tryControls.append(label, range, run);
+    return;
+  }
+
+  const wrap = document.createElement("div");
+  wrap.className = "choice-grid";
+  [
+    ["Missing idempotency key","missing_idempotency_key"],
+    ["Lease expiry race","lease_expiry_race"],
+    ["Duplicate queue delivery","duplicate_queue_delivery"]
+  ].forEach(([label,value]) => wrap.appendChild(choiceButton(label, () => recordTry(session.runTry({hypothesis:value})))));
+  tryControls.appendChild(wrap);
+}
+
+function renderView(){
+  seedTitle.textContent = session.seed.label;
+  activeVerbLabel.textContent = session.state.active_verb.toUpperCase();
+  viewText.textContent = session.currentView();
+  el("talkPanel").classList.toggle("hidden", session.state.active_verb !== "talk");
+  tryPanel.classList.toggle("hidden", session.state.active_verb !== "try");
+  makePanel.classList.toggle("hidden", session.state.active_verb !== "make");
+  sharePanel.classList.toggle("hidden", session.state.active_verb !== "share");
+  renderTry();
+}
+
+function renderVerbs(){
+  verbBar.querySelectorAll("button[data-verb]").forEach(button => {
+    button.setAttribute("aria-pressed", String(button.dataset.verb === session.state.active_verb));
+  });
+}
+
+function renderAll(){ renderState(); renderModes(); renderVerbs(); renderView(); }
+
+function reset(seedId){
+  if("speechSynthesis" in window) window.speechSynthesis.cancel();
+  session = new ProjectionSession(seedId);
+  participantInput.value = "";
+  candidateOutput.textContent = "";
+  candidateOutput.classList.add("hidden");
+  renderAll();
+}
+
+SEEDS.forEach(seed => {
+  const option = document.createElement("option");
+  option.value = seed.id;
+  option.textContent = seed.label;
+  seedSelect.appendChild(option);
+});
+seedSelect.addEventListener("change", event => reset(event.target.value));
+
+verbBar.querySelectorAll("button[data-verb]").forEach(button => {
+  button.addEventListener("click", () => {
+    session.activateVerb(button.dataset.verb);
+    renderAll();
+  });
+});
+
+el("hearButton").addEventListener("click", () => {
+  if(!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(new SpeechSynthesisUtterance(session.currentView()));
+});
+el("stopVoiceButton").addEventListener("click", () => { if("speechSynthesis" in window) window.speechSynthesis.cancel(); });
+
+el("addEvidenceButton").addEventListener("click", () => {
+  const text = participantInput.value.trim();
+  if(!text) return;
+  session.addEvidence("participant_action", text);
+  participantInput.value = "";
+  renderState();
+});
+el("saveReflectionButton").addEventListener("click", () => {
+  const text = participantInput.value.trim();
+  if(!text) return;
+  session.setReflection(text);
+  participantInput.value = "";
+  renderState();
+});
+
+el("previewCandidateButton").addEventListener("click", () => {
+  try{
+    const candidate = session.createContributionCandidate();
+    candidateOutput.textContent = JSON.stringify(candidate,null,2);
+    candidateOutput.classList.remove("hidden");
+    renderState();
+  }catch(error){
+    candidateOutput.textContent = String(error.message || error);
+    candidateOutput.classList.remove("hidden");
+  }
+});
+el("keepPrivateButton").addEventListener("click", () => {
+  try{
+    session.declineShare();
+    candidateOutput.textContent = "Kept private. Institutional effect: none.";
+    candidateOutput.classList.remove("hidden");
+    renderState();
+  }catch(error){
+    candidateOutput.textContent = String(error.message || error);
+    candidateOutput.classList.remove("hidden");
+  }
+});
+
+reset(SEEDS[0].id);
+</script>
+</body>
+</html>
