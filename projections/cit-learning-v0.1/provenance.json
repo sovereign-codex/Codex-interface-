@@ -2,6 +2,7 @@
   "projection_id": "CIT-LEARNING-PROJECTION-v0.1",
   "status": "candidate",
   "public_deployment_authorized": false,
+  "production_route_authorized": false,
   "source": {
     "repository": "sovereign-codex/Tyme-Lab",
     "commit": "aa25b07162638d090526cf873eb837137bd6939c",
@@ -12,6 +13,14 @@
     "repository": "sovereign-codex/Codex-interface-",
     "branch": "projection/cit-learning-continuum-v0.1",
     "live_foyer_modified": false
+  },
+  "preview": {
+    "exposure_observed": true,
+    "provider": "Cloudflare Pages",
+    "branch_preview_base_url": "https://projection-cit-learning-cont.codex-interface-83q.pages.dev",
+    "candidate_path": "/projections/cit-learning-v0.1/",
+    "observed_via": "GitHub PR #10 deployment comment",
+    "authorization_effect": "none"
   },
   "boundaries": {
     "network_submission": false,
