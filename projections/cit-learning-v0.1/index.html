@@ -8,76 +8,111 @@
   <link rel="stylesheet" href="../../assets/css/style.css">
   <style>
     .candidate-banner{border:1px solid var(--accent);background:#101b31}
-    .verb-bar{display:grid;grid-template-columns:repeat(5,minmax(56px,1fr));gap:8px;position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));padding:8px;background:rgba(11,18,32,.94);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:16px;z-index:10;overflow-x:auto}
-    .verb-bar button,.mode-bar button,.choice-grid button{background:#17233d;border:1px solid var(--border);color:var(--text)}
+    .verb-bar{display:grid;grid-template-columns:repeat(5,minmax(56px,1fr));gap:8px;position:static;margin-top:22px;padding:8px;background:#0d1527;border:1px solid var(--border);border-radius:16px;overflow-x:auto}
+    .verb-bar button,.mode-bar button,.choice-grid button,.session-controls button{background:#17233d;border:1px solid var(--border);color:var(--text)}
     .verb-bar button[aria-pressed="true"],.mode-bar button[aria-pressed="true"]{outline:2px solid var(--accent2);font-weight:700}
-    .mode-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .mode-bar{display:grid;grid-template-columns:1fr;gap:8px}
+    .mode-bar button{text-align:left;display:flex;flex-direction:column;gap:4px}
+    .mode-bar button span{font-size:.78rem;color:var(--muted);font-weight:400}
     .choice-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px}
     .state-line{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
     .state-pill{font-size:.78rem;padding:6px 9px;border:1px solid var(--border);border-radius:999px;color:var(--muted)}
     .learning-card{min-height:210px}
     .interaction-box{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
     .candidate-output{white-space:pre-wrap;overflow-wrap:anywhere;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;line-height:1.45}
-    .hidden{display:none}
+    .hidden{display:none!important}
+    .session-controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .session-output{margin-top:10px}
+    .mode-help{margin-top:12px;padding:12px;border-left:3px solid var(--accent2);background:#0d1527;border-radius:8px}
+    .mode-help p{margin:0}
+    .mode-guidance{margin-top:10px;color:var(--accent2)}
+    .result-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .plain-preview{line-height:1.5}
+    .plain-preview strong{display:block;margin-top:8px}
+    details{margin-top:12px}
     select{width:100%;margin-top:6px;border-radius:12px;border:1px solid var(--border);background:#0d1527;color:var(--text);padding:12px;font-size:16px}
-    @media (min-width:560px){.choice-grid{grid-template-columns:1fr}}
+    @media (min-width:560px){.mode-bar{grid-template-columns:repeat(3,1fr)}.choice-grid{grid-template-columns:1fr}}
     @media (min-width:700px){.choice-grid{grid-template-columns:repeat(3,1fr)}}
   </style>
 </head>
 <body>
 <header class="app-header">
-  <a class="back-link" href="../../index.html">← Current Foyer</a>
+  <a class="back-link" href="../../index.html">← Tyme Hall foyer</a>
   <h1>Meet the question in more than one way</h1>
   <p class="muted">Tyme Hall learning projection candidate · source review only</p>
 </header>
 <main class="container">
   <section class="panel candidate-banner">
-    <p><strong>This is not the live Tyme Hall.</strong> It is a review candidate derived from a validated laboratory rehearsal. Nothing on this surface is submitted to the Hall, no account is created, and no participant is ranked.</p>
+    <p><strong>This is not the live Tyme Hall.</strong> It is a review candidate derived from a validated laboratory rehearsal. Nothing on this surface is submitted to Tyme Hall, no account is created, and no participant is ranked.</p>
+  </section>
+
+  <section class="panel">
+    <h2>What is Tyme Hall?</h2>
+    <p>Tyme Hall is a developing public environment for inspecting, learning from, testing, and contributing to a body of research and software. This page is only a prototype for reviewing one possible learning interaction before it is considered for the live site.</p>
   </section>
 
   <section class="panel hero">
     <h2>Start with something you want to understand</h2>
     <p>You do not need to know project vocabulary first. Choose a sample question, then move among speaking, seeing, trying, making and optionally sharing. The question stays the same while the representation changes.</p>
+    <p class="muted">The three examples are deliberately far apart—from sound recognition to programming to systems diagnosis—to test whether the same interaction pattern survives different kinds of work.</p>
     <label for="seedSelect">Sample encounter</label>
     <select id="seedSelect" aria-label="Sample encounter"></select>
+    <p class="muted">Changing the sample starts a fresh temporary session and clears the current sample's local activity and notes.</p>
     <div class="state-line" id="stateLine"></div>
+    <div class="session-controls">
+      <button id="reviewSessionButton" type="button">Review local session</button>
+      <button id="clearSessionButton" type="button">Clear local session</button>
+    </div>
+    <div id="sessionOutput" class="output session-output hidden" aria-live="polite"></div>
   </section>
 
   <section class="panel">
     <h2>How should assistance relate to this encounter?</h2>
-    <p class="muted">You control this relationship. Changing a view or renderer does not silently change it.</p>
+    <p class="muted">You control this relationship. Changing from Talk to See, Try, Make, or Share does not silently change it.</p>
     <div class="mode-bar" id="modeBar"></div>
+    <div class="mode-help" id="modeHelp" aria-live="polite"></div>
   </section>
 
   <section class="panel learning-card">
     <p class="muted" id="activeVerbLabel">TALK</p>
     <h2 id="seedTitle"></h2>
     <p id="viewText"></p>
+    <p class="mode-guidance" id="modeGuidance"></p>
 
     <div id="talkPanel" class="interaction-box">
-      <button id="hearButton" type="button">Hear Steward</button>
-      <button id="stopVoiceButton" type="button">Stop voice</button>
-      <p class="muted">Voice is only another way to present the same encounter. This candidate does not request microphone access.</p>
+      <button id="hearButton" type="button">Hear this aloud</button>
+      <button id="stopVoiceButton" type="button">Stop audio</button>
+      <p class="muted">This uses the browser's text-to-speech as another presentation of the same text. It does not listen to you or request microphone access.</p>
     </div>
 
     <div id="tryPanel" class="interaction-box hidden" aria-live="polite">
       <p><strong>Try it</strong></p>
       <div id="tryControls"></div>
       <div id="tryOutput" class="output hidden"></div>
+      <div class="result-actions">
+        <button id="hearResultButton" class="hidden" type="button">Hear result aloud</button>
+      </div>
     </div>
 
     <div id="makePanel" class="interaction-box hidden">
-      <label for="participantInput">Make, explain, repair, or reflect</label>
+      <p id="makeGuidance"></p>
+      <button id="delegateDraftButton" class="hidden" type="button">Show a worked draft</button>
+      <div id="makeOutput" class="output hidden" aria-live="polite"></div>
+      <label for="participantInput">Make, explain, repair, revise, or reflect</label>
       <textarea id="participantInput" placeholder="Your words stay in this page only. Nothing is transmitted."></textarea>
-      <button id="addEvidenceButton" type="button">Keep as local evidence</button>
+      <button id="addEvidenceButton" type="button">Keep as a saved local note</button>
       <button id="saveReflectionButton" type="button">Keep as local reflection</button>
     </div>
 
     <div id="sharePanel" class="interaction-box hidden">
-      <p><strong>Sharing remains optional.</strong> In this candidate, “share” can only prepare a local contribution preview. It cannot submit, publish, grant authority, or create an institutional contribution record.</p>
+      <p><strong>Sharing remains optional.</strong> In this prototype, Share only prepares a local preview of what you might offer later. It cannot submit, publish, grant authority, or create an institutional contribution record.</p>
       <button id="previewCandidateButton" type="button">Preview contribution</button>
       <button id="keepPrivateButton" type="button">Keep private</button>
-      <div id="candidateOutput" class="output candidate-output hidden"></div>
+      <div id="candidateOutput" class="output plain-preview hidden" aria-live="polite"></div>
+      <details id="machinePreviewDetails" class="hidden">
+        <summary>Inspect machine-readable preview</summary>
+        <pre id="machinePreview" class="candidate-output"></pre>
+      </details>
     </div>
 
     <div class="verb-bar" id="verbBar" aria-label="Ways to meet the encounter">
@@ -91,18 +126,18 @@
 
   <section class="panel">
     <h2>What this candidate is testing</h2>
-    <p>The same question should remain coherent across audio, text, interactive and making surfaces. The assistance relationship must stay explicit. A successful action must not silently become a capability claim. Contribution must remain optional and reviewable before it becomes institutional memory.</p>
+    <p>The same question should remain coherent across audio, text, interaction and making. The assistance relationship must stay explicit and behave differently when the participant chooses to learn, delegate, or co-create. A successful action must not silently become a capability claim. Contribution must remain optional and reviewable before it becomes an institutional record.</p>
   </section>
 
   <section class="panel">
     <h2>Source and boundaries</h2>
-    <p>This projection traces to the merged Tyme-Lab rehearsal at commit <code>aa25b07162638d090526cf873eb837137bd6939c</code>. The projection itself remains a candidate. Presence in this repository does not make its content production-ready or institutionally authoritative.</p>
+    <p>This projection traces to a rehearsal in <strong>Tyme-Lab</strong>, the source repository used to test the interaction before exposing it as a review page, at commit <code>aa25b07162638d090526cf873eb837137bd6939c</code>. The projection itself remains a candidate. Presence in a repository does not make its content production-ready or institutionally authoritative.</p>
     <a class="back-link" href="https://github.com/sovereign-codex/Tyme-Lab/tree/aa25b07162638d090526cf873eb837137bd6939c/institutional-cognition/cit-multimodal-learning-continuum/v0.1/rehearsal">Inspect source rehearsal →</a>
   </section>
 </main>
 
 <script type="module">
-import { SEEDS, ASSISTANCE_MODES, ProjectionSession } from "./state.mjs";
+import { SEEDS, ASSISTANCE_MODES, ASSISTANCE_INFO, ProjectionSession } from "./state.mjs";
 
 const el = id => document.getElementById(id);
 const seedSelect = el("seedSelect");
@@ -112,24 +147,41 @@ const stateLine = el("stateLine");
 const seedTitle = el("seedTitle");
 const activeVerbLabel = el("activeVerbLabel");
 const viewText = el("viewText");
+const modeGuidance = el("modeGuidance");
+const modeHelp = el("modeHelp");
 const tryPanel = el("tryPanel");
 const tryControls = el("tryControls");
 const tryOutput = el("tryOutput");
+const hearResultButton = el("hearResultButton");
 const makePanel = el("makePanel");
+const makeGuidance = el("makeGuidance");
+const delegateDraftButton = el("delegateDraftButton");
+const makeOutput = el("makeOutput");
 const sharePanel = el("sharePanel");
 const participantInput = el("participantInput");
 const candidateOutput = el("candidateOutput");
+const machinePreviewDetails = el("machinePreviewDetails");
+const machinePreview = el("machinePreview");
+const sessionOutput = el("sessionOutput");
 let session;
+let lastAudibleResult = "";
 
-function modeLabel(mode){ return mode === "co_create" ? "CO-CREATE" : mode.toUpperCase(); }
+function modeLabel(mode){ return ASSISTANCE_INFO[mode].label; }
+
+function speak(text){
+  if(!("speechSynthesis" in window) || !String(text).trim()) return;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(new SpeechSynthesisUtterance(String(text)));
+}
 
 function renderState(){
-  const s = session.state;
+  const summary = session.localSessionSummary();
   stateLine.innerHTML = "";
   [
     `question: ${session.seed.label}`,
-    `assistance: ${modeLabel(s.assistance_mode)}`,
-    `local notes: ${s.evidence.length + (s.reflection ? 1 : 0)}`
+    `assistance: ${modeLabel(session.state.assistance_mode)}`,
+    `activity: ${summary.activity_count}`,
+    `saved notes: ${summary.saved_note_count}`
   ].forEach(text => {
     const span = document.createElement("span");
     span.className = "state-pill";
@@ -141,21 +193,53 @@ function renderState(){
 function renderModes(){
   modeBar.innerHTML = "";
   ASSISTANCE_MODES.forEach(mode => {
+    const info = ASSISTANCE_INFO[mode];
     const button = document.createElement("button");
     button.type = "button";
-    button.textContent = modeLabel(mode);
+    const strong = document.createElement("strong");
+    strong.textContent = info.label;
+    const span = document.createElement("span");
+    span.textContent = info.short;
+    button.append(strong, span);
+    button.setAttribute("aria-label", `${info.label}: ${info.short}`);
     button.setAttribute("aria-pressed", String(session.state.assistance_mode === mode));
     button.addEventListener("click", () => {
       session.setAssistanceMode(mode);
+      hideTransientOutputs();
       renderAll();
     });
     modeBar.appendChild(button);
   });
+  const info = session.assistanceInfo();
+  modeHelp.innerHTML = "";
+  const p = document.createElement("p");
+  const strong = document.createElement("strong");
+  strong.textContent = `${info.label} — ${info.short} `;
+  p.append(strong, document.createTextNode(info.behavior));
+  modeHelp.appendChild(p);
+}
+
+function renderModeGuidance(){
+  const mode = session.state.assistance_mode;
+  if(mode === "learn") modeGuidance.textContent = "Learn mode: make an attempt before the page resolves the task; feedback follows your action.";
+  if(mode === "delegate") modeGuidance.textContent = "Delegate mode: the page may complete this step directly. Completion will not be treated as evidence that you learned it.";
+  if(mode === "co_create") modeGuidance.textContent = "Co-create mode: your choice or proposal and the page's contribution are kept distinct, with uncertainty preserved.";
+}
+
+function formatTryResult(result){
+  const lines = [result.observation];
+  if(Array.isArray(result.output)) lines.push(`Output: ${result.output.join(", ")}.`);
+  if(result.participant_contribution && session.state.assistance_mode === "co_create") lines.push(`Your contribution: ${typeof result.participant_contribution === "object" ? JSON.stringify(result.participant_contribution) : result.participant_contribution}`);
+  if(result.system_contribution && session.state.assistance_mode === "co_create") lines.push(result.system_contribution);
+  if(result.learning_claim === false) lines.push("Learning claim: none. This step was delegated.");
+  return lines.join("\n");
 }
 
 function recordTry(result){
-  tryOutput.textContent = result.observation + (Array.isArray(result.output) ? ` Output: ${result.output.join(", ")}.` : "");
+  lastAudibleResult = formatTryResult(result);
+  tryOutput.textContent = lastAudibleResult;
   tryOutput.classList.remove("hidden");
+  hearResultButton.classList.remove("hidden");
   renderState();
 }
 
@@ -171,7 +255,17 @@ function renderTry(){
   tryControls.innerHTML = "";
   tryOutput.classList.add("hidden");
   tryOutput.textContent = "";
+  hearResultButton.classList.add("hidden");
+  lastAudibleResult = "";
   if(session.state.active_verb !== "try") return;
+
+  if(session.state.assistance_mode === "delegate"){
+    const p = document.createElement("p");
+    p.textContent = "You chose Delegate, so this step can be completed for you without treating completion as evidence of learning.";
+    const button = choiceButton("Show worked result", () => recordTry(session.runDelegatedResult()));
+    tryControls.append(p, button);
+    return;
+  }
 
   if(session.seed.id === "sound-symbol-b"){
     const wrap = document.createElement("div");
@@ -210,15 +304,34 @@ function renderTry(){
   tryControls.appendChild(wrap);
 }
 
+function renderMake(){
+  const mode = session.state.assistance_mode;
+  delegateDraftButton.classList.toggle("hidden", mode !== "delegate");
+  makeOutput.classList.add("hidden");
+  makeOutput.textContent = "";
+  if(mode === "learn"){
+    makeGuidance.textContent = "Build or explain something in your own words. Saving it here records a local note, not proof of mastery.";
+    participantInput.placeholder = "Explain or build it in your own words. Your words stay in this page only.";
+  } else if(mode === "delegate"){
+    makeGuidance.textContent = "The page can prepare a worked draft. You may revise it, but the completed draft is not treated as evidence that you learned the capability.";
+    participantInput.placeholder = "Optionally revise or annotate the worked draft. Your words stay in this page only.";
+  } else {
+    makeGuidance.textContent = "Add your part in your own words. The page's contribution stays distinct from yours rather than being presented as a single undifferentiated answer.";
+    participantInput.placeholder = "Add your contribution, decision, test, or repair. Your words stay in this page only.";
+  }
+}
+
 function renderView(){
   seedTitle.textContent = session.seed.label;
   activeVerbLabel.textContent = session.state.active_verb.toUpperCase();
   viewText.textContent = session.currentView();
+  renderModeGuidance();
   el("talkPanel").classList.toggle("hidden", session.state.active_verb !== "talk");
   tryPanel.classList.toggle("hidden", session.state.active_verb !== "try");
   makePanel.classList.toggle("hidden", session.state.active_verb !== "make");
   sharePanel.classList.toggle("hidden", session.state.active_verb !== "share");
   renderTry();
+  renderMake();
 }
 
 function renderVerbs(){
@@ -227,14 +340,24 @@ function renderVerbs(){
   });
 }
 
+function hideTransientOutputs(){
+  candidateOutput.classList.add("hidden");
+  candidateOutput.textContent = "";
+  machinePreviewDetails.classList.add("hidden");
+  machinePreview.textContent = "";
+  sessionOutput.classList.add("hidden");
+  sessionOutput.textContent = "";
+  makeOutput.classList.add("hidden");
+  makeOutput.textContent = "";
+}
+
 function renderAll(){ renderState(); renderModes(); renderVerbs(); renderView(); }
 
 function reset(seedId){
   if("speechSynthesis" in window) window.speechSynthesis.cancel();
   session = new ProjectionSession(seedId);
   participantInput.value = "";
-  candidateOutput.textContent = "";
-  candidateOutput.classList.add("hidden");
+  hideTransientOutputs();
   renderAll();
 }
 
@@ -249,21 +372,19 @@ seedSelect.addEventListener("change", event => reset(event.target.value));
 verbBar.querySelectorAll("button[data-verb]").forEach(button => {
   button.addEventListener("click", () => {
     session.activateVerb(button.dataset.verb);
+    hideTransientOutputs();
     renderAll();
   });
 });
 
-el("hearButton").addEventListener("click", () => {
-  if(!("speechSynthesis" in window)) return;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(new SpeechSynthesisUtterance(session.currentView()));
-});
+el("hearButton").addEventListener("click", () => speak(session.currentView()));
 el("stopVoiceButton").addEventListener("click", () => { if("speechSynthesis" in window) window.speechSynthesis.cancel(); });
+hearResultButton.addEventListener("click", () => speak(lastAudibleResult));
 
 el("addEvidenceButton").addEventListener("click", () => {
   const text = participantInput.value.trim();
   if(!text) return;
-  session.addEvidence("participant_action", text);
+  session.addEvidence("saved_local_note", text, "participant_saved_note");
   participantInput.value = "";
   renderState();
 });
@@ -274,12 +395,37 @@ el("saveReflectionButton").addEventListener("click", () => {
   participantInput.value = "";
   renderState();
 });
+delegateDraftButton.addEventListener("click", () => {
+  try{
+    const draft = session.delegatedDraft();
+    makeOutput.textContent = `${draft.content}\n\nLearning claim: none. This draft was delegated.`;
+    makeOutput.classList.remove("hidden");
+    renderState();
+  }catch(error){
+    makeOutput.textContent = String(error.message || error);
+    makeOutput.classList.remove("hidden");
+  }
+});
 
 el("previewCandidateButton").addEventListener("click", () => {
   try{
-    const candidate = session.createContributionCandidate();
-    candidateOutput.textContent = JSON.stringify(candidate,null,2);
+    const preview = session.createContributionCandidate();
+    const summary = session.localSessionSummary();
+    candidateOutput.innerHTML = "";
+    [
+      ["Question", summary.question],
+      ["Assistance", modeLabel(summary.assistance_mode)],
+      ["Local activity", String(summary.activity_count)],
+      ["Saved notes", String(summary.saved_note_count)],
+      ["What happens now", "Nothing is submitted. This is only a local preview and can be previewed again or kept private."]
+    ].forEach(([label,value]) => {
+      const strong = document.createElement("strong");
+      strong.textContent = label;
+      candidateOutput.append(strong, document.createTextNode(value));
+    });
     candidateOutput.classList.remove("hidden");
+    machinePreview.textContent = JSON.stringify(preview,null,2);
+    machinePreviewDetails.classList.remove("hidden");
     renderState();
   }catch(error){
     candidateOutput.textContent = String(error.message || error);
@@ -289,13 +435,28 @@ el("previewCandidateButton").addEventListener("click", () => {
 el("keepPrivateButton").addEventListener("click", () => {
   try{
     session.declineShare();
-    candidateOutput.textContent = "Kept private. Institutional effect: none.";
+    candidateOutput.textContent = "Kept private. Nothing was submitted and there is no institutional effect.";
     candidateOutput.classList.remove("hidden");
+    machinePreviewDetails.classList.add("hidden");
     renderState();
   }catch(error){
     candidateOutput.textContent = String(error.message || error);
     candidateOutput.classList.remove("hidden");
   }
+});
+
+el("reviewSessionButton").addEventListener("click", () => {
+  const summary = session.localSessionSummary();
+  sessionOutput.textContent = `Temporary session only\nQuestion: ${summary.question}\nAssistance: ${modeLabel(summary.assistance_mode)}\nActivity: ${summary.activity_count}\nSaved notes: ${summary.saved_note_count}\nPersistence: ${summary.persistence}\nInstitutional effect: none`;
+  sessionOutput.classList.remove("hidden");
+});
+el("clearSessionButton").addEventListener("click", () => {
+  session.clearLocalSession();
+  participantInput.value = "";
+  hideTransientOutputs();
+  sessionOutput.textContent = "Local activity and saved notes cleared for this sample. Nothing was submitted.";
+  sessionOutput.classList.remove("hidden");
+  renderState();
 });
 
 reset(SEEDS[0].id);
