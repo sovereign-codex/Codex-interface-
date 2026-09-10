@@ -1,6 +1,7 @@
 {
   "projection_id": "CIT-LEARNING-PROJECTION-v0.1",
-  "status": "candidate_repaired_pending_fresh_context_zero",
+  "status": "candidate",
+  "review_state": "repaired_pending_fresh_context_zero",
   "public_deployment_authorized": false,
   "production_route_authorized": false,
   "source": {
