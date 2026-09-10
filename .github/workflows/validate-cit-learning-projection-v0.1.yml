@@ -1,0 +1,25 @@
+name: Validate CIT Learning Projection v0.1
+
+on:
+  pull_request:
+    paths:
+      - "projections/cit-learning-v0.1/**"
+      - "validation/validate_cit_learning_projection.mjs"
+      - ".github/workflows/validate-cit-learning-projection-v0.1.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-public-facing-projection:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact reviewed head
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Validate bounded projection
+        run: node validation/validate_cit_learning_projection.mjs
