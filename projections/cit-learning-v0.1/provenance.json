@@ -1,0 +1,28 @@
+{
+  "projection_id": "CIT-LEARNING-PROJECTION-v0.1",
+  "status": "candidate",
+  "public_deployment_authorized": false,
+  "source": {
+    "repository": "sovereign-codex/Tyme-Lab",
+    "commit": "aa25b07162638d090526cf873eb837137bd6939c",
+    "path": "institutional-cognition/cit-multimodal-learning-continuum/v0.1/rehearsal",
+    "merged_pr": 44
+  },
+  "target": {
+    "repository": "sovereign-codex/Codex-interface-",
+    "branch": "projection/cit-learning-continuum-v0.1",
+    "live_foyer_modified": false
+  },
+  "boundaries": {
+    "network_submission": false,
+    "microphone_capture": false,
+    "persistent_browser_profile": false,
+    "production_participant_records": false,
+    "real_child_participation": false,
+    "contribution_trail_creation": false,
+    "hall_event_emission": false,
+    "credential_issuance": false,
+    "authority_escalation": false,
+    "canon_promotion": false
+  }
+}
