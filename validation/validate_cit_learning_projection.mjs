@@ -34,7 +34,9 @@ const sourceCommit = "aa25b07162638d090526cf873eb837137bd6939c";
 
 ok &&= expect("mobile-viewport", html.includes('name="viewport"'));
 ok &&= expect("five-visible-verbs", VERBS.every(verb => html.includes(`data-verb="${verb}"`) && html.includes(`>${verb.toUpperCase()}</button>`)));
-ok &&= expect("ordinary-language-first", html.includes("Start with something you want to understand") && html.includes("You do not need to know TYME vocabulary first"));
+ok &&= expect("ordinary-language-first", html.includes("Start with something you want to understand") && html.includes("You do not need to know project vocabulary first"));
+ok &&= expect("public-header-avoids-cit-jargon", !html.includes("Candidate CIT learning projection") && html.includes("Tyme Hall learning projection candidate"));
+ok &&= expect("public-status-hides-internal-event-vocabulary", !html.includes("`Hall event:") && !html.includes("`authority:") && html.includes("`local notes:"));
 ok &&= expect("source-commit-visible", html.includes(sourceCommit) && contract.includes(sourceCommit));
 ok &&= expect("source-commit-machine-readable", SOURCE.source_commit === sourceCommit && provenance.source.commit === sourceCommit);
 ok &&= expect("projection-remains-candidate", SOURCE.projection_authority === "candidate" && provenance.status === "candidate");
@@ -45,7 +47,7 @@ ok &&= expect("no-network-submit-path", !html.includes("fetch(") && !html.includ
 ok &&= expect("no-microphone-capture", !html.includes("getUserMedia") && !html.includes("SpeechRecognition") && html.includes("speechSynthesis"));
 ok &&= expect("no-persistent-browser-profile", !html.includes("localStorage") && !html.includes("indexedDB") && !html.includes("document.cookie"));
 ok &&= expect("keep-private-path-visible", html.includes("Keep private") && html.includes("Institutional effect: none"));
-ok &&= expect("contribution-candidate-boundary-visible", html.includes("Contribution Candidate") && html.includes("cannot submit, publish, grant authority, or create a Contribution Trail"));
+ok &&= expect("contribution-boundary-visible-in-ordinary-language", html.includes("local contribution preview") && html.includes("cannot submit, publish, grant authority, or create an institutional contribution record"));
 
 const forbiddenParticipantLabels = ["early learner", "developing builder", "expert practitioner", "learner level", "beginner", "intermediate", "advanced"];
 ok &&= expect("no-participant-type-ranking-labels", forbiddenParticipantLabels.every(term => !html.toLowerCase().includes(term)));
