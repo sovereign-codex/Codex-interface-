@@ -1,0 +1,37 @@
+{
+  "route_id": "CIT-LEARNING-LIVE-ROUTE-v0.1",
+  "status": "candidate",
+  "review_state": "branch_staged_pending_validation",
+  "source_projection": {
+    "repository": "sovereign-codex/Codex-interface-",
+    "path": "projections/cit-learning-v0.1/",
+    "merged_commit": "ec55fb7106bcc110c21ea0ca3a0a46647fa3c73e",
+    "source_status": "candidate",
+    "source_authority": "non-authorizing"
+  },
+  "target": {
+    "surface": "root_foyer",
+    "path": "/",
+    "branch": "projection/cit-learning-live-route-v0.1",
+    "route_href": "projections/cit-learning-v0.1/"
+  },
+  "authorization": {
+    "production_route_authorized": false,
+    "public_contribution_intake_authorized": false,
+    "persistent_participant_records_authorized": false,
+    "real_child_participation_authorized": false,
+    "credential_issuance_authorized": false,
+    "canon_promotion_authorized": false,
+    "autonomous_steward_authority_authorized": false
+  },
+  "integration_invariants": {
+    "five_institutional_entrances_preserved": true,
+    "learning_route_is_separate_participation_path": true,
+    "no_automatic_redirect": true,
+    "no_participant_state_returned_to_foyer": true,
+    "no_network_submission_added_by_route": true,
+    "no_persistent_browser_profile_added_by_route": true,
+    "no_contribution_intake_added_by_route": true,
+    "source_projection_rewrite_authorized": false
+  }
+}
