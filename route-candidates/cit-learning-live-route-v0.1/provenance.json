@@ -1,7 +1,7 @@
 {
   "route_id": "CIT-LEARNING-LIVE-ROUTE-v0.1",
   "status": "candidate",
-  "review_state": "branch_staged_pending_validation",
+  "review_state": "deterministic_clear_pending_external_route_review",
   "source_projection": {
     "repository": "sovereign-codex/Codex-interface-",
     "path": "projections/cit-learning-v0.1/",
@@ -14,6 +14,21 @@
     "path": "/",
     "branch": "projection/cit-learning-live-route-v0.1",
     "route_href": "projections/cit-learning-v0.1/"
+  },
+  "validation": {
+    "initial_exact_head": "2ba9a26e7a179e04da19f64b0e54b4ef0f416d7b",
+    "workflow_run_id": 34521489965,
+    "result": "success",
+    "projection_revalidated": true,
+    "route_seam_validated": true
+  },
+  "preview": {
+    "exposure_observed": true,
+    "provider": "Cloudflare Pages",
+    "branch_preview_base_url": "https://projection-cit-learning-live.codex-interface-83q.pages.dev",
+    "preview_url": "https://9958e42a.codex-interface-83q.pages.dev",
+    "observed_via": "GitHub PR #11 deployment comment",
+    "authorization_effect": "none"
   },
   "authorization": {
     "production_route_authorized": false,
