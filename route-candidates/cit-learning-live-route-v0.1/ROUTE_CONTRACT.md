@@ -42,6 +42,29 @@ The learning route appears in a separate panel after those institutional entranc
 
 Public-facing copy must explain the distinction in ordinary language: the five entrances are for inspecting the institution; the learning route is for participating in one bounded question.
 
+## Surface-state grammar
+
+Route review must not rely only on disclaimer prose. The page must render compact, human-visible state metadata so a visitor can distinguish the current surface and the learning destination at a glance.
+
+For the foyer:
+
+```text
+Surface: PUBLIC FOYER
+Authority: NON-AUTHORIZING
+Role: INSTITUTIONAL INSPECTION
+```
+
+For the bounded participation destination:
+
+```text
+Destination: CANDIDATE
+Authority: NONE
+Persistence: SESSION ONLY
+Share: PREVIEW ONLY
+```
+
+The same distinctions must also remain machine-readable in route provenance. This status grammar does not create authority; it renders existing authority and lifecycle boundaries.
+
 ## Participation boundary
 
 Entering the learning route must not:
@@ -57,6 +80,17 @@ Entering the learning route must not:
 - silently move a participant into Contribution intake.
 
 SHARE inside the projection remains a reversible local preview only.
+
+## Share / Contribution transition law
+
+SHARE and the institutional Contribution entrance are not interchangeable.
+
+```text
+SHARE -> local preview only -> private exit
+CONTRIBUTION -> separate institutional intake/review path
+```
+
+No direct or automatic transition exists from SHARE into Contribution intake. If a participant later chooses to make an institutional contribution, that decision begins through the separate Contribution surface and its own review discipline.
 
 ## Return boundary
 
@@ -88,11 +122,14 @@ The route candidate clears branch-level review only if:
 - the learning entry is visually and semantically separate from those five categories;
 - the learning entry points only to `/projections/cit-learning-v0.1/`;
 - the projection preserves a visible return to the foyer;
+- the foyer and bounded-participation states are visibly labeled;
+- surface-state metadata is machine-readable in route provenance;
+- SHARE is visibly distinguished from institutional Contribution intake;
 - no automatic redirect enters the learning surface;
 - no participant data is transmitted or persisted by the route change;
 - no contribution intake is created by following the route;
 - no authority or deployment flag becomes true;
-- a context-zero evaluator can distinguish institutional inspection from bounded participation without private coaching.
+- a context-zero evaluator can distinguish institutional inspection from bounded participation, and Share from institutional Contribution, without private coaching.
 
 ## Non-blocking UX backlog inherited from the Grok return
 
