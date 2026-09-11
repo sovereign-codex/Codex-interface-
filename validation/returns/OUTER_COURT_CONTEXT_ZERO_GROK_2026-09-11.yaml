@@ -1,0 +1,54 @@
+review_id: OUTER-COURT-CONTEXT-ZERO-independent-2026-09-11
+participant_context: "No private TYME context provided"
+result: CONDITIONAL_PASS
+
+intent_reconstruction:
+  ask: "Entry for learning, questioning, and orienting without requiring prior project terminology; routes to bounded learning interaction and Orientation."
+  seek: "Entry for investigating active becoming, experiments, open questions, institutional state, work records, and relational traces; routes to Laboratory, Office, Work & Lineage, Constellation, and graph/trace tools."
+  know: "Entry for examining reviewed public inheritance, durable definitions, and material that has survived review, together with evidence, uncertainty, provenance, and review state; routes to Scrolls and Canon."
+  knock: "Entry for challenging, extending, correcting, or returning evidence through a governed path; routes to Contribution (currently GitHub Issues)."
+
+strongest_clarity: "Clear separation of experimental/non-canonical Laboratory material from reviewed Scrolls/Canon inheritance, plus repeated explicit boundaries that visibility, publication, or submission do not equal authority, validation, or standing."
+strongest_ambiguity: "The first-screen verbs (especially KNOW and the abstract 'what is becoming') still require the participant to map them onto institutional nouns that are only fully explained after entry; residual vocabulary load remains for terms such as Scrolls, Canon, Constellation, and Work & Lineage."
+
+unsupported_inferences:
+  - "That any surface grants institutional control, persistence of personal state, or automatic promotion of content."
+  - "That successful use of the bounded learning interaction creates a recorded capability or identity."
+  - "That a GitHub issue constitutes a native Hall receipt or guaranteed review."
+
+failure_classes:
+  - "F-12 VOCABULARY_DEPENDENCY"
+  - "F-02 KNOW_CERTAINTY_OVERREACH (risk of misreading, mitigated by explicit text but still present for first-time readers)"
+
+fifth_intent_required: false
+fifth_intent_reason: "All listed public surfaces (Office, Scrolls, Laboratory, Constellation, Contribution, Orientation, Work & Lineage, Canon, Terminal, Control Panel, graph/trace tools) map cleanly under the four intents; no fifth intent is needed to cover the exposed surfaces."
+
+identity_inference: "No account or persistent identity is required for ASK, SEEK, or KNOW. Evidence: explicit statements that no account is created, no learner rank is created, the interaction is a candidate surface, Share prepares only a local preview and does not submit, and Contribution is a separate governed path."
+authority_inference: "The interface repeatedly distinguishes participation from authority. Evidence: 'Sovereignty first. Evidence before authority', Office does not create state or grant authority, Laboratory publication is not validation or Canon promotion, Contribution does not grant standing or imply Canon promotion, Terminal/Control Panel visibility does not grant control, and Canon is revisable and non-infallible."
+exit_path: "Yes. The first-screen states 'Exit remains available.' No forced contribution or identity surrender is required to leave."
+
+adversarial_checks:
+  A: "Incorrect. KNOW is defined as examining what has survived review together with evidence, uncertainty, provenance, and review state; explicit text states KNOW does not mean certainty or immutable truth, and Canonical does not mean infallible."
+  B: "Incorrect. A GitHub issue is an external return path, is not a native Hall receipt, does not guarantee Hall review, and does not grant authority or standing."
+  C: "Incorrect. Successful completion of the learning interaction does not prove learning, creates no account or learner rank, and Share does not submit anything to TYME Hall."
+  D: "Incorrect. Laboratory publication is non-canonical, is not validation, and is not Canon promotion."
+  E: "Incorrect. Visibility of the Control Panel (or Terminal) does not grant institutional control; generating a local artifact does not mean it has been persisted, merged, published, approved, or granted authority."
+  F: "Incorrect. Visibility of a Work record does not mean the Work is currently active; records may be historical, waiting, returned, or integrated."
+
+recommended_smallest_repairs:
+  - "On the first screen, add one-line plain-language glosses or secondary labels that map ASK/SEEK/KNOW/KNOCK more explicitly to the institutional nouns (e.g., ASK → Orientation & learning; SEEK → Laboratory & current state; KNOW → Scrolls & Canon; KNOCK → Contribution)."
+  - "In the KNOW entry path, surface the evidentiary postures (CANONICAL / REVIEWED / PROVISIONAL / etc.) and the statement 'Canonical does not mean infallible' earlier and more prominently."
+  - "In the KNOCK / Contribution path, restate in the first interaction that a GitHub issue is external, creates no native receipt, and guarantees neither review nor authority."
+  - "Ensure every deeper tool surface (Terminal, Control Panel, graph/trace) carries the same short boundary line already present in the packet: visibility ≠ control / authority."
+
+evidence_paths:
+  - "First-screen candidate copy and the four intent definitions."
+  - "Foyer description of institutional surfaces and the explicit statement that the ASK/SEEK/KNOW/KNOCK layer sits in front of them."
+  - "Bounded Learning Interaction boundaries (no account, no rank, Share is local preview only)."
+  - "Laboratory boundaries (non-canonical, not validation, not Canon promotion)."
+  - "Office, Work & Lineage, Constellation, Scrolls, and Canon boundary statements."
+  - "Contribution / KNOCK path description and GitHub-specific limits."
+  - "Terminal and Control Panel visibility-does-not-grant-control statements."
+  - "Explicit exit availability on the first screen."
+
+promotion_recommendation: HOLD
