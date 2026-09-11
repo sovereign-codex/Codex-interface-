@@ -1,0 +1,68 @@
+{
+  "route_id": "CIT-LEARNING-LIVE-ROUTE-v0.1",
+  "status": "candidate",
+  "review_state": "surface_status_repair_pending_validation",
+  "source_projection": {
+    "repository": "sovereign-codex/Codex-interface-",
+    "path": "projections/cit-learning-v0.1/",
+    "merged_commit": "ec55fb7106bcc110c21ea0ca3a0a46647fa3c73e",
+    "source_status": "candidate",
+    "source_authority": "non-authorizing"
+  },
+  "target": {
+    "surface": "root_foyer",
+    "path": "/",
+    "branch": "projection/cit-learning-live-route-v0.1",
+    "route_href": "projections/cit-learning-v0.1/"
+  },
+  "validation": {
+    "initial_exact_head": "2ba9a26e7a179e04da19f64b0e54b4ef0f416d7b",
+    "workflow_run_id": 34521489965,
+    "result": "success",
+    "projection_revalidated": true,
+    "route_seam_validated": true
+  },
+  "preview": {
+    "exposure_observed": true,
+    "provider": "Cloudflare Pages",
+    "branch_preview_base_url": "https://projection-cit-learning-live.codex-interface-83q.pages.dev",
+    "preview_url": "https://75af6445.codex-interface-83q.pages.dev",
+    "observed_via": "GitHub PR #11 deployment comment",
+    "authorization_effect": "none"
+  },
+  "surface_status_grammar": {
+    "foyer": {
+      "surface": "PUBLIC FOYER",
+      "authority": "NON-AUTHORIZING",
+      "role": "INSTITUTIONAL INSPECTION"
+    },
+    "bounded_participation": {
+      "destination": "CANDIDATE",
+      "authority": "NONE",
+      "persistence": "SESSION ONLY",
+      "share": "PREVIEW ONLY"
+    },
+    "share_to_contribution_transition": "Share is local preview only; Contribution is the separate institutional intake/review path. No direct automatic transition exists."
+  },
+  "authorization": {
+    "production_route_authorized": false,
+    "public_contribution_intake_authorized": false,
+    "persistent_participant_records_authorized": false,
+    "real_child_participation_authorized": false,
+    "credential_issuance_authorized": false,
+    "canon_promotion_authorized": false,
+    "autonomous_steward_authority_authorized": false
+  },
+  "integration_invariants": {
+    "five_institutional_entrances_preserved": true,
+    "learning_route_is_separate_participation_path": true,
+    "surface_state_is_explicit": true,
+    "share_is_not_contribution_intake": true,
+    "no_automatic_redirect": true,
+    "no_participant_state_returned_to_foyer": true,
+    "no_network_submission_added_by_route": true,
+    "no_persistent_browser_profile_added_by_route": true,
+    "no_contribution_intake_added_by_route": true,
+    "source_projection_rewrite_authorized": false
+  }
+}

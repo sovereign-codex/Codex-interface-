@@ -1,0 +1,30 @@
+name: Validate CIT Learning Live Route v0.1
+
+on:
+  pull_request:
+    paths:
+      - "index.html"
+      - "route-candidates/cit-learning-live-route-v0.1/**"
+      - "validation/validate_cit_learning_live_route.mjs"
+      - "projections/cit-learning-v0.1/**"
+      - "validation/validate_cit_learning_projection.mjs"
+      - ".github/workflows/validate-cit-learning-live-route-v0.1.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-foyer-to-learning-seam:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact reviewed head
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Revalidate merged learning projection
+        run: node validation/validate_cit_learning_projection.mjs
+      - name: Validate foyer to learning route
+        run: node validation/validate_cit_learning_live_route.mjs
