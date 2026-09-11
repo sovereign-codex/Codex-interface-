@@ -1,0 +1,37 @@
+review_id: OUTER-COURT-THRESHOLD-GROK-2026-09-11
+participant_context: "No private TYME context provided"
+result: PASS
+
+phase_a_routes:
+  scenario_1: ASK
+  scenario_2: SEEK
+  scenario_3: KNOW
+  scenario_4: KNOCK
+  scenario_5: "Exit / non-participation remains available; no identity or contribution required"
+  scenario_6: "SEEK for active/unresolved/in-progress; KNOW for reviewed/current standing; or smallest clarifying question if still mixed"
+
+intent_reconstruction:
+  ask: "Learn, ask a question, or find bearings / orient"
+  seek: "Explore active questions, evidence, and work still in progress"
+  know: "Examine reviewed knowledge, its evidence, and its current standing (explicitly not certainty)"
+  knock: "Challenge, correct, or return evidence for review (submitting grants no authority)"
+
+know_implies_certainty: false
+knock_implies_authority: false
+fifth_intent_required: false
+
+threshold_vocabulary_dependency: NONE
+deeper_vocabulary_dependency: EXPECTED
+
+repository_reconciliation: PASS
+
+strongest_clarity: "Explicit boundary statements ('Reviewed does not mean certain.' / 'Submitting does not grant authority.' / 'Exit remains available.') plus clean four-intent routing that matches the scenarios without requiring institutional nouns at the threshold."
+strongest_ambiguity: "Scenario 6 mixed 'established vs still in progress' is resolvable by the active/unresolved vs reviewed/standing distinction already present in the threshold copy; residual minor risk only if a participant ignores the explicit SEEK/KNOW contrast."
+
+boundary_failures:
+  - ""
+
+recommended_smallest_repairs:
+  - ""
+
+promotion_recommendation: ADVANCE_TO_CONSTITUTIONAL_REVIEW
