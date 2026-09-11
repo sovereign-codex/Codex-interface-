@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "id": "TYME-HALL-OUTER-COURT-v0.1",
-  "status": "ARCHITECTURE_CANDIDATE_REPAIR_01",
+  "status": "ARCHITECTURE_CANDIDATE_THRESHOLD_PASS",
   "baseline": {
     "repository": "sovereign-codex/Codex-interface-",
     "branch": "main",
@@ -14,11 +14,11 @@
   "changes_rendered_foyer": false,
   "first_screen_copy": {
     "question": "What brings you here?",
-    "ask": "Learn, question, or get oriented.",
-    "seek": "Investigate questions, evidence, and what is still being tested.",
-    "know": "Examine reviewed inheritance and its current standing.",
+    "ask": "Learn, ask a question, or find your bearings.",
+    "seek": "Explore active questions, evidence, and work still in progress.",
+    "know": "Examine reviewed knowledge, its evidence, and its current standing.",
     "know_boundary": "Reviewed does not mean certain.",
-    "knock": "Challenge, correct, or return evidence through a governed path.",
+    "knock": "Challenge, correct, or return evidence for review.",
     "knock_boundary": "Submitting does not grant authority.",
     "footer": "Sovereignty first. Evidence before authority. Exit remains available."
   },
@@ -94,7 +94,31 @@
       "promotion_recommendation": "HOLD",
       "failure_classes": ["F-12 VOCABULARY_DEPENDENCY", "F-02 KNOW_CERTAINTY_OVERREACH"],
       "repair": "REPAIR_01"
+    },
+    {
+      "review_id": "OUTER-COURT-CONTEXT-ZERO-contextzero-2026-09-11",
+      "participant": "contextzero",
+      "result": "CONDITIONAL_PASS",
+      "promotion_recommendation": "HOLD",
+      "failure_classes": ["F-12 VOCABULARY_DEPENDENCY"],
+      "repair": "REPAIR_02"
+    },
+    {
+      "review_id": "OUTER-COURT-THRESHOLD-GROK-2026-09-11",
+      "participant": "Grok",
+      "result": "PASS",
+      "promotion_recommendation": "ADVANCE_TO_CONSTITUTIONAL_REVIEW",
+      "threshold_vocabulary_dependency": "NONE",
+      "deeper_vocabulary_dependency": "EXPECTED",
+      "repository_reconciliation": "PASS",
+      "boundary_failures": []
     }
   ],
-  "next_gate": "INDEPENDENT_CONTEXT_ZERO_RERUN_AFTER_REPAIR_01"
+  "threshold_gate": {
+    "result": "PASS",
+    "f12_outer_court_boundary": "RESOLVED",
+    "know_certainty_overreach": "RESOLVED",
+    "fifth_intent_required": false
+  },
+  "next_gate": "CHARTER_ITX_RIX_EPISTEMIC_REVIEW"
 }
