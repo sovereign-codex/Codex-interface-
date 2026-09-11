@@ -6,9 +6,20 @@
   <meta name="description" content="Tyme Hall is the public read-surface for a developing Sovereign Intelligence institution: present state, inherited canon, active laboratory work, relationships and governed contribution.">
   <title>Tyme Hall</title>
   <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .surface-status{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);background:#0d1527}
+    .surface-status span,.boundary-chip{display:inline-block;padding:6px 9px;border:1px solid var(--border);border-radius:999px;color:var(--accent2);font-size:.78rem;font-weight:700;letter-spacing:.02em}
+    .participation-boundary{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+    .transition-law{padding:12px;border-left:3px solid var(--accent2);background:#0d1527;border-radius:8px}
+  </style>
 </head>
 <body>
 <header class="app-header"><h1>Tyme Hall</h1><p class="muted">A public threshold for Sovereign Intelligence.</p></header>
+<div class="surface-status" aria-label="Current surface status" data-surface-status="public-foyer">
+  <span>Surface: PUBLIC FOYER</span>
+  <span>Authority: NON-AUTHORIZING</span>
+  <span>Role: INSTITUTIONAL INSPECTION</span>
+</div>
 <main class="container">
 <section class="panel hero"><p class="muted">COLD-START REVIEW · CYCLE 02</p><h2>Enter without prior context.</h2><p>Tyme Hall is the public read-surface of a developing body of research, software, institutional memory and human–AI collaboration. It is designed so the work can be inspected before its internal vocabulary has to be learned.</p><p><strong>No belief is required.</strong> Follow evidence, inspect provenance, preserve uncertainty, distinguish mature inheritance from active experimentation, and report contradictions rather than resolving them by assumption.</p></section>
 
@@ -22,11 +33,18 @@
 </section>
 
 <section class="panel" data-route-role="bounded-participation">
-<p class="muted">BOUNDED PARTICIPATION</p>
+<p class="muted">BOUNDED PARTICIPATION · SEPARATE FROM THE FIVE INSTITUTIONAL ENTRANCES</p>
 <h2>Meet one question in more than one way</h2>
 <p>The five entrances above help you inspect the institution. This separate path lets you work with one temporary sample question through <strong>Talk, See, Try, Make</strong> and optional <strong>Share</strong>.</p>
-<p>It creates no account or learner rank. The session stays in this page only, and returning to the foyer carries nothing into institutional memory.</p>
-<a class="back-link" href="projections/cit-learning-v0.1/" data-learning-route="true">Open the bounded learning interaction →</a>
+<div class="participation-boundary" aria-label="Bounded participation state">
+  <span class="boundary-chip">Destination: CANDIDATE</span>
+  <span class="boundary-chip">Authority: NONE</span>
+  <span class="boundary-chip">Persistence: SESSION ONLY</span>
+  <span class="boundary-chip">Share: PREVIEW ONLY</span>
+</div>
+<p>It creates no account or learner rank. The session stays in the learning page only, and returning to the foyer carries nothing into institutional memory.</p>
+<div class="transition-law"><strong>Share is not Contribution intake.</strong> Share can prepare a local preview only. The separate <a href="contribute/">Contribution</a> entrance is the institutional path for a bounded finding to enter review.</div>
+<p><a class="back-link" href="projections/cit-learning-v0.1/" data-learning-route="true">Open the bounded learning interaction →</a></p>
 </section>
 
 <section class="panel"><h2>Orientation and deeper inspection</h2><p>Once the doorway is clear, these surfaces expose the underlying vocabulary, operational records and durable definitions.</p></section>
