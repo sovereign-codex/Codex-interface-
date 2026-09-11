@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="description" content="Tyme Hall is the public read-surface for a developing Sovereign Intelligence institution: present state, inherited canon, active laboratory work, relationships and governed contribution.">
+  <meta name="description" content="Tyme Hall is the public read-surface for a developing Sovereign Intelligence institution, with intent-first paths for learning, investigation, reviewed knowledge and governed contribution.">
   <title>Tyme Hall</title>
   <link rel="stylesheet" href="assets/css/style.css">
   <style>
@@ -11,6 +11,19 @@
     .surface-status span,.boundary-chip{display:inline-block;padding:6px 9px;border:1px solid var(--border);border-radius:999px;color:var(--accent2);font-size:.78rem;font-weight:700;letter-spacing:.02em}
     .participation-boundary{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
     .transition-law{padding:12px;border-left:3px solid var(--accent2);background:#0d1527;border-radius:8px}
+    .outer-court-intro{margin-bottom:14px}
+    .intent-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
+    .intent-card{display:block;text-decoration:none;color:var(--text);background:#0d1527;border:1px solid var(--border);border-radius:16px;padding:16px;min-height:150px}
+    .intent-card:hover,.intent-card:focus-visible{border-color:var(--accent2);outline:none}
+    .intent-label{display:inline-block;margin-bottom:8px;color:var(--accent2);font-size:.78rem;font-weight:800;letter-spacing:.12em}
+    .intent-card h3{font-size:1.3rem;margin-bottom:8px}
+    .intent-card p{margin:0;color:var(--muted);line-height:1.5}
+    .intent-card .intent-boundary{margin-top:12px;padding-top:10px;border-top:1px solid rgba(154,167,207,.15);font-size:.88rem;color:var(--accent2)}
+    .constitutional-line{margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(154,167,207,.15);line-height:1.6}
+    .constitutional-line a{color:var(--accent2);font-weight:700;text-decoration:none}
+    .routing-law{margin-top:16px;padding:12px;border:1px solid var(--border);border-radius:12px;background:#0d1527;color:var(--muted)}
+    .institution-label{margin-bottom:8px}
+    @media (min-width:700px){.intent-grid{grid-template-columns:1fr 1fr}}
   </style>
 </head>
 <body>
@@ -18,12 +31,48 @@
 <div class="surface-status" aria-label="Current surface status" data-surface-status="public-foyer">
   <span>Surface: PUBLIC FOYER</span>
   <span>Authority: NON-AUTHORIZING</span>
-  <span>Role: INSTITUTIONAL INSPECTION</span>
+  <span>Role: INTENT ROUTING</span>
 </div>
 <main class="container">
-<section class="panel hero"><p class="muted">COLD-START REVIEW · CYCLE 02</p><h2>Enter without prior context.</h2><p>Tyme Hall is the public read-surface of a developing body of research, software, institutional memory and human–AI collaboration. It is designed so the work can be inspected before its internal vocabulary has to be learned.</p><p><strong>No belief is required.</strong> Follow evidence, inspect provenance, preserve uncertainty, distinguish mature inheritance from active experimentation, and report contradictions rather than resolving them by assumption.</p></section>
+<section class="panel hero" data-outer-court="v0.1" aria-labelledby="outer-court-question">
+  <p class="muted outer-court-intro">PUBLIC FOYER · OUTER COURT v0.1</p>
+  <h2 id="outer-court-question">What brings you here?</h2>
+  <p>Choose what you want to do first. The Hall will reveal the institutional surface only when it becomes useful.</p>
 
-<section class="panel"><h2>Five ways to enter the living institution</h2><p>These are different relationships to institutional knowledge, not five equivalent content categories.</p></section>
+  <div class="intent-grid" role="list" aria-label="Outer Court intents">
+    <a class="intent-card" role="listitem" href="projections/cit-learning-v0.1/" data-outer-court-intent="ask" data-authority-effect="none">
+      <span class="intent-label">ASK</span>
+      <h3>Learn, ask a question, or find your bearings.</h3>
+      <p>Begin with bounded learning and orientation before deeper system vocabulary is required.</p>
+    </a>
+
+    <a class="intent-card" role="listitem" href="laboratory/" data-outer-court-intent="seek" data-authority-effect="none">
+      <span class="intent-label">SEEK</span>
+      <h3>Explore active questions, evidence, and work still in progress.</h3>
+      <p>Enter the experimental and investigative surfaces without confusing active work with established knowledge.</p>
+    </a>
+
+    <a class="intent-card" role="listitem" href="scrolls/" data-outer-court-intent="know" data-authority-effect="none">
+      <span class="intent-label">KNOW</span>
+      <h3>Examine reviewed knowledge, its evidence, and its current standing.</h3>
+      <p>Inspect inherited material together with provenance, revision and evidentiary posture.</p>
+      <p class="intent-boundary"><strong>Reviewed does not mean certain.</strong></p>
+    </a>
+
+    <a class="intent-card" role="listitem" href="contribute/" data-outer-court-intent="knock" data-authority-effect="none">
+      <span class="intent-label">KNOCK</span>
+      <h3>Challenge, correct, or return evidence for review.</h3>
+      <p>Cross into the governed contribution path only when you intend to return something to the institution.</p>
+      <p class="intent-boundary"><strong>Submitting does not grant authority.</strong></p>
+    </a>
+  </div>
+
+  <p class="constitutional-line"><a href="https://github.com/sovereign-codex/sovereign-codex/blob/main/sovereign-codex/01_CHARTER/charter_of_human_sovereignty.md">Sovereignty first.</a> Evidence before authority. Exit remains available.</p>
+  <p class="muted">The linked Human Sovereignty Charter is currently Version 1.0 / Foundational Draft.</p>
+  <div class="routing-law"><strong>Choosing a path only routes intent.</strong> It does not create institutional standing, authority, a Hall receipt, a review promise, or Canon status.</div>
+</section>
+
+<section class="panel"><p class="muted institution-label">INSTITUTIONAL SURFACES · REVEALED AFTER INTENT</p><h2>Go deeper when the distinction becomes useful</h2><p>These organs remain distinct. The Outer Court does not rename or collapse them; it simply gives a first-time participant a simpler first question.</p></section>
 <section class="grid">
 <a class="card-link" href="office/"><h3>Office</h3><p>Present state: what is active now, what changed, what is next, what is waiting, and what requires review.</p></a>
 <a class="card-link" href="scrolls/"><h3>Scrolls</h3><p>Inherited canon and reviewed public artifacts that crossed an explicit publication boundary.</p></a>
@@ -33,9 +82,9 @@
 </section>
 
 <section class="panel" data-route-role="bounded-participation">
-<p class="muted">BOUNDED PARTICIPATION · SEPARATE FROM THE FIVE INSTITUTIONAL ENTRANCES</p>
+<p class="muted">ASK · BOUNDED PARTICIPATION</p>
 <h2>Meet one question in more than one way</h2>
-<p>The five entrances above help you inspect the institution. This separate path lets you work with one temporary sample question through <strong>Talk, See, Try, Make</strong> and optional <strong>Share</strong>.</p>
+<p>This path lets you work with one temporary sample question through <strong>Talk, See, Try, Make</strong> and optional <strong>Share</strong>.</p>
 <div class="participation-boundary" aria-label="Bounded participation state">
   <span class="boundary-chip">Destination: CANDIDATE</span>
   <span class="boundary-chip">Authority: NONE</span>
@@ -43,7 +92,7 @@
   <span class="boundary-chip">Share: PREVIEW ONLY</span>
 </div>
 <p>It creates no account or learner rank. The session stays in the learning page only, and returning to the foyer carries nothing into institutional memory.</p>
-<div class="transition-law"><strong>Share is not Contribution intake.</strong> Share can prepare a local preview only. The separate <a href="contribute/">Contribution</a> entrance explains the current external return path for a bounded finding and the conditions under which it may later become eligible for review.</div>
+<div class="transition-law"><strong>Share is not Contribution intake.</strong> Share can prepare a local preview only. The separate <a href="contribute/">Contribution</a> surface explains the current external return path for a bounded finding and the conditions under which it may later become eligible for review.</div>
 <p><a class="back-link" href="projections/cit-learning-v0.1/" data-learning-route="true">Open the bounded learning interaction →</a></p>
 </section>
 
