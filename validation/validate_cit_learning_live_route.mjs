@@ -64,6 +64,24 @@ ok &&= expect("foyer-entry-boundary-visible",
   participationPanel.includes("carries nothing into institutional memory")
 );
 
+ok &&= expect("foyer-surface-status-visible",
+  foyer.includes('data-surface-status="public-foyer"') &&
+  foyer.includes("Surface: PUBLIC FOYER") &&
+  foyer.includes("Authority: NON-AUTHORIZING") &&
+  foyer.includes("Role: INSTITUTIONAL INSPECTION")
+);
+ok &&= expect("participation-surface-status-visible",
+  participationPanel.includes("Destination: CANDIDATE") &&
+  participationPanel.includes("Authority: NONE") &&
+  participationPanel.includes("Persistence: SESSION ONLY") &&
+  participationPanel.includes("Share: PREVIEW ONLY")
+);
+ok &&= expect("share-not-contribution-visible",
+  participationPanel.includes("Share is not Contribution intake") &&
+  participationPanel.includes("Share can prepare a local preview only") &&
+  participationPanel.includes('href="contribute/"')
+);
+
 ok &&= expect("no-automatic-redirect", !/http-equiv\s*=\s*["']refresh["']/i.test(foyer) && !foyer.includes("location.href") && !foyer.includes("location.replace"));
 ok &&= expect("route-adds-no-form-or-script", !participationPanel.includes("<form") && !participationPanel.includes("<script"));
 ok &&= expect("projection-return-to-foyer-visible", projectionHtml.includes('href="../../index.html"') && projectionHtml.includes("Tyme Hall foyer"));
@@ -76,6 +94,14 @@ ok &&= expect("route-source-merge-exact", provenance.source_projection.merged_co
 ok &&= expect("route-href-machine-readable", provenance.target.route_href === "projections/cit-learning-v0.1/");
 ok &&= expect("route-production-authorization-false", provenance.authorization.production_route_authorized === false);
 ok &&= expect("all-route-authorizations-fail-closed", Object.values(provenance.authorization).every(value => value === false));
+ok &&= expect("surface-status-grammar-machine-readable",
+  provenance.surface_status_grammar.foyer.surface === "PUBLIC FOYER" &&
+  provenance.surface_status_grammar.foyer.authority === "NON-AUTHORIZING" &&
+  provenance.surface_status_grammar.bounded_participation.destination === "CANDIDATE" &&
+  provenance.surface_status_grammar.bounded_participation.persistence === "SESSION ONLY" &&
+  provenance.surface_status_grammar.bounded_participation.share === "PREVIEW ONLY" &&
+  provenance.surface_status_grammar.share_to_contribution_transition.includes("No direct automatic transition exists")
+);
 ok &&= expect("integration-invariants-affirmed", Object.entries(provenance.integration_invariants).every(([key, value]) => key === "source_projection_rewrite_authorized" ? value === false : value === true));
 
 ok &&= expect("contract-rejects-sixth-category", contract.includes("not become a sixth institutional category"));
