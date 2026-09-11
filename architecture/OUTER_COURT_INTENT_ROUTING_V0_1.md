@@ -2,7 +2,7 @@
 
 ## Status
 
-`ARCHITECTURE_CANDIDATE / ROUTING_CONTRACT / REPAIR_01`
+`ARCHITECTURE_CANDIDATE / ROUTING_CONTRACT / REPAIR_02 / CONSTITUTIONAL_PASS`
 
 This document maps the proposed `ASK / SEEK / KNOW / KNOCK` encounter layer onto the **existing** public TYME Hall surfaces. It does not create new live routes, change the rendered foyer, activate Hall ingress, introduce persistent identity, or alter institutional authority.
 
@@ -30,6 +30,25 @@ Laboratory != Canon
 > **Expose intentions at the threshold; reveal institutions only as the participant goes deeper.**
 
 The four words are public intent primitives. They are not new institutional organs and do not replace Office, Scrolls, Laboratory, Constellation, Contribution, the Foyer 3 + 1, or the deeper Terminal.
+
+## Constitutional reconciliation
+
+The constitutional / epistemic review resolves the apparent tension between `intent first` and `Charter first` by separating interaction order from authority order:
+
+> **Intent may be first in interaction; sovereignty remains first in authority.**
+
+```text
+INTERACTION AXIS
+ASK | SEEK | KNOW | KNOCK
+
+GOVERNANCE AXIS
+SOVEREIGNTY -> INTELLIGENCE -> RELATIONSHIP -> CONTRIBUTION
+
+AUTHORITY PRECEDENCE
+CHARTER -> ratified governance -> ITX -> RIX -> Hall projection -> interaction
+```
+
+Selecting an Outer Court intent does not bypass constitutional protections, allocate rights, create authority, or accept a contribution.
 
 ## Intent definitions
 
@@ -183,26 +202,26 @@ Contribution
 
 Those distinctions remain valid. The debt is **ordering**, not ontology.
 
-### Candidate future encounter — Repair 01
+### Promoted candidate encounter — Repair 02
 
-The first independent context-zero read returned `CONDITIONAL_PASS` with two material risks: residual vocabulary dependency and possible KNOW-certainty overreach. The repair keeps the first screen noun-light rather than exposing institutional labels prematurely.
+Three context-zero evaluations refined the threshold. The final threshold run returned `PASS`, with threshold vocabulary dependency `NONE`, deeper vocabulary dependency `EXPECTED`, repository reconciliation `PASS`, no boundary failures, and no further repairs recommended.
 
 ```text
 TYME HALL
 What brings you here?
 
 ASK
-Learn, question, or get oriented.
+Learn, ask a question, or find your bearings.
 
 SEEK
-Investigate questions, evidence, and what is still being tested.
+Explore active questions, evidence, and work still in progress.
 
 KNOW
-Examine reviewed inheritance and its current standing.
+Examine reviewed knowledge, its evidence, and its current standing.
 Reviewed does not mean certain.
 
 KNOCK
-Challenge, correct, or return evidence through a governed path.
+Challenge, correct, or return evidence for review.
 Submitting does not grant authority.
 
 Sovereignty first. Evidence before authority. Exit remains available.
@@ -265,6 +284,8 @@ KNOCK -> current GitHub return may require GitHub identity because it is externa
 
 Future Hall-native continuity, pseudonymity, receipts, or I AM projection remain separate authorization questions.
 
+`No persistent identity required by architecture` must not be inflated into a broader claim that no data is collected unless independently verified.
+
 ## Authority rule
 
 All four intents have:
@@ -274,6 +295,20 @@ authority_effect: none
 ```
 
 An intent may expose evidence, learning, a review state, or a contribution entrance. It does not grant institutional standing, merge rights, Canon promotion rights, autonomous publication power, or delegated consequence authority.
+
+## Rendering requirements from constitutional + epistemic review
+
+Any later rendering candidate must preserve all of the following:
+
+1. `Sovereignty first` remains visible and resolves to the Human Sovereignty constitutional source.
+2. Intent selection cannot bypass disclosures required before identity, external transport, delegation, or consequential action.
+3. Non-human technical sovereignty language cannot imply identical human rights or self-authorizing power.
+4. Interactive AI / agent surfaces disclose actor type and material limitations when relevant.
+5. Learn / Delegate / Co-create distinctions remain legible when they affect capability, responsibility, or authorship claims.
+6. KNOW surfaces expose posture, provenance, uncertainty, revision, and supersession.
+7. KNOCK discloses GitHub external identity / transport before crossing and never represents an issue as Hall receipt or guaranteed review.
+8. Deep tools remain non-authorizing.
+9. Exit remains first-class.
 
 ## Candidate selection algorithm
 
@@ -294,19 +329,20 @@ else:
 
 This classification is a navigation aid, not a determination of user identity, competence, worth, or authority.
 
-## Context-zero success conditions
+## Review status
 
-A fresh participant should be able to determine, without private project history:
+```text
+context-zero threshold gate: PASS
+F-12 at Outer Court boundary: RESOLVED
+KNOW certainty overreach: RESOLVED
+fifth intent required: false
+Charter × ITX × RIX + epistemic reconciliation: PASS
+next gate: EXPLICIT HUMAN IMPLEMENTATION AUTHORIZATION
+```
 
-1. where to learn or ask;
-2. where to investigate active work or evidence;
-3. where to inspect reviewed inheritance and its current standing;
-4. how to challenge or return evidence;
-5. that they may leave without creating an account or contributing;
-6. that a contribution does not automatically become knowledge;
-7. that review does not automatically create authority;
-8. that Canon remains revisable through explicit provenance and governance;
-9. that deeper system vocabulary is optional until needed.
+The constitutional / epistemic reconciliation is recorded at:
+
+`validation/OUTER_COURT_CONSTITUTIONAL_EPISTEMIC_RECONCILIATION_V0_1.md`
 
 ## Promotion sequence
 
@@ -317,9 +353,9 @@ routing contract candidate
 -> independent cold read
 -> smallest semantic repair if needed
 -> independent re-run after material wording change
--> Charter × ITX × RIX + epistemic reconciliation
--> explicit human implementation authorization
--> rendering branch / PR
+-> Charter × ITX × RIX + epistemic reconciliation        PASS
+-> explicit human implementation authorization           NEXT
+-> separate rendering branch / PR
 -> independent rendered-surface review
 -> separate merge / deployment decision
 ```
@@ -340,4 +376,4 @@ This candidate does not:
 
 ## Memory compression
 
-> **ASK encounters intelligence. SEEK pursues evidence. KNOW inspects reviewed inheritance without claiming certainty. KNOCK requests governed participation without granting authority. The intents route into existing Hall organs; they do not replace them.**
+> **ASK encounters intelligence. SEEK pursues evidence. KNOW inspects reviewed inheritance without claiming certainty. KNOCK requests governed participation without granting authority. Intent may be first in interaction; sovereignty remains first in authority.**
