@@ -2,9 +2,11 @@
 
 ## Status
 
-`REVIEW_PACKET / UNRUN`
+`REVIEW_PACKET / REPAIR_01 / RERUN_READY`
 
-This packet is prepared for an independent evaluator with **no private TYME / Sovereign Intelligence context**. It does not itself satisfy the review gate.
+This packet is prepared for an independent evaluator with **no private TYME / Sovereign Intelligence context**. The first run returned `CONDITIONAL_PASS` with `F-12 VOCABULARY_DEPENDENCY` and a residual `F-02 KNOW_CERTAINTY_OVERREACH` risk. This revision changes only the first-screen wording needed to address those findings.
+
+It does not itself satisfy the review gate.
 
 ## Candidate under review
 
@@ -12,12 +14,15 @@ This packet is prepared for an independent evaluator with **no private TYME / So
 - Routing contract: `architecture/OUTER_COURT_INTENT_ROUTING_V0_1.md`
 - Machine-readable primitive: `architecture/outer-court.intent.v0.1.json`
 - Repository baseline being mapped: `main@3c6c0c88c9ef6e67ee571f038656627080cfcdda`
+- First independent return: `validation/returns/OUTER_COURT_CONTEXT_ZERO_GROK_2026-09-11.yaml`
 
 ## Evaluator constraint
 
 Do not explain TYME vocabulary to the evaluator before the review. Do not tell the evaluator what the four intents are supposed to mean beyond the candidate first-screen copy below. The purpose is to determine whether the language carries its own orientation.
 
-## Candidate first-screen copy
+For a true re-run, use a fresh context or a different evaluator if possible. Do not show the evaluator the first review result before they answer.
+
+## Candidate first-screen copy — Repair 01
 
 ```text
 TYME HALL
@@ -25,19 +30,38 @@ TYME HALL
 What brings you here?
 
 ASK
-Learn. Question. Orient.
+Learn, question, or get oriented.
 
 SEEK
-Investigate what is becoming.
+Investigate questions, evidence, and what is still being tested.
 
 KNOW
-Examine what has survived review.
+Examine reviewed inheritance and its current standing.
+Reviewed does not mean certain.
 
 KNOCK
-Challenge, extend, or return evidence through a governed path.
+Challenge, correct, or return evidence through a governed path.
+Submitting does not grant authority.
 
 Sovereignty first. Evidence before authority. Exit remains available.
 ```
+
+### Repair rationale
+
+The first cold read correctly reconstructed all four intents and found no fifth intent necessary. It nevertheless identified two threshold risks:
+
+```text
+F-12 VOCABULARY_DEPENDENCY
+F-02 KNOW_CERTAINTY_OVERREACH (residual risk)
+```
+
+Repair 01 therefore:
+
+1. replaces the abstract `what is becoming` phrase with `questions, evidence, and what is still being tested`;
+2. makes KNOW about `reviewed inheritance and its current standing`;
+3. states at the threshold that `Reviewed does not mean certain`;
+4. states at KNOCK that `Submitting does not grant authority`;
+5. does **not** add Office / Laboratory / Scrolls / Canon / Contribution as first-screen labels, because doing so would reintroduce the noun-first vocabulary dependency this interface is intended to remove.
 
 ## Review questions
 
@@ -80,7 +104,7 @@ A passing interpretation should reject each unsupported inference and explain th
 
 - the evaluator distinguishes all four intents without hidden project context;
 - ASK is understood as orientation / learning / questioning rather than compulsory contribution;
-- SEEK is understood as investigation of active or unresolved material;
+- SEEK is understood as investigation of questions, evidence, active or unresolved material;
 - KNOW is understood as inspected inheritance with evidence / review posture, not final certainty;
 - KNOCK is understood as a governed request / return threshold, not authority acquisition;
 - no fifth first-screen intent is identified as necessary from the inspected current surfaces;
@@ -165,4 +189,4 @@ independent context-zero return
 
 ## Evidence boundary
 
-This packet is **UNRUN** until an independent evaluator returns an answer. Creating, committing, or merging this packet is not evidence that the candidate passed.
+This packet is `RERUN_READY`, not passed. Creating, committing, or merging this packet is not evidence that the repaired candidate passed.
