@@ -1,0 +1,10 @@
+production_domain: https://tymehall.org
+result: PASS
+root_reachable: true
+outer_court_visible: true
+boundary_copy_present: true
+routes_match: true
+stale_foyer_detected: false
+observed_problems:
+  - ""
+freeze_recommendation: FREEZE
