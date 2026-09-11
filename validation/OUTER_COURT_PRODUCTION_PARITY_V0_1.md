@@ -2,9 +2,11 @@
 
 ## Status
 
-`MERGED / DEPLOYMENT_SUCCEEDED / CUSTOM-DOMAIN_CONTENT_READ_PENDING`
+`PRODUCTION_PARITY_PASS / FROZEN_CHECKPOINT`
 
-PR #14 has been merged to `main` and both Cloudflare Pages and GitHub Pages reported successful deployment for the merge commit. The custom production domain remains reachable at the DNS layer, but this record does **not** claim full live-content parity at `https://tymehall.org` until an independent external read confirms the served first-screen content and routes.
+PR #14 has been merged to `main`. Cloudflare Pages and GitHub Pages both reported successful deployment for the exact merge commit, and an independent external live read of `https://tymehall.org` returned `PASS` with `freeze_recommendation: FREEZE`.
+
+This freezes the reviewed Outer Court production checkpoint. It does **not** expand Hall-native receipt, identity, Canon, AVOT, or consequence-bearing authority.
 
 ## Merge evidence
 
@@ -54,21 +56,20 @@ Submitting does not grant authority.
 Sovereignty first. Evidence before authority. Exit remains available.
 ```
 
-Route targets remain:
+Route targets:
 
 ```text
-ASK  -> projections/cit-learning-v0.1/
-SEEK -> laboratory/
-KNOW -> scrolls/
-KNOCK -> contribute/
+ASK  -> /projections/cit-learning-v0.1/
+SEEK -> /laboratory/
+KNOW -> /scrolls/
+KNOCK -> /contribute/
 ```
 
-## Cloudflare deployment evidence
+## Deployment evidence
 
-The merge commit received a completed Cloudflare Pages check:
+Cloudflare Pages:
 
 ```text
-check: Cloudflare Pages
 head_sha: 5342cbaf1098391879a15c7ccca752d3fbc241b8
 status: completed
 conclusion: success
@@ -77,11 +78,7 @@ preview: https://8f2b21b4.codex-interface-83q.pages.dev
 completed_at: 2026-09-11T23:37:09Z
 ```
 
-This confirms Cloudflare accepted and deployed the merge commit. It does not by itself prove that the custom domain is currently serving byte-for-byte identical content.
-
-## GitHub Pages deployment evidence
-
-GitHub's dynamic Pages workflow also completed successfully for the same merge commit:
+GitHub Pages:
 
 ```text
 workflow: pages build and deployment
@@ -93,17 +90,9 @@ conclusion: success
 environment_url: https://sovereign-codex.github.io/Codex-interface-/
 ```
 
-The deploy job log records:
-
-```text
-Created deployment for 5342cbaf1098391879a15c7ccca752d3fbc241b8
-Reported success!
-Evaluated environment url: https://sovereign-codex.github.io/Codex-interface-/
-```
-
 ## Canonical-domain DNS evidence
 
-`tymehall.org` currently resolves through Cloudflare:
+`tymehall.org` resolves through Cloudflare:
 
 ```text
 A:    104.21.52.77, 172.67.196.232
@@ -111,24 +100,30 @@ AAAA: 2606:4700:3033::6815:344d, 2606:4700:3030::ac43:c4e8
 NS:   ethan.ns.cloudflare.com, laylah.ns.cloudflare.com
 ```
 
-This confirms the canonical domain is DNS-reachable through Cloudflare infrastructure. DNS reachability is not content parity.
+## Independent custom-domain live read — PASS
 
-## Remaining parity gate
+Preserved return:
 
-A final external live read should confirm from `https://tymehall.org` itself:
+`validation/returns/OUTER_COURT_PRODUCTION_DOMAIN_GROK_2026-09-11.yaml`
 
-1. the root page returns successfully;
-2. ASK / SEEK / KNOW / KNOCK are visible in the reviewed order;
-3. `Reviewed does not mean certain.` is visible under KNOW;
-4. `Submitting does not grant authority.` is visible under KNOCK;
-5. `Sovereignty first. Evidence before authority. Exit remains available.` is visible;
-6. ASK routes to `/projections/cit-learning-v0.1/`;
-7. SEEK routes to `/laboratory/`;
-8. KNOW routes to `/scrolls/`;
-9. KNOCK routes to `/contribute/`;
-10. no stale pre-Outer-Court foyer is being served through cache or alternate origin.
+Observed result:
 
-## Current disposition
+```yaml
+production_domain: https://tymehall.org
+result: PASS
+root_reachable: true
+outer_court_visible: true
+boundary_copy_present: true
+routes_match: true
+stale_foyer_detected: false
+observed_problems:
+  - ""
+freeze_recommendation: FREEZE
+```
+
+This independently confirms that the canonical domain is serving the reviewed Outer Court rather than the stale institution-first foyer.
+
+## Frozen checkpoint
 
 ```text
 MERGE: PASS / COMPLETE
@@ -136,7 +131,23 @@ SOURCE PARITY ON main: PASS
 CLOUDFLARE DEPLOYMENT: PASS
 GITHUB PAGES DEPLOYMENT: PASS
 CANONICAL-DOMAIN DNS: PASS
-CUSTOM-DOMAIN LIVE CONTENT PARITY: UNVERIFIED
+CUSTOM-DOMAIN LIVE CONTENT PARITY: PASS
+STALE FOYER: NOT DETECTED
+PRODUCTION CHECKPOINT: FROZEN
 ```
 
-Do not freeze the public checkpoint or declare production parity complete until the final custom-domain live read returns cleanly.
+## Preserved boundaries after freeze
+
+The production freeze confirms only the reviewed public routing surface. It does not authorize:
+
+- Hall-native contribution receipts;
+- persistent identity or I AM continuity;
+- guaranteed review or acceptance of submissions;
+- Canon promotion;
+- AVOT authority expansion;
+- consequence-bearing automation;
+- weakening of Charter × ITX × RIX precedence.
+
+## Memory compression
+
+> **The Outer Court is live and production-parity verified: ASK / SEEK / KNOW / KNOCK is now the frozen public threshold, with sovereignty first in authority and intent first in interaction.**
