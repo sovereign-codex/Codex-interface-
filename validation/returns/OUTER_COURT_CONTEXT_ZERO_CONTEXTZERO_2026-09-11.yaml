@@ -1,0 +1,52 @@
+review_id: OUTER-COURT-CONTEXT-ZERO-contextzero-2026-09-11
+participant_context: "No private TYME context provided"
+result: CONDITIONAL_PASS
+
+intent_reconstruction:
+  ask: "Bounded learning, questioning, or orientation entry with modes such as Talk/See/Try/Make/Share; no account, no rank, no proof of learning, Share only local preview and not submission or Contribution."
+  seek: "Investigation of active/unresolved work (Laboratory: hypotheses, experiments, prototypes, open questions; non-canonical), current institutional state (Office: read-only reports of active/changed/next/waiting), Work & Lineage records, Constellation relations, and Graph/Trace/Timeline evidence tools; none are authority or truth sources."
+  know: "Inspection of reviewed public inheritance (Scrolls) and durable institutional definitions (Canon) with identity, version, provenance, epistemic posture, stewardship, publication state, supersession, and postures such as CANONICAL/REVIEWED/PROVISIONAL/CONTESTED/SUPERSEDED/OPEN_ISSUE/WITHDRAWN; reviewed or canonical does not mean certain, infallible, or unquestionable."
+  knock: "Governed path for challenge, correction, reproduction, documentation, bounded implementation, or evidence return (currently via external GitHub Issues); submitting does not grant authority, standing, native receipt, guaranteed review, or Canon promotion."
+
+strongest_clarity: "Explicit repeated boundaries that reviewed/canonical ≠ certainty/infallible, Laboratory publication ≠ Canon, GitHub issue ≠ native Hall receipt or guaranteed review, Share ≠ Contribution, visible tool ≠ control, and submitting/participation ≠ authority."
+strongest_ambiguity: "First-screen verbs (especially SEEK and KNOW) and deeper terms (Laboratory, Office, Scrolls, Canon, Constellation, Work & Lineage, evidentiary postures) require the public-surface descriptions to become fully actionable for a complete novice; the four labels alone are suggestive but vocabulary-dependent."
+
+unsupported_inferences:
+  - "That any surface creates persistent identity, learner rank, or institutional standing"
+  - "That KNOW or Scrolls/Canon content is certain, immutable, or empirically validated in full"
+  - "That a GitHub issue is a native Hall receipt or automatically accepted/reviewed"
+  - "That Laboratory publication or Work visibility equals current activity or Canon status"
+  - "That seeing Terminal/Control Panel or generating an artifact grants control, persistence, or authority"
+  - "That Share submits anything or equals Contribution"
+
+failure_classes:
+  - "F-12 VOCABULARY_DEPENDENCY"
+
+fifth_intent_required: false
+fifth_intent_reason: "All described surfaces (orientation/learning, Laboratory/Office/Work/Constellation/evidence tools, Scrolls/Canon, Contribution/GitHub, Terminal/Control Panel) map under the four intents without requiring a fifth first-screen entry."
+
+identity_inference: "No account or persistent identity is required for ASK, SEEK, or KNOW; boundaries explicitly state no account is created and Share does not submit."
+authority_inference: "Participation, submission, review, visibility, publication, and tool access are repeatedly bounded as non-authorizing; authority is not granted by any outer-court action."
+exit_path: "Exit remains available; participant can leave without contributing or creating identity."
+
+adversarial_checks:
+  A: "Incorrect — KNOW and public descriptions state reviewed/canonical does not mean certain or infallible; KNOW inspects standing with uncertainty and provenance visible."
+  B: "Incorrect — GitHub is an external return path only; an issue is not a native Hall receipt, does not guarantee review, and does not grant acceptance or authority."
+  C: "Incorrect — ASK boundaries state no learner rank is created and successful completion does not prove learning or record capability."
+  D: "Incorrect — Laboratory work is non-canonical; publication is not validation or Canon promotion."
+  E: "Incorrect — Visible tool ≠ institutional control; deeper surfaces (Terminal/Control Panel) explicitly do not confer control or authorized change."
+  F: "Incorrect — A visible Work record may be historical; visibility does not mean currently active."
+
+recommended_smallest_repairs:
+  - "On first screen, add one short clarifying phrase under each intent drawn directly from the public descriptions (e.g., SEEK: 'active experiments, open questions, current state, evidence tools — not canon'; KNOW: 'reviewed inheritance and standing — not certainty')."
+  - "Ensure the four intent labels remain the sole first-screen choices and that deeper vocabulary appears only after entry or via Orientation."
+
+evidence_paths:
+  - "Candidate first-screen copy: four intents + explicit sovereignty/evidence/exit lines"
+  - "ASK public-surface: bounded learning modes, no account/rank, Share local-only, Orientation non-authorizing"
+  - "SEEK public-surface: Laboratory non-canonical, Office read-only state, Work visibility ≠ active, Constellation/Graph/Trace as navigation/evidence only"
+  - "KNOW public-surface: Scrolls/Canon with postures, reviewed/canonical ≠ certain/infallible/unquestionable"
+  - "KNOCK public-surface: Contribution via GitHub external path, no native receipt, no authority/standing/Canon promotion"
+  - "Deeper surfaces: visible tool ≠ control, local artifact ≠ persisted/authorized"
+
+promotion_recommendation: HOLD
