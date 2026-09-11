@@ -2,7 +2,7 @@
 
 ## Status
 
-`ARCHITECTURE_CANDIDATE / ROUTING_CONTRACT`
+`ARCHITECTURE_CANDIDATE / ROUTING_CONTRACT / REPAIR_01`
 
 This document maps the proposed `ASK / SEEK / KNOW / KNOCK` encounter layer onto the **existing** public TYME Hall surfaces. It does not create new live routes, change the rendered foyer, activate Hall ingress, introduce persistent identity, or alter institutional authority.
 
@@ -52,7 +52,7 @@ Boundary:
 
 ### SEEK
 
-Participant intent: **investigate what is active, unresolved, related, monitored, or being tested.**
+Participant intent: **investigate questions, evidence, active state, unresolved material, monitoring, or testing.**
 
 Primary existing destinations:
 
@@ -129,7 +129,7 @@ participation != institutional standing
 |---|---|---|---|
 | `ASK` | What would you like to understand? | Learning · Orientation · explanatory Scroll / Map context | Leave freely, continue learning, move to SEEK, or explicitly KNOCK with a return |
 | `SEEK` | What would you like to investigate? | Laboratory · Office · Work · Constellation · Graph · Threads · Trace | Continue evidence traversal, move to KNOW when standing matters, or KNOCK with evidence |
-| `KNOW` | What has survived review, and why? | Scrolls · Canon · provenance · reviewed Office state · history | Inspect uncertainty / supersession; move to KNOCK to challenge or extend |
+| `KNOW` | What has survived review, and with what standing? | Scrolls · Canon · provenance · reviewed Office state · history | Inspect uncertainty / supersession; move to KNOCK to challenge or extend |
 | `KNOCK` | What would you like to challenge, correct, reproduce, or return? | Contribution seam · current GitHub external return | Exit without submission or continue through explicit external attribution rules |
 
 ## Cross-cutting organs
@@ -163,6 +163,10 @@ machine schemas / raw data
 
 Vocabulary such as AVOT, TRACE, I AM, MoDev, QIL, Codex Control Center, or internal lifecycle objects should appear on demand rather than as prerequisites for entry.
 
+Each deeper tool should carry a short boundary appropriate to its capability, such as:
+
+> **Visible tool ≠ institutional control. Generated artifact ≠ persisted or authorized change.**
+
 ## Current routing debt
 
 ### Foyer noun-first navigation
@@ -179,26 +183,34 @@ Contribution
 
 Those distinctions remain valid. The debt is **ordering**, not ontology.
 
-Candidate future encounter:
+### Candidate future encounter — Repair 01
+
+The first independent context-zero read returned `CONDITIONAL_PASS` with two material risks: residual vocabulary dependency and possible KNOW-certainty overreach. The repair keeps the first screen noun-light rather than exposing institutional labels prematurely.
 
 ```text
 TYME HALL
 What brings you here?
 
 ASK
-Learn. Question. Orient.
+Learn, question, or get oriented.
 
 SEEK
-Investigate what is becoming.
+Investigate questions, evidence, and what is still being tested.
 
 KNOW
-Examine what has survived review.
+Examine reviewed inheritance and its current standing.
+Reviewed does not mean certain.
 
 KNOCK
-Challenge, extend, or return evidence through a governed path.
+Challenge, correct, or return evidence through a governed path.
+Submitting does not grant authority.
+
+Sovereignty first. Evidence before authority. Exit remains available.
 ```
 
 Then reveal the Hall organ needed to fulfill that intent.
+
+This is intentionally **not** changed to labels such as `ASK → Orientation`, `SEEK → Laboratory`, or `KNOW → Scrolls / Canon` on the first screen. Those nouns remain deeper because the point of the Outer Court is to reduce vocabulary dependency, not merely rename the current menu.
 
 ### Trails semantic overlap
 
@@ -303,6 +315,8 @@ routing contract candidate
 -> machine-readable intent primitive
 -> context-zero review packet
 -> independent cold read
+-> smallest semantic repair if needed
+-> independent re-run after material wording change
 -> Charter × ITX × RIX + epistemic reconciliation
 -> explicit human implementation authorization
 -> rendering branch / PR
@@ -326,4 +340,4 @@ This candidate does not:
 
 ## Memory compression
 
-> **ASK encounters intelligence. SEEK pursues evidence. KNOW inspects reviewed inheritance. KNOCK requests governed participation in changing or extending it. The intents route into existing Hall organs; they do not replace them.**
+> **ASK encounters intelligence. SEEK pursues evidence. KNOW inspects reviewed inheritance without claiming certainty. KNOCK requests governed participation without granting authority. The intents route into existing Hall organs; they do not replace them.**
