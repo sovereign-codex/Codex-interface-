@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "id": "TYME-HALL-OUTER-COURT-v0.1",
-  "status": "ARCHITECTURE_CANDIDATE",
+  "status": "ARCHITECTURE_CANDIDATE_REPAIR_01",
   "baseline": {
     "repository": "sovereign-codex/Codex-interface-",
     "branch": "main",
@@ -12,92 +12,49 @@
   "authority_effect": "none",
   "creates_live_routes": false,
   "changes_rendered_foyer": false,
+  "first_screen_copy": {
+    "question": "What brings you here?",
+    "ask": "Learn, question, or get oriented.",
+    "seek": "Investigate questions, evidence, and what is still being tested.",
+    "know": "Examine reviewed inheritance and its current standing.",
+    "know_boundary": "Reviewed does not mean certain.",
+    "knock": "Challenge, correct, or return evidence through a governed path.",
+    "knock_boundary": "Submitting does not grant authority.",
+    "footer": "Sovereignty first. Evidence before authority. Exit remains available."
+  },
   "intents": [
     {
       "id": "ask",
       "label": "ASK",
-      "participant_intent": [
-        "learn",
-        "understand",
-        "orient",
-        "ask_question"
-      ],
-      "primary_existing_routes": [
-        "/projections/cit-learning-v0.1/",
-        "/orientation/"
-      ],
-      "secondary_existing_routes": [
-        "/scrolls/",
-        "/map/"
-      ],
+      "participant_intent": ["learn", "understand", "orient", "ask_question"],
+      "primary_existing_routes": ["/projections/cit-learning-v0.1/", "/orientation/"],
+      "secondary_existing_routes": ["/scrolls/", "/map/"],
       "persistent_identity_required_by_architecture": false,
       "authority_effect": "none"
     },
     {
       "id": "seek",
       "label": "SEEK",
-      "participant_intent": [
-        "investigate",
-        "monitor",
-        "research",
-        "test",
-        "inspect_active_state"
-      ],
-      "primary_existing_routes": [
-        "/laboratory/",
-        "/office/",
-        "/work/",
-        "/constellation/",
-        "/map/",
-        "/graph-viewer.html",
-        "/thread-explorer.html",
-        "/trace-viewer.html",
-        "/trace-detail.html"
-      ],
+      "participant_intent": ["investigate", "monitor", "research", "test", "inspect_active_state", "inspect_evidence"],
+      "primary_existing_routes": ["/laboratory/", "/office/", "/work/", "/constellation/", "/map/", "/graph-viewer.html", "/thread-explorer.html", "/trace-viewer.html", "/trace-detail.html"],
       "persistent_identity_required_by_architecture": false,
       "authority_effect": "none"
     },
     {
       "id": "know",
       "label": "KNOW",
-      "participant_intent": [
-        "inspect_reviewed_inheritance",
-        "inspect_provenance",
-        "inspect_epistemic_standing",
-        "inspect_revision_history"
-      ],
-      "primary_existing_routes": [
-        "/scrolls/",
-        "/canon/"
-      ],
-      "secondary_existing_routes": [
-        "/work/",
-        "/trails/",
-        "/node-timeline.html",
-        "/office/"
-      ],
-      "epistemic_constraints": [
-        "know_does_not_mean_certainty",
-        "canon_does_not_mean_infallibility",
-        "review_does_not_create_authority"
-      ],
+      "participant_intent": ["inspect_reviewed_inheritance", "inspect_provenance", "inspect_epistemic_standing", "inspect_revision_history"],
+      "primary_existing_routes": ["/scrolls/", "/canon/"],
+      "secondary_existing_routes": ["/work/", "/trails/", "/node-timeline.html", "/office/"],
+      "epistemic_constraints": ["reviewed_does_not_mean_certain", "know_does_not_mean_certainty", "canon_does_not_mean_infallibility", "review_does_not_create_authority"],
       "persistent_identity_required_by_architecture": false,
       "authority_effect": "none"
     },
     {
       "id": "knock",
       "label": "KNOCK",
-      "participant_intent": [
-        "challenge",
-        "correct",
-        "reproduce",
-        "return_evidence",
-        "request_amendment",
-        "request_governed_participation"
-      ],
-      "primary_existing_routes": [
-        "/contribute/"
-      ],
+      "participant_intent": ["challenge", "correct", "reproduce", "return_evidence", "request_amendment", "request_governed_participation"],
+      "primary_existing_routes": ["/contribute/"],
       "current_external_return": {
         "provider": "GitHub Issues",
         "hall_native": false,
@@ -105,28 +62,16 @@
         "guaranteed_review": false,
         "external_identity_rules_apply": true
       },
+      "epistemic_constraints": ["submitting_does_not_grant_authority"],
       "authority_effect": "none"
     }
   ],
   "cross_cutting_services": [
-    {
-      "surface": "/office/",
-      "supports": ["seek", "know", "knock"],
-      "role": "read_only_present_state_projection",
-      "authority_effect": "none"
-    },
-    {
-      "surface": "/constellation/",
-      "supports": ["seek", "know"],
-      "role": "derived_relational_navigation",
-      "authoritative": false
-    }
+    {"surface": "/office/", "supports": ["seek", "know", "knock"], "role": "read_only_present_state_projection", "authority_effect": "none"},
+    {"surface": "/constellation/", "supports": ["seek", "know"], "role": "derived_relational_navigation", "authoritative": false}
   ],
-  "deeper_surfaces": [
-    "/terminal/",
-    "/control-panel.html",
-    "/scroll-reader.html"
-  ],
+  "deeper_surfaces": ["/terminal/", "/control-panel.html", "/scroll-reader.html"],
+  "deeper_surface_boundary": "Visible tool does not imply institutional control; generated artifact does not imply persisted or authorized change.",
   "known_routing_debt": [
     "root_foyer_exposes_institutional_nouns_before_participant_intent",
     "trails_combines_orientation_paths_with_institutional_lineage",
@@ -141,5 +86,15 @@
     "bounded_learning_share_is_not_contribution_intake",
     "laboratory_publication_is_not_canon_promotion"
   ],
-  "next_gate": "CONTEXT_ZERO_COLD_READ"
+  "review_history": [
+    {
+      "review_id": "OUTER-COURT-CONTEXT-ZERO-independent-2026-09-11",
+      "participant": "Grok",
+      "result": "CONDITIONAL_PASS",
+      "promotion_recommendation": "HOLD",
+      "failure_classes": ["F-12 VOCABULARY_DEPENDENCY", "F-02 KNOW_CERTAINTY_OVERREACH"],
+      "repair": "REPAIR_01"
+    }
+  ],
+  "next_gate": "INDEPENDENT_CONTEXT_ZERO_RERUN_AFTER_REPAIR_01"
 }
