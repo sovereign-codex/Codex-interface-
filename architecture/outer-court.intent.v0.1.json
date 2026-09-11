@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "id": "TYME-HALL-OUTER-COURT-v0.1",
+  "status": "ARCHITECTURE_CANDIDATE",
+  "baseline": {
+    "repository": "sovereign-codex/Codex-interface-",
+    "branch": "main",
+    "commit": "3c6c0c88c9ef6e67ee571f038656627080cfcdda",
+    "tree": "dec7bfac64e62f73670b9f3aaf23bc50ecd4fa2c"
+  },
+  "invariant": "Expose intentions at the threshold; reveal institutions only as the participant goes deeper.",
+  "authority_effect": "none",
+  "creates_live_routes": false,
+  "changes_rendered_foyer": false,
+  "intents": [
+    {
+      "id": "ask",
+      "label": "ASK",
+      "participant_intent": [
+        "learn",
+        "understand",
+        "orient",
+        "ask_question"
+      ],
+      "primary_existing_routes": [
+        "/projections/cit-learning-v0.1/",
+        "/orientation/"
+      ],
+      "secondary_existing_routes": [
+        "/scrolls/",
+        "/map/"
+      ],
+      "persistent_identity_required_by_architecture": false,
+      "authority_effect": "none"
+    },
+    {
+      "id": "seek",
+      "label": "SEEK",
+      "participant_intent": [
+        "investigate",
+        "monitor",
+        "research",
+        "test",
+        "inspect_active_state"
+      ],
+      "primary_existing_routes": [
+        "/laboratory/",
+        "/office/",
+        "/work/",
+        "/constellation/",
+        "/map/",
+        "/graph-viewer.html",
+        "/thread-explorer.html",
+        "/trace-viewer.html",
+        "/trace-detail.html"
+      ],
+      "persistent_identity_required_by_architecture": false,
+      "authority_effect": "none"
+    },
+    {
+      "id": "know",
+      "label": "KNOW",
+      "participant_intent": [
+        "inspect_reviewed_inheritance",
+        "inspect_provenance",
+        "inspect_epistemic_standing",
+        "inspect_revision_history"
+      ],
+      "primary_existing_routes": [
+        "/scrolls/",
+        "/canon/"
+      ],
+      "secondary_existing_routes": [
+        "/work/",
+        "/trails/",
+        "/node-timeline.html",
+        "/office/"
+      ],
+      "epistemic_constraints": [
+        "know_does_not_mean_certainty",
+        "canon_does_not_mean_infallibility",
+        "review_does_not_create_authority"
+      ],
+      "persistent_identity_required_by_architecture": false,
+      "authority_effect": "none"
+    },
+    {
+      "id": "knock",
+      "label": "KNOCK",
+      "participant_intent": [
+        "challenge",
+        "correct",
+        "reproduce",
+        "return_evidence",
+        "request_amendment",
+        "request_governed_participation"
+      ],
+      "primary_existing_routes": [
+        "/contribute/"
+      ],
+      "current_external_return": {
+        "provider": "GitHub Issues",
+        "hall_native": false,
+        "hall_receipt_created": false,
+        "guaranteed_review": false,
+        "external_identity_rules_apply": true
+      },
+      "authority_effect": "none"
+    }
+  ],
+  "cross_cutting_services": [
+    {
+      "surface": "/office/",
+      "supports": ["seek", "know", "knock"],
+      "role": "read_only_present_state_projection",
+      "authority_effect": "none"
+    },
+    {
+      "surface": "/constellation/",
+      "supports": ["seek", "know"],
+      "role": "derived_relational_navigation",
+      "authoritative": false
+    }
+  ],
+  "deeper_surfaces": [
+    "/terminal/",
+    "/control-panel.html",
+    "/scroll-reader.html"
+  ],
+  "known_routing_debt": [
+    "root_foyer_exposes_institutional_nouns_before_participant_intent",
+    "trails_combines_orientation_paths_with_institutional_lineage",
+    "legacy_scroll_reader_overlaps_reviewed_scroll_and_canon_surfaces",
+    "control_panel_name_can_imply_more_authority_than_local_artifact_generation_provides"
+  ],
+  "hard_boundaries": [
+    "gitHub_submission_is_not_hall_receipt",
+    "submission_does_not_guarantee_review",
+    "review_does_not_create_authority",
+    "canon_does_not_delegate_consequence_authority",
+    "bounded_learning_share_is_not_contribution_intake",
+    "laboratory_publication_is_not_canon_promotion"
+  ],
+  "next_gate": "CONTEXT_ZERO_COLD_READ"
+}
