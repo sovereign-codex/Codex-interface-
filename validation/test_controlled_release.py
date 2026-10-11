@@ -18,6 +18,7 @@ def load(name):
 intent = load("verify_hall_release_intent")
 bundle = load("build_hall_release")
 cf = load("verify_cloudflare_release_mode")
+auth = load("verify_hall_release_authorization")
 S = "a" * 40
 T = "b" * 40
 
@@ -96,6 +97,74 @@ class ReleaseIntentTests(unittest.TestCase):
         x[5] = T
         with self.assertRaises(intent.ReleaseHold):
             intent.evaluate_intent(*x)
+
+
+class ReleaseAuthorizationTests(unittest.TestCase):
+    def good(self, **changes):
+        p = {
+            "actor": "operator-reviewed",
+            "designated_operator": "operator-reviewed",
+            "receipt": "TYME-HALL-LAUNCH-001/G6/GO-001",
+            "candidate": S,
+            "mode": "deploy",
+            "gate_armed": "true",
+            "authorized_sha": S,
+        }
+        p.update(changes)
+        return p
+
+    def test_referential_checks_do_not_claim_real_human_verification(self):
+        r = auth.evaluate(**self.good())
+        self.assertFalse(r["actual_environment_protection_verified"])
+        self.assertFalse(r["actual_notion_g6_approval_verified"])
+        self.assertFalse(r["deployment_performed"])
+
+    def test_unassigned_operator_refused(self):
+        with self.assertRaises(auth.AuthorizationHold):
+            auth.evaluate(**self.good(designated_operator=""))
+
+    def test_unauthorized_operator_refused(self):
+        with self.assertRaises(auth.AuthorizationHold):
+            auth.evaluate(**self.good(actor="untrusted"))
+
+    def test_omitted_g6_receipt_refused(self):
+        with self.assertRaises(auth.AuthorizationHold):
+            auth.evaluate(**self.good(receipt=""))
+
+    def test_invalid_g6_receipt_refused(self):
+        with self.assertRaises(auth.AuthorizationHold):
+            auth.evaluate(**self.good(receipt="external-url-is-not-a-go"))
+
+    def test_unarmed_environment_refused(self):
+        with self.assertRaises(auth.AuthorizationHold):
+            auth.evaluate(**self.good(gate_armed=None))
+
+    def test_not_exactly_true_environment_refused(self):
+        with self.assertRaises(auth.AuthorizationHold):
+            auth.evaluate(**self.good(gate_armed="yes"))
+
+    def test_different_authorized_sha_refused(self):
+        with self.assertRaises(auth.AuthorizationHold):
+            auth.evaluate(**self.good(authorized_sha=T))
+
+    def test_empty_authorized_sha_refused(self):
+        with self.assertRaises(auth.AuthorizationHold):
+            auth.evaluate(**self.good(authorized_sha=""))
+
+    def test_preflight_has_no_deployment_authority(self):
+        p = self.good(mode="preflight", gate_armed=None, authorized_sha=None)
+        result = auth.evaluate(**p)
+        self.assertEqual(result["verdict"],
+                         "REFERENTIAL_RELEASE_GATE_VALID_NOT_PROOF_OF_HUMAN_APPROVAL")
+        self.assertEqual(result["authority_effect"], "none")
+
+    def test_unknown_mode_fails(self):
+        with self.assertRaises(auth.AuthorizationHold):
+            auth.evaluate(**self.good(mode="admin"))
+
+    def test_empty_candidate_fails(self):
+        with self.assertRaises(auth.AuthorizationHold):
+            auth.evaluate(**self.good(candidate=""))
 
 
 class CloudflareReadbackTests(unittest.TestCase):
@@ -226,6 +295,7 @@ class WorkflowNoPrematureExecutionTests(unittest.TestCase):
         self.assertIn("--commit-hash", body)
         self.assertIn("verify_cloudflare_release_mode.py", body)
         self.assertIn("verify_hall_release_intent.py", body)
+        self.assertIn("verify_hall_release_authorization.py", body)
         self.assertNotIn("wrangler pages project create", body)
         self.assertNotIn("git push", body)
 
