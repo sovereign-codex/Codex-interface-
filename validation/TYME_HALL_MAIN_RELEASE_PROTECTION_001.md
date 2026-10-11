@@ -68,6 +68,21 @@ From a separate read-only connection or public GitHub settings readback, preserv
 
 ## Current evidence checkpoint
 
-`PREMERGE_CHECK_STAGED_AND_TESTED` / `RULESET_NOT_YET_CREATED` / `MAIN_UNPROTECTED` / `PRODUCTION_UNCHANGED`.
+**Historical baseline (before October 11 activation):** `PREMERGE_CHECK_STAGED_AND_TESTED / RULESET_NOT_YET_CREATED / MAIN_UNPROTECTED / PRODUCTION_UNCHANGED`.
+
+### Authenticated GitHub readback — October 11, 2026, 06:09 Arizona
+
+After administrator action, authenticated GitHub repository ruleset GET confirms:
+
+- Ruleset **[TYME-HALL-LAUNCH-001-main-release](https://github.com/sovereign-codex/Codex-interface-/rules/24880323)**, ID `24880323`, target `branch`, enforcement `active`, creation `2026-10-11T06:09:07.535-07:00`.
+- Target condition: `include:["~DEFAULT_BRANCH"]`, `exclude:[]`. GitHub main branch endpoint now reports `protected:true`, while the legacy classic branch protection subobject remains `enabled:false`. That is compatible with effective repository ruleset protection; do not confuse the classic subobject with overall branch protection.
+- Bypass actors: **none**.
+- Enforced rules: `deletion`, `non_fast_forward`, `pull_request`. Pull request parameters are **one approving review**, dismiss stale approvals, require approval of last reviewable push, require review thread resolution. Existing merge methods remain merge/squash/rebase.
+- No `required_status_checks` rule currently exists. `hall_launch_001_premerge` is a **passing candidate job** on unmerged draft PR #19, NOT an enforced required check. Activating it safely remains a later, reviewed rule update.
+- Readback of `main` commit still equals the deployed source SHA `5342cbaf1098391879a15c7ccca752d3fbc241b8`; PR #19 remains draft/open and unmerged.
+
+**Disposition:** `MAIN_RULESET_ACTIVE_AND_READ_BACK / ONE_INDEPENDENT_REVIEW_REQUIRED / CI_NOT_YET_REQUIRED / PRODUCTION_UNCHANGED`. The formerly unprotected-branch finding is **resolved**. Full G5/G6 remain **OPEN** pending independent eligible reviewer, required check activation and rehearsed rollback. A review requirement may deliberately freeze production merges while the collaborator is recruited.
+
+This is a repository-level GitHub protection; it does not independently guarantee Cloudflare rollback or public runtime integrity. No emergency bypass actor was added.
 
 Sources: [GitHub creating rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/creating-rulesets-for-a-repository), [available rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets), [protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches).
