@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/tyme-hall-001-controlled-release*.yml'
       - 'validation/verify_hall_release_intent.py'
+      - 'validation/verify_hall_release_authorization.py'
       - 'validation/verify_cloudflare_release_mode.py'
       - 'validation/build_hall_release.py'
       - 'validation/test_controlled_release.py'
