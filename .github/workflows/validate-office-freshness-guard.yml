@@ -1,0 +1,24 @@
+name: Public Office Snapshot Freshness Guard
+
+on:
+  pull_request:
+    paths:
+      - "office/index.html"
+      - "validation/validate_office_freshness_guard.mjs"
+      - ".github/workflows/validate-office-freshness-guard.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot-state-warning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate historical/unknown/future/current Office state labels offline
+        run: node --test validation/validate_office_freshness_guard.mjs

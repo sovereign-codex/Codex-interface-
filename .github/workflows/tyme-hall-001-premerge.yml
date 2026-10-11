@@ -1,0 +1,28 @@
+name: TYME Hall Required Premerge Contract
+
+on:
+  pull_request:
+    branches:
+      - main
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hall_launch_001_premerge:
+    name: hall_launch_001_premerge
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out the PR code without stored credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Select pinned Node runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Assert Hall static source, provenance and non-authority invariants
+        run: node --test validation/launch_hall_premerge.test.mjs

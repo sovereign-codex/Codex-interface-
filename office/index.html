@@ -16,7 +16,7 @@
     <p>This surface reports approved institutional state. It does not create institutional state, grant authority, or expose private deliberation.</p>
     <p><a class="back-link" href="state.json">Inspect the machine-readable Office state →</a></p>
   </section>
-  <section id="notice" class="panel"><h2>Notice</h2><p>Loading approved public state…</p></section>
+  <section id="notice" class="panel" aria-live="polite"><h2>Notice</h2><p>Loading approved public state…</p></section>
   <section id="now" class="panel"><h2>Now</h2></section>
   <section id="changed" class="panel"><h2>What changed</h2></section>
   <section id="active" class="panel"><h2>Active</h2></section>
@@ -68,7 +68,25 @@
   fetch('state.json', {cache: 'no-store'})
     .then(function (r) { if (!r.ok) throw new Error('state unavailable'); return r.json(); })
     .then(function (state) {
-      document.querySelector('#notice p').textContent = state.public_notice;
+      document.querySelector('#notice p').textContent = state.public_notice || 'Public state is a read-only projection, not institutional authority.';
+      const freshness = document.createElement('p');
+      freshness.className = 'muted';
+      const dateText = typeof state.generated_at === 'string' ? state.generated_at : '';
+      const generated = Date.parse(dateText);
+      if (!Number.isFinite(generated) || !dateText) {
+        freshness.textContent = 'SNAPSHOT DATE UNKNOWN — this Office view cannot be verified as current. Inspect state.json and the source evidence before relying on “Now.”';
+      } else {
+        const age = Math.floor((Date.now() - generated) / 86400000);
+        const dateLabel = new Date(generated).toISOString().slice(0, 10);
+        if (age < -1) {
+          freshness.textContent = 'SNAPSHOT CLOCK CONFLICT — generated_at is in the future relative to this device. Do not treat this projection as current.';
+        } else if (age > 14) {
+          freshness.textContent = 'STALE PUBLIC OFFICE SNAPSHOT — generated ' + dateLabel + ' (' + age + ' days ago). The “Now,” “Next” and review fields describe that historical snapshot, not verified current institutional state.';
+        } else {
+          freshness.textContent = 'Snapshot generated ' + dateLabel + '. This is a dated, reviewed public projection, not a live institutional feed.';
+        }
+      }
+      document.getElementById('notice').appendChild(freshness);
       addItem(document.getElementById('now'), state.current_priority);
       fill('changed', state.change_log);
       fill('active', state.active_matters);
