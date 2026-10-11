@@ -1,0 +1,164 @@
+name: TYME Hall 001 Controlled Production Release — INERT UNTIL COMMISSIONED
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Exact HEAD SHA of reviewed protected main, lowercase 40 hex
+        required: true
+        type: string
+      release_receipt_ref:
+        description: Human G6 GO receipt in Notion/Office or release ledger; never use as a secret
+        required: true
+        type: string
+
+# Only a candidate until Cloudflare production autobuilds disabled (previews retained),
+# a manually configured protected environment with required human review and no bypass,
+# environment-only secrets and variables, and independent staging release validation.
+# Mere environment declaration can create an UNPROTECTED environment.
+permissions:
+  contents: read
+
+concurrency:
+  group: tyme-hall-production-release
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    name: Public-only candidate validation — no Cloudflare credentials
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TYME_RELEASE_SHA: ${{ inputs.source_sha }}
+      TYME_RELEASE_OPERATOR: ${{ vars.TYME_RELEASE_OPERATOR }}
+      RELEASE_ACTOR: ${{ github.actor }}
+      RELEASE_RECEIPT: ${{ inputs.release_receipt_ref }}
+    steps:
+      - name: Require explicitly designated workflow operator and source receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$TYME_RELEASE_OPERATOR" || "$RELEASE_ACTOR" != "$TYME_RELEASE_OPERATOR" ]]; then
+            echo 'HOLD: unassigned or unauthorized production release operator' >&2
+            exit 2
+          fi
+          if [[ ! "$RELEASE_RECEIPT" =~ ^TYME-HALL-LAUNCH-001/G6/[A-Za-z0-9._-]{5,100}$ ]]; then
+            echo 'HOLD: no bounded release GO reference (this input is not proof of approval)' >&2
+            exit 2
+          fi
+      - name: Check out exact workflow source without stored Git credentials
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Recheck referential G6/operator intent from reviewed source
+        run: python3 validation/verify_hall_release_authorization.py --mode preflight
+      - name: Pin Node runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Require exact current protected main SHA
+        run: python3 validation/verify_hall_release_intent.py --fresh-remote
+      - name: Verify controlled-release structure and rejection cases
+        run: python3 -m unittest discover -s validation -p 'test_controlled_release.py' -v
+      - name: Require founding Hall premerge regression coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f validation/launch_hall_premerge.test.mjs || {
+            echo 'HOLD: Hall premerge validation PR not yet included on main' >&2
+            exit 2
+          }
+          node --test validation/launch_hall_premerge.test.mjs
+      - name: Stage public allowlisted assets only — do not deploy
+        shell: bash
+        run: python3 validation/build_hall_release.py --destination "$RUNNER_TEMP/tyme-hall-preflight"
+
+  deploy:
+    name: Founder-authorized production promotion — separate protected environment
+    needs: preflight
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      deployments: write
+    environment:
+      name: tymehall-production
+      url: https://tymehall.org
+    env:
+      TYME_RELEASE_SHA: ${{ inputs.source_sha }}
+      TYME_RELEASE_OPERATOR: ${{ vars.TYME_RELEASE_OPERATOR }}
+      TYME_RELEASE_GATE_ARMED: ${{ vars.TYME_RELEASE_GATE_ARMED }}
+      TYME_RELEASE_AUTHORIZED_SHA: ${{ vars.TYME_RELEASE_AUTHORIZED_SHA }}
+      RELEASE_ACTOR: ${{ github.actor }}
+      RELEASE_RECEIPT: ${{ inputs.release_receipt_ref }}
+    steps:
+      - name: Re-check operator, explicit founder GO and environment arming after approval
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$TYME_RELEASE_OPERATOR" || "$RELEASE_ACTOR" != "$TYME_RELEASE_OPERATOR" ]]; then
+            echo 'HOLD: release actor not independently authorized' >&2
+            exit 2
+          fi
+          if [[ "$TYME_RELEASE_GATE_ARMED" != 'true' ]]; then
+            echo 'HOLD: human-reviewed production environment not armed' >&2
+            exit 2
+          fi
+          if [[ "$TYME_RELEASE_AUTHORIZED_SHA" != "$TYME_RELEASE_SHA" ]]; then
+            echo 'HOLD: founder-authorized SHA not identical to release source' >&2
+            exit 2
+          fi
+      - name: Check out reviewed exact source without stored Git credentials
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Recheck referential G6/operator/environment gate from reviewed source
+        run: python3 validation/verify_hall_release_authorization.py --mode deploy
+      - name: Pin Node runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Independently rerun source and public-asset checks after approval
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 validation/verify_hall_release_intent.py --fresh-remote
+          python3 -m unittest discover -s validation -p 'test_controlled_release.py' -v
+          node --test validation/launch_hall_premerge.test.mjs
+          python3 validation/build_hall_release.py --destination "$RUNNER_TEMP/tyme-hall-public"
+      - name: Install exact Wrangler version without release credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/tyme-release-tools" --no-save --ignore-scripts wrangler@4.45.0
+      - name: Require Cloudflare production auto-deployment disabled
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: python3 validation/verify_cloudflare_release_mode.py
+      - name: Release only the independently approved main SHA
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          python3 validation/verify_hall_release_intent.py --fresh-remote
+          python3 validation/verify_cloudflare_release_mode.py
+          "$RUNNER_TEMP/tyme-release-tools/node_modules/.bin/wrangler" pages deploy "$RUNNER_TEMP/tyme-hall-public" --project-name=codex-interface --branch=main --commit-hash="$TYME_RELEASE_SHA"
+      - name: Independently read back Cloudflare deployment SHA and success
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: python3 validation/verify_cloudflare_release_mode.py --post-deploy-sha "$TYME_RELEASE_SHA"
+      - name: Record limitations
+        shell: bash
+        run: |
+          echo 'Cloudflare readback proves source/status only, not route health or Office authority.'
+          echo 'Human recorder must preserve deployment ID, exact SHA, G6 receipt, health probes and rollback reference.'
