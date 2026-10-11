@@ -28,6 +28,10 @@ jobs:
           persist-credentials: false
       - name: Exercise approved/denied cases without deployment
         run: python3 -m unittest discover -s validation -p 'test_controlled_release.py' -v
+      - name: Stage real tracked Hall assets without deployment, secret or publication
+        env:
+          TYME_RELEASE_SHA: ${{ github.sha }}
+        run: python3 validation/build_hall_release.py --destination "$RUNNER_TEMP/tyme-hall-contract-assets"
       - name: Parse prospective GitHub Actions workflow configuration
         run: |
           ruby -e "require 'yaml'; v = YAML.load_file('.github/workflows/tyme-hall-001-controlled-release.yml'); abort('missing jobs') unless v['jobs'].key?('deploy'); puts 'Static YAML parse PASS'"
