@@ -53,6 +53,8 @@ jobs:
           ref: ${{ github.sha }}
           fetch-depth: 0
           persist-credentials: false
+      - name: Recheck referential G6/operator intent from reviewed source
+        run: python3 validation/verify_hall_release_authorization.py --mode preflight
       - name: Pin Node runtime
         uses: actions/setup-node@v4
         with:
@@ -92,6 +94,7 @@ jobs:
       TYME_RELEASE_GATE_ARMED: ${{ vars.TYME_RELEASE_GATE_ARMED }}
       TYME_RELEASE_AUTHORIZED_SHA: ${{ vars.TYME_RELEASE_AUTHORIZED_SHA }}
       RELEASE_ACTOR: ${{ github.actor }}
+      RELEASE_RECEIPT: ${{ inputs.release_receipt_ref }}
     steps:
       - name: Re-check operator, explicit founder GO and environment arming after approval
         shell: bash
@@ -115,6 +118,8 @@ jobs:
           ref: ${{ github.sha }}
           fetch-depth: 0
           persist-credentials: false
+      - name: Recheck referential G6/operator/environment gate from reviewed source
+        run: python3 validation/verify_hall_release_authorization.py --mode deploy
       - name: Pin Node runtime
         uses: actions/setup-node@v4
         with:
