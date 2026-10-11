@@ -90,6 +90,8 @@ TYME_RELEASE_SHA=5342cbaf1098391879a15c7ccca752d3fbc241b8 python3 validation/bui
 
 The second sample must be run with the current candidate SHA, not the historical value, and into a clean non-repository output folder. It produces `_release-manifest.json` for review, not a live Hall receipt. If executed outside Actions, this does not test protected GitHub environments.
 
+The release candidate also includes `validation/verify_hall_release_authorization.py`, a testable, purely referential G6/operator/authorized-SHA validator. It rejects missing or unauthorized operator identities, malformed G6 references, an unarmed environment, and any source mismatch. Its PASS explicitly states that it **has not validated real Notion approval, GitHub environment protection, or deployment**. Only an independent admin review of configured protection rules and a witnessed human approval can establish those facts. The separate no-secret PR CI tests this authorization contract as well as source identity and Cloudflare deployment-mode denial cases.
+
 The prospective production workflow:
 - never triggers on `push` or `pull_request`;
 - requires `workflow_dispatch` on `main`;
