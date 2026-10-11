@@ -6,6 +6,14 @@
 **Ruleset:** [TYME-HALL-LAUNCH-001-main-release, ID 24880323](https://github.com/sovereign-codex/Codex-interface-/rules/24880323)  
 **Date:** October 11, 2026. No commercial offer, employment representation, payment commitment, request for private credentials or deployment authorization.
 
+## P0 technical release-coupling hold (read-only Cloudflare verification, October 11)
+
+The current Cloudflare Pages project uses `main` as its automatically deployed production branch; a GitHub merge can therefore become a **production publication event**. The main ruleset requires one approval but does NOT independently enforce a separate founder's production GO.
+
+**Do not invite a newly screened candidate with repository write permission yet.** After Track A evaluation, keep all interaction at read-only/public-feedback level until an independently controlled deployment approval/promotion mechanism has been selected, tested (including DENY), and confirmed to retain rollback and founder authority. Simply writing "review is not deployment" in this packet is policy, not a technical safeguard.
+
+The project has no active required CI status-check rule yet; preview deployments for all branches are not production. Use the [Control Center collaboration frame](https://github.com/sovereign-codex/Codex-control-center/blob/launch/tyme-hall-001-release-packet/launch/TYME-HALL-LAUNCH-001/collaboration-frame-preflight.md), acceptance A9, as the formal release-control hold. No Pages setting or GitHub roles have been changed to address it.
+
 ## Why an independent reviewer is needed
 
 Authenticated ruleset readback confirms the default branch is protected. It requires **one approving review**, a fresh approval of the most recent reviewable push, dismissal of stale approvals, resolution of review threads, and no deletion or non-fast-forward updates. There are no bypass actors. The Hall's Cloudflare Pages project deploys from the protected main branch.
@@ -31,7 +39,7 @@ Before invitation, require:
 3. Evidence of source/provenance discipline, security boundaries and honest treatment of CI versus actual release authorization.
 4. Disclosure of AI assistance, conflicts of interest and availability; founder-approved collaboration/contribution terms.
 
-**Permission decision is separate and human-owned:** a screened candidate may receive the smallest eligible GitHub permission *that still counts* toward a required review (typically write permission scoped to the **Hall repository alone**, not organization owner/admin privileges). No Cloudflare, Notion, secret-management, funding, production-credential or ruleset bypass permissions. Even repository write access can affect unprotected development branches; vet the candidate before grant, preserve the default-branch ruleset, and plan revocation.
+**Permission decision is separate and human-owned, and currently on HOLD until acceptance A9:** only after independent release-go isolation is demonstrated may a screened candidate receive the smallest eligible GitHub permission *that still counts* toward a required review (typically write permission scoped to the **Hall repository alone**, not organization owner/admin privileges). No Cloudflare, Notion, secret-management, funding, production-credential or ruleset bypass permissions. Even repository write access can affect unprotected development branches; vet the candidate before grant, preserve the default-branch ruleset, and plan revocation.
 
 ## Reviewer checklist for Hall PR #19
 
