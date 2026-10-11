@@ -1,0 +1,32 @@
+name: TYME Hall 001 Controlled Release — Static Contract Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/tyme-hall-001-controlled-release*.yml'
+      - 'validation/verify_hall_release_intent.py'
+      - 'validation/verify_cloudflare_release_mode.py'
+      - 'validation/build_hall_release.py'
+      - 'validation/test_controlled_release.py'
+      - 'validation/CONTROLLED_RELEASE_RUNBOOK.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  controlled-release-static-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Review proposed workflow with no credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Exercise approved/denied cases without deployment
+        run: python3 -m unittest discover -s validation -p 'test_controlled_release.py' -v
+      - name: Parse prospective GitHub Actions workflow configuration
+        run: |
+          ruby -e "require 'yaml'; v = YAML.load_file('.github/workflows/tyme-hall-001-controlled-release.yml'); abort('missing jobs') unless v['jobs'].key?('deploy'); puts 'Static YAML parse PASS'"
