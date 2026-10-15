@@ -1,0 +1,61 @@
+{
+  "schema_version": "hall-freeze-preflight-001",
+  "recorded_at_utc": "2026-10-15T01:57:32.779Z",
+  "purpose": "Dual Hall evaluation preflight; recording observations does not freeze a live third-party surface",
+  "authority_effect": "none",
+  "status": "PENDING",
+  "source": "Cloudflare Pages project API read-only; GitHub branch readback",
+  "targets": {
+    "A": {
+      "role_hypothesis": "institutional_public_projection",
+      "entry_url": "https://tymehall.org/",
+      "cloudflare_project": "codex-interface",
+      "project_domains": [
+        "tymehall.org",
+        "codex-interface-83q.pages.dev"
+      ],
+      "production_branch": "main",
+      "reported_production_commit": "5342cbaf1098391879a15c7ccca752d3fbc241b8",
+      "production_deployment_id": "8f2b21b4-9541-471f-b2f7-651373591e4f",
+      "production_deployment_status": "success",
+      "freeze_status": "SOURCE_PINNED",
+      "anonymous_http_readback": "NOT_OBSERVED",
+      "human_visible_capture": "NOT_CAPTURED",
+      "machine_readable_capture": "NOT_CAPTURED",
+      "byte_digests": "NOT_CAPTURED",
+      "custom_domain_parity": "UNVERIFIED",
+      "accessibility_check": "NOT_RUN",
+      "content_drift_check": "NOT_RUN"
+    },
+    "B": {
+      "role_hypothesis": "contributor_reconstruction_experiment",
+      "surface": "ChatGPT Reconstruction Probe 001",
+      "public_url": "UNVERIFIED_NOT_PUBLISHED_IN_MANIFEST",
+      "sharing_policy": "UNVERIFIED",
+      "provider_revision": "UNVERIFIED",
+      "freeze_status": "PENDING",
+      "anonymous_http_readback": "NOT_OBSERVED",
+      "human_visible_capture": "NOT_CAPTURED",
+      "machine_readable_capture": "UNKNOWN",
+      "byte_digests": "NOT_CAPTURED",
+      "accessibility_check": "NOT_RUN",
+      "content_drift_check": "NOT_RUN",
+      "local_runtime_claim": "NOT_ESTABLISHED"
+    }
+  },
+  "evaluation": {
+    "protocol_path": "validation/TYME_HALL_MULTI_INTELLIGENCE_EVALUATION_001.md",
+    "neutral_packet_path": "validation/hall-evaluation-001/NEUTRAL_FIRST_CONTACT_001.txt",
+    "independent_trials_completed": 0,
+    "independent_trials_status": "NOT_STARTED",
+    "release_gate_P0": "PENDING",
+    "release_gate_C1": "WITHHELD"
+  },
+  "outstanding": [
+    "Verify exact public Site address and permissioned sharing for Target B without exposing private data",
+    "Obtain independent HTTP readback for both targets and capture public-safe content/assets and digests",
+    "Inspect accessibility and machine-readable vs rendered agreement for Target A",
+    "Complete external machine plus technical-human and general-human independent cold-start evaluations"
+  ],
+  "caveat": "Cloudflare deployment metadata verifies provider deployment state, not visitor-side reachability, complete capture, or revision freeze"
+}
