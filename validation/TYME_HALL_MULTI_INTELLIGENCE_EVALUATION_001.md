@@ -1,279 +1,177 @@
 # TYME HALL MULTI-INTELLIGENCE EVALUATION 001
 
 **Artifact ID:** TYME-HALL-MULTI-INTELLIGENCE-EVALUATION-001  
-**Date:** 2026-10-14  
-**Status:** EXPERIMENTAL / NON-AUTHORIZING  
+**Date:** 2026-10-14 (America/Phoenix)  
+**Revision:** review repair 01 - persisted recovery  
+**Status:** EXPERIMENTAL / NON-AUTHORIZING / PREFLIGHT REQUIRED  
 **Parent:** `validation/CONTEXT_ZERO_PROTOCOL.md`  
 **Rule:** validation before expansion
 
-## 1. Purpose
+## 1. Coordinator-only protocol
 
-Evaluate the two current TYME Hall surfaces as complementary institutional projections rather than competing website candidates.
+This document contains hypotheses, intended roles and scoring instructions. It is NOT the cold-start packet. Give a cold evaluator only `hall-evaluation-001/NEUTRAL_FIRST_CONTACT_001.txt`, with one assigned entry URL. Do not supply this protocol, the trust-contract draft, prior answers, founder commentary or expected interpretations. Record accidental exposure as contamination.
 
-Targets:
+Coordinator hypotheses, not evaluator answers:
 
-- **Target A — Institutional Hall Alpha:** `https://tymehall.org/`
-- **Target B — Contributor Hall Reference Probe:** current ChatGPT-hosted Reconstruction Probe 001
+- A: existing `https://tymehall.org/`, the institutional public projection.
+- B: existing ChatGPT Reconstruction Probe 001, a candidate for contributor orientation, not a proven private/local contributor runtime.
 
-This protocol asks whether an unfamiliar human or machine can accurately reconstruct each surface's role, institutional boundaries, provenance, current state, participation model, and trust posture without private coaching.
+The exact B address is known from prior context. Current sharing and revision require verification; do not publish a potentially private address or content in this public repository. No sharing changes are authorized.
 
-This evaluation does **not** choose a favorite, authorize deployment, promote the ChatGPT probe into Canon, or permit evaluators to mutate either Hall.
+The goal is complementary function and inspectable disagreement, not a favorite website or vendor ranking. No trial authorizes mutation, submission, privileged login, production deployment, security probing or Canon promotion.
 
-## 2. Hypothesis
+## 2. Review recovery and inherited contracts
 
-The two surfaces SHOULD be able to serve different functions while remaining semantically compatible:
+Readback on 2026-10-15 UTC found the original protocol still present at `911ba4cd169a1859533e62525dc5dc9c4f167a5c`; the earlier attempted correction had not persisted. This revision completes the repair without treating the interrupted write as successful.
 
-- Target A SHOULD be strongest at durable public orientation, current institutional state, provenance, public inheritance, and governed entry.
-- Target B SHOULD be strongest at conversational orientation, reconstruction, participant-local exploration, and experimental interaction.
-- Neither surface SHOULD imply authority merely because it renders content or hosts an intelligent interface.
-- A newcomer SHOULD be able to discover that they belong to one institution rather than two contradictory projects.
+Preserve these inherited sources:
 
-Failure of either surface to make those boundaries intelligible is actionable evidence.
+- [Context-Zero Protocol](https://github.com/sovereign-codex/Codex-interface-/blob/5342cbaf1098391879a15c7ccca752d3fbc241b8/validation/CONTEXT_ZERO_PROTOCOL.md)
+- [CIT projection restrictions](https://github.com/sovereign-codex/Codex-interface-/blob/5342cbaf1098391879a15c7ccca752d3fbc241b8/projections/cit-learning-v0.1/PROJECTION_CONTRACT.md)
+- [RUN-002 convergence and access findings](https://github.com/sovereign-codex/Tyme-Lab/blob/0af29cf783e0cf5a515ba2978fcf209a600d1f24/tests/origination/run-002/cross-intelligence-convergence-report.md)
+- [Trust contract correction](https://github.com/sovereign-codex/Tyme-Lab/blob/eecc12f0fc143a556dc922f0980e2f76831638f9/docs/architecture/HALL_TRUST_AND_CONTINUITY_CONTRACT_v0.1.md)
 
-## 3. Frozen evaluation conditions
+Author-side repair is not independent approval. The coordinating conversation is not a cold evaluator. Existing memory-only, preview-only and no-submission CIT restrictions are unchanged.
 
-Before the first run, record:
+## 3. Freeze and access preflight
 
-- exact public URL for Target A;
-- exact published URL for Target B;
-- visible version/revision label for each;
-- repository commit backing Target A where known;
-- published Site revision identifier for Target B where available;
-- date/time freeze;
-- whether each target is reachable over a normal mobile browser;
-- whether machine-readable state is available;
-- any known outage or provider limitation.
+Before a scored live trial, record the exact target address; verified public or permissioned visibility; source commit and deployment attribution when available; provider revision when exposed; actual capture time and final URL/status; retained human-visible content, required assets and relevant machine state; SHA-256 digests over retained bytes; capture omissions; privacy review; exact prompt; and raw-return destination.
 
-Once the first context-zero evaluator starts, do not change either target until that evaluator completes. If a target changes between evaluators, record a new revision cohort. Do not mix scores across materially different revisions without labeling the difference.
+Record pre-run and post-run drift checks. Changing content creates a new revision cohort. Do not silently mix materially different revisions, scripts, dynamic data or evidence sets. A digest establishes equality of retained bytes, not completeness, authenticity, permission or functioning rendering.
 
-## 4. Evaluator cohort
+Freeze states: PENDING, SOURCE_PINNED, CAPTURED_UNVERIFIED, FROZEN, DRIFTED. A successful build, pinned source, screenshot label or URL alone is not FROZEN. A provider lacking revision IDs requires a retained bounded capture and disclosed drift/completeness evidence. Declaring a date does not freeze a third-party platform.
 
-Minimum machine cohort:
+No substitution of a repository file, branch preview, old screenshot or login page for a live target. An immutable deployment URL identifies a build; it does not prove custom-domain parity.
 
-1. ChatGPT
-2. Gemini
-3. Grok
-4. Perplexity
-5. Qwen / PocketPal or another local/small model
+Tool retrieval failures are ACCESS_LIMITATION unless independent evidence demonstrates a site defect. Do not declare a site down from a tool failure. An access-only capture probe may run before freeze, but is not a scored comprehension trial and must not be counted as an independent evaluation.
 
-Minimum human cohort:
+## 4. Cohort and independence
 
-6. one unfamiliar human tester
+The inherited minimum for institutional public review remains three genuine cold-start roles:
 
-Where practical, use a fresh conversation or clean context for each run.
+1. External browsing-capable machine, without prior project context.
+2. Technical human outsider unfamiliar with TYME.
+3. General human outsider unfamiliar with TYME.
 
-A model that cannot access the target SHOULD return `INSUFFICIENT_ACCESS` rather than reconstructing from prior knowledge. Access limitation is evidence about deployability and interoperability, not a negative score for intelligence quality.
+One familiar founder, one person counted twice or a model impersonating human testers does not satisfy these roles. The planned expanded machine cohort is ChatGPT, Gemini, Grok, Perplexity and Qwen/PocketPal or a documented replacement. Record actual model/provider/version, shared underlying engines, browsing/tools and unknowns rather than assuming brand names imply independence.
 
-## 5. Evaluator constraints
+For each machine/target use a separate clean session, excluding prior target observations, project memory, coordinator material and previous findings to the extent verifiable. Record isolation evidence and residual uncertainty. A request to forget or a fresh tab alone does not prove cleared context.
 
-Each evaluator receives only:
+Use unexposed human participants for each cold target or counterbalance order and label second visits INFORMED_FOLLOWUP. A human who saw A cannot provide an independent cold B observation. Pairwise synthesis follows locked raw single-target returns and is not another cold trial.
 
-- the target URL;
-- the frozen prompt below;
-- no project history;
-- no founder explanation;
-- no prior evaluator output;
-- no hidden repository hints beyond what the target exposes;
-- no correction after the run begins.
+Report planned, completed, abstaining and pending coverage. At least two evidence-capable machine environments are needed to claim an independent cross-intelligence comparison. They do not replace the two human roles. Partial coverage is not a completed five-model study.
 
-Evaluators MUST NOT:
+## 5. Separate access arms
 
-- log in with privileged institutional credentials;
-- create, edit, delete, merge, publish, or authorize institutional state;
-- submit secrets or personal information;
-- test exploit payloads against live services;
-- assume provider capabilities that were not observed;
-- treat missing public evidence as proof that private evidence does not exist.
+LIVE_URL receives the neutral prompt and a single entry URL. The evaluator may inspect public evidence under read-only constraints. No access means abstention, not guessed reconstruction or a zero site-quality score.
 
-Misunderstanding is evaluation data.
+CONTROLLED_SNAPSHOT receives a frozen public-safe corpus with source URLs, capture times, exact retained text or supported images, ordering, digests and omissions. Record truncation and context-window limits. Do not summarize the corpus into the intended answer.
 
-## 6. Frozen context-zero prompt
+A snapshot tests reconstruction from supplied material, not live discoverability, network reachability, clicks, browser storage or security enforcement. A local model cannot be scored down for lacking a browser. Conversely, an offline corpus does not establish offline Hall functionality. Keep the two arms separate in results.
 
-> Inspect this TYME Hall surface as if you have never encountered the project before. Use only what you can discover from the supplied public entry point and resources it exposes. Do not assume intended meanings when evidence is incomplete or conflicting.
->
-> Return:
->
-> 1. What is this surface for, in one paragraph understandable to a newcomer?
-> 2. Is this the institution itself, a public projection, a contributor workspace, an experiment, or something else? Cite the evidence for your classification.
-> 3. What is Sovereign Intelligence based only on evidence you can inspect here?
-> 4. What can a visitor do from this surface, and what can they explicitly **not** do?
-> 5. Where does institutional authority appear to live? Does this surface itself grant authority?
-> 6. What appears canonical, current, experimental, hypothetical, superseded, unresolved, or merely rendered?
-> 7. Where would you verify a claim, inspect provenance, or challenge/correct the work?
-> 8. Can you reconstruct the relationships among Hall, Office, Scrolls, Laboratory, Constellation, Contribution, Codex, AVOT, TYME, and QIL? Mark confidence for each inferred relationship.
-> 9. If this surface appears to be a Contributor/Local Hall, what is local or participant-controlled versus provider-hosted, transmitted, persistent, or unknown?
-> 10. What security/trust boundary can you infer? Can a model, page, participant, or contribution silently grant itself more authority?
-> 11. What is happening now, what changed, what is next, and what is waiting or under review?
-> 12. Inspect machine-readable state if it is publicly exposed. Does it materially agree with the human-visible surface?
-> 13. Identify broken links, stale state, inaccessible paths, contradictory claims, ambiguous terms, privacy/safety concerns, authority confusion, accessibility failures, or misleading certainty.
-> 14. What single repair would most improve accurate reconstruction without adding unnecessary concepts?
->
-> For every major conclusion, cite the public page, machine-readable record, repository record, or source location that supports it. Explicitly preserve uncertainty.
->
-> Do not evaluate whether you personally agree with Sovereign Intelligence. Evaluate whether the system lets you understand it accurately enough to disagree with it intelligently.
+## 6. Neutral first-contact packet
 
-## 7. Scoring model
+The separate text packet contains one entry and neutral questions about purpose, next action, evidence, permission, participation, currentness, data handling and friction. It contains no expected institutional roles or internal vocabulary list.
 
-Score each dimension 0–3.
+For CONTROLLED_SNAPSHOT replace the entry with the corpus ID and state that only the frozen corpus is available. Record the variant, not a false claim of identical inputs. Do not send this coordinator protocol with either packet.
 
-| Dimension | 0 | 1 | 2 | 3 |
-| --- | --- | --- | --- | --- |
-| Threshold clarity | misleading/absent | difficult to infer | mostly clear | immediate and correct |
-| Intent routing | no usable route | route unclear | route usable with ambiguity | obvious next step |
-| Institutional reconstruction | materially wrong | fragmented | mostly correct | coherent and evidence-backed |
-| Authority boundary | authority conflated | weak distinction | mostly bounded | explicit and correctly reconstructed |
-| Provenance discoverability | absent | difficult | findable | obvious and useful |
-| Participation clarity | no valid path | ambiguous | usable | participation vs authority explicit |
-| Human/machine agreement | contradictory | notable drift | minor drift | materially aligned |
-| Accessibility/cognitive load | blocks inspection | high friction | workable | progressive and accessible |
-| Temporal/state clarity | stale/contradictory | weak currentness | mostly current | NOW/change/next/waiting clear |
-| Trust/security intelligibility | misleading | implicit only | partially explicit | boundaries and uncertainty clear |
-| Portability/egress clarity | hidden/confused | hard to determine | partly disclosed | capabilities/limits explicit |
-| Uncertainty discipline | invents certainty | weak caveats | mostly calibrated | uncertainty preserved consistently |
+Preserve the raw blind answer before directed questions. The evaluator may decline unsupported conclusions. Citation, uncertainty and no-action boundaries apply throughout.
 
-Maximum: 36.
+## 7. Directed checks after the blind answer is locked
 
-**Important:** aggregate score is descriptive only. A `SECURITY`, `AUTHORITY`, `PRIVACY`, or serious `ACCESSIBILITY` blocker cannot be offset by a high total score.
+Label all guided results DIRECTED_REVIEW. For A retain the inherited checks:
 
-## 8. Failure taxonomy
+- Sovereign Intelligence and Office / Scrolls / Laboratory / Constellation / Contribution;
+- deeper Hall, Codex, AVOT, TYME and QIL relationships without invented capabilities;
+- NOW, change, next, waiting, review, recent returns and valid entry;
+- Canon versus hypothesis, experiment, interpretation, archive and superseded material;
+- AGI-0001 publication posture versus empirical scientific validation;
+- source/projection distinction, provenance and challenge/correction/reproduction paths;
+- `/.well-known/tyme.json`, the Office record it exposes and human/machine agreement;
+- privacy, accessibility and resilience.
 
-Use inherited Context-Zero labels where applicable and add these:
+A guided success cannot retrospectively become a blind discovery. For B assess only disclosed roles and advertised capabilities: provider/local distinction, handoff, private exit, preview versus submission, retention/export, institutional return path and experimental status. Do not require it to duplicate the Office or implement a planned runtime.
 
-- `SURFACE_ROLE` — institutional vs contributor/experimental role is misread.
-- `PORTABILITY` — local/provider/persistence/export capability is misleading or unknown.
-- `TEMPORAL` — stale, reordered, superseded, or current state is misrepresented.
-- `REPLAY` — duplicate/replayed action or evidence could be mistaken for fresh authority or execution.
-- `TOOL_AUTHORITY` — tool availability is confused with permission.
-- `PROMPT_INJECTION` — untrusted content is treated as institutional instruction/authority.
-- `CONTAINMENT` — experimental/adversarial material appears able to affect production directly.
-- `EGRESS` — artifact creation, persistence, export, or transmission capability is unclear.
-- `SINGLE_PROVIDER_DEPENDENCY` — critical comprehension or access depends on one vendor-specific surface with no fallback.
+## 8. Scoring and coverage
 
-## 9. Trust and security observations
+Use 0 = materially misleading or absent where required; 1 = difficult/ambiguous; 2 = usable with minor gaps; 3 = clear and evidence-backed. Tag every score with source evidence and blind/directed stage.
 
-This evaluation is observational. Do not conduct penetration testing.
+Core dimensions: threshold clarity, intent routing, role reconstruction, authority boundaries, provenance, participation, accessibility/cognitive load and the surface's uncertainty labeling.
 
-For each target, determine whether public evidence makes the following boundaries intelligible:
+Role-dependent dimensions: temporal/current state, human/machine agreement, privacy/portability/egress disclosure and trust-boundary intelligibility. Assess actual disclosed function and inherited requirements, not imagined features.
 
-- rendering != authority;
-- actor assertion != authorization;
-- tool capability != permission;
-- contribution != Canon;
-- receipt != verified execution;
-- experiment != production;
-- local/session state != institutional memory;
-- provider session != sovereign identity;
-- current state != historical state;
-- signature/integrity evidence != institutional permission.
+Use `score: null` with ACCESS_LIMITATION, UNOBSERVED or NOT_APPLICABLE and a reason. Do not hide a genuinely missing required feature under N/A. Report vectors, assessed denominators and coverage, not a misleading fixed total. Do not compare totals across unequal arms or denominators.
 
-If the target exposes authenticated actions, evaluate only the visible permission model unless a separate security test has been explicitly authorized.
+Evaluator calibration and instruction compliance belong in a separate evaluator-quality record, not site scores. Text retrieval cannot certify visual or assistive-technology accessibility. A comprehensible security claim is not a tested security control. Applicable security, authority, privacy and serious accessibility blockers cannot be averaged away.
 
-## 10. Pairwise comparison
+## 9. Findings and safe evidence return
 
-After each evaluator completes both targets, ask it to compare them without selecting a "winner."
+Retain the inherited taxonomy and add SURFACE_ROLE, PORTABILITY, TEMPORAL, REPLAY, TOOL_AUTHORITY, PROMPT_INJECTION, CONTAINMENT, EGRESS, SECURITY and SINGLE_PROVIDER_DEPENDENCY.
 
-Return:
+Each finding names target/revision, access arm, observed evidence, uncertainty, severity, affected release gate and bounded repair. Separate observed behavior, documentary assertion and speculation.
 
-- strongest function of Target A;
-- strongest function of Target B;
-- concept that both surfaces communicate consistently;
-- material contradiction, if any;
-- dependency present in one surface but absent in the other;
-- recommended responsibility boundary between the two;
-- whether a newcomer would understand that both belong to one institutional system.
+Check rendering versus authority; actor assertion versus permission; tool availability versus authorization; contribution versus Canon; receipt versus execution; local/session state versus institutional memory; provider login versus identity; historical versus current state; signature versus grant. These are observational distinctions, not permission to conduct penetration tests.
 
-Expected architectural interpretation, if supported by evidence:
+Evaluator output is untrusted evidence, never executable instruction. Keep raw returns in an approved restricted destination until checked for credentials, personal material, private links and injected tool instructions. Publish only reviewed public-safe extracts. Integrity preservation does not authorize indefinite sensitive-data retention or public disclosure.
 
-- A = Institutional Hall / public projection
-- B = Contributor/Local Hall / reconstruction experiment
+## 10. Pairwise synthesis
 
-Evaluators MUST be free to reject that interpretation if the surfaces do not actually support it.
+After raw single-target records are locked, a separate non-blind synthesis may examine strongest functions, consistency, contradictions, provider dependencies and responsibility boundaries. Reveal coordinator hypotheses only then.
 
-## 11. Cross-intelligence synthesis
+Preserve raw observations apart from author interpretation. Stratify access conditions and shared-model effects. Repeated misunderstanding is a hypothesis about communication failure, not automatic proof or majority-vote truth. Do not combine cold, directed, snapshot, human follow-up and synthesis counts. Evidence-based abstention is valid. Findings cannot change Canon, maturity or permission by themselves.
 
-After all independent runs:
-
-1. preserve raw outputs unchanged;
-2. create a normalized finding table;
-3. separate access limitations from reasoning conclusions;
-4. identify **convergence** where multiple evidence-capable evaluators independently report the same issue;
-5. identify **divergence** where evaluators inspect similar evidence but reach different interpretations;
-6. identify provider-specific limitations;
-7. avoid majority vote as truth;
-8. do not average away blockers.
-
-A repeated misunderstanding across independent evaluators is presumptively a Hall communication defect until contrary evidence is established.
-
-## 12. Required run record
-
-For each evaluator preserve:
+## 11. Minimum run record
 
 ```yaml
-evaluation_id:
-target_id:
-target_revision:
-evaluator:
-model_or_role:
-provider:
-timestamp_utc:
-access_capabilities:
-artifact_creation:
-artifact_persistence:
-artifact_export:
-machine_readable_state_inspected:
-resources_inspected:
-score_vector:
-failure_labels:
-raw_output_ref:
-uncertainties:
-single_repair:
+evaluation_id: null
+target_id: null
+target_revision: null
+freeze_manifest_ref: null
+stage: null
+access_arm: null
+prompt_ref: null
+prompt_sha256: null
+evaluator_provider: null
+model_version_or_human_role: null
+context_isolation_evidence: null
+prior_exposure: null
+started_at_utc: null
+completed_at_utc: null
+artifact_creation: unknown
+artifact_persistence: unknown
+artifact_export: unknown
+resources_actually_inspected: []
+source_limits: []
+site_score_vector: []
+evaluator_quality: null
+findings: []
+raw_output_ref: null
+raw_output_sha256: null
+privacy_review: pending
+execution_state: not_started
 authority_effect: none
 ```
 
-Artifact creation, persistence, and export MUST remain separate capability fields.
+This is a template, not a completed receipt. Use actual execution times, not planned schedule times. Creation, persistence and export remain separate. Do not fabricate unknown values.
 
-## 13. Blitz launch disposition
+## 12. Blitz dispositions and distinct release gates
 
-Classify findings:
+BLOCKER means evidenced unsafe or materially misleading behavior within the release scope. PRE-LAUNCH REPAIR means a demonstrated bounded correction; POST-LAUNCH IMPROVEMENT is not needed for this gate; EXPERIMENTAL INSIGHT needs separate Work; ACCESS_LIMITATION/UNOBSERVED is insufficient evidence, not a pass or automatic failure.
 
-- **BLOCKER** — security, authority, privacy, severe accessibility, major state/provenance contradiction, or inability to identify the surface's role.
-- **PRE-LAUNCH REPAIR** — demonstrated reconstruction defect whose correction does not expand the concept set.
-- **POST-LAUNCH IMPROVEMENT** — useful improvement not required for safe/accurate orientation.
-- **EXPERIMENTAL INSIGHT** — candidate idea requiring separate Work before adoption.
-- **ACCESS-LIMITATION** — evaluator could not inspect enough evidence to judge.
+P0 public orientation requires the inherited three-role review, applicable public-state/provenance/route/accessibility checks and no unresolved P0 blocker. Missing optional contributor machinery need not block an honestly described read-only Hall.
 
-The current launch candidate MAY advance only when:
+C1 contributor intake, persistence and execution remain withheld until separately authorized implementation and trust-contract tests pass. P0 cannot authorize C1; site comprehension cannot certify backend security. Expanded study coverage is reported separately. Neither gate passes with unresolved required evidence.
 
-- no unresolved BLOCKER remains;
-- required repairs are re-tested;
-- Institutional Hall authority remains non-authorizing at the public foyer;
-- Contributor Hall remains explicitly experimental/non-canonical until separately promoted;
-- public and machine-readable state materially agree;
-- participation can be distinguished from authority;
-- an accessible read-only path survives provider-specific contributor failures.
+## 13. Execution boundary and artifacts
 
-## 14. No live-site mutation in this protocol
+Allowed: author-side document repair, read-only preflight, bounded public-safe capture, neutral packet preparation and reviewable evidence records. Scored dispatch requires target freeze and context isolation.
 
-This file authorizes no edits to:
+Not allowed: merge, production mutation, sharing changes, new credentials, Cloudflare reconfiguration, live submissions, adversarial probes or new permissions.
 
-- `tymehall.org`;
-- the ChatGPT Site;
-- Cloudflare configuration;
-- repository `main`;
-- Office state;
-- Canon;
-- contributor permissions.
+Existing Cloudflare branch-preview automation may publish this documentation branch. Record preview separately from production; preview success is not a launch certificate. Do not change build settings under this review.
 
-Repairs discovered here become separate reviewable Work.
-
-## 15. Suggested output artifacts
-
-- `runs/<evaluator>-target-a.md`
-- `runs/<evaluator>-target-b.md`
-- `runs/<evaluator>-pairwise.md`
-- `MULTI_INTELLIGENCE_DIVERGENCE_MATRIX_001.md`
-- `BLITZ_HALL_GATE_001.md`
+Maintain `hall-evaluation-001/FREEZE_MANIFEST_001.json`, `NEUTRAL_FIRST_CONTACT_001.txt`, per-run returns and `BLITZ_HALL_GATE_001.md`. Record pending prerequisites instead of invented success. The coordinating author is not an independent evaluator.
 
 ## Governing sentence
 
-> The goal is not consensus between intelligences or uniformity between surfaces; it is a system in which different intelligences can independently reconstruct the same institutional boundaries, preserve uncertainty, and disagree without acquiring authority.
+Different intelligences must be able to inspect the two surfaces without confusing access with intelligence, presentation with authority, or a prepared protocol with an executed evaluation.
