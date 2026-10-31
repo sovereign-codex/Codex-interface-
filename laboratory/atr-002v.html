@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="description" content="ATR-002V bounded text and voice adapter probe for lineage reconstruction.">
+  <title>ATR-002V Voice Adapter · Laboratory</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .status-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}.status{padding:.8rem;border:1px solid currentColor;border-radius:12px}
+    textarea{width:100%;min-height:120px;font:inherit;padding:.85rem;border-radius:12px;box-sizing:border-box}
+    button{font:inherit;padding:.8rem 1rem;border-radius:12px;margin:.25rem .25rem .25rem 0}
+    code,pre{white-space:pre-wrap;word-break:break-word}.trace{font-size:.92rem}
+  </style>
+</head>
+<body>
+<header class="app-header">
+  <a class="back-link" href="./">← Laboratory</a>
+  <h1>ATR-002V · Voice Adapter</h1>
+  <p class="muted">Experimental · text canonical · audio is projection</p>
+</header>
+<main class="container">
+  <section class="panel hero">
+    <h2>Boundary</h2>
+    <p>This probe tests the interaction seam only. It does not claim to execute MA-001, write TRACE, grant authority, or reproduce a historical voice.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Capability check</h2>
+    <div class="status-grid">
+      <div class="status"><strong>Speech input</strong><br><span id="sttStatus">checking…</span></div>
+      <div class="status"><strong>Speech output</strong><br><span id="ttsStatus">checking…</span></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>1 · Canonical input</h2>
+    <p class="muted">Typed text or recognized speech becomes the canonical transcript.</p>
+    <textarea id="transcript" placeholder="Ask MA-001 a question…"></textarea>
+    <div>
+      <button id="micButton" type="button">Start microphone</button>
+      <button id="clearButton" type="button">Clear</button>
+    </div>
+    <p id="listenState" class="muted">Idle.</p>
+  </section>
+
+  <section class="panel">
+    <h2>2 · Traced response object</h2>
+    <p class="muted">Paste a response emitted by the future ATR/AVOT runtime. Only <code>response_text</code> is spoken.</p>
+    <textarea id="responseJson" spellcheck="false">{
+  "lineage_id": "MA-001",
+  "response_text": "A traced response would appear here.",
+  "trace_receipt_id": "UNCONNECTED-DEMO",
+  "inference_classes": ["D"],
+  "temporal_boundary": "modern counterfactual",
+  "confidence": "unverified",
+  "evidence_refs": []
+}</textarea>
+    <div>
+      <button id="renderButton" type="button">Render traced response</button>
+      <button id="speakButton" type="button">Speak response</button>
+      <button id="stopButton" type="button">Stop speech</button>
+    </div>
+    <p id="parseState" class="muted">No runtime connection. Manual response-object injection only.</p>
+  </section>
+
+  <section class="panel">
+    <h2>3 · Response</h2>
+    <p id="responseText">No response rendered.</p>
+    <details>
+      <summary>Trace receipt metadata</summary>
+      <pre id="traceMeta" class="trace">{}</pre>
+    </details>
+  </section>
+
+  <section class="panel">
+    <h2>Acceptance posture</h2>
+    <ul>
+      <li>Text remains functional without microphone permission.</li>
+      <li>Recognized speech is written into the same transcript field used by typed input.</li>
+      <li>Audio failure does not invalidate the text response.</li>
+      <li>Trace metadata is displayed separately and is never spoken by default.</li>
+      <li>No visual embodiment or historical voice cloning is present.</li>
+    </ul>
+  </section>
+</main>
+<script>
+(() => {
+  const transcript = document.getElementById('transcript');
+  const responseJson = document.getElementById('responseJson');
+  const responseText = document.getElementById('responseText');
+  const traceMeta = document.getElementById('traceMeta');
+  const parseState = document.getElementById('parseState');
+  const listenState = document.getElementById('listenState');
+  const micButton = document.getElementById('micButton');
+  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const hasTTS = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+
+  document.getElementById('sttStatus').textContent = Recognition ? 'available in this browser' : 'unavailable — text fallback active';
+  document.getElementById('ttsStatus').textContent = hasTTS ? 'available in this browser' : 'unavailable — text output only';
+
+  let recognition = null;
+  if (Recognition) {
+    recognition = new Recognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = true;
+    recognition.continuous = false;
+    let settled = '';
+    recognition.onstart = () => { settled = transcript.value.trim(); listenState.textContent = 'Listening…'; micButton.disabled = true; };
+    recognition.onresult = event => {
+      let interim = '';
+      let finalText = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const text = event.results[i][0].transcript;
+        if (event.results[i].isFinal) finalText += text;
+        else interim += text;
+      }
+      const base = settled ? settled + ' ' : '';
+      transcript.value = base + finalText + interim;
+    };
+    recognition.onerror = event => { listenState.textContent = 'Speech input error: ' + event.error + '. Text input remains available.'; };
+    recognition.onend = () => { listenState.textContent = 'Idle. Transcript preserved as canonical input.'; micButton.disabled = false; };
+    micButton.addEventListener('click', () => recognition.start());
+  } else {
+    micButton.disabled = true;
+  }
+
+  document.getElementById('clearButton').addEventListener('click', () => {
+    transcript.value = '';
+    listenState.textContent = 'Idle.';
+  });
+
+  function parseResponse() {
+    const obj = JSON.parse(responseJson.value);
+    if (!obj || typeof obj.response_text !== 'string' || !obj.response_text.trim()) {
+      throw new Error('response_text must be a non-empty string');
+    }
+    responseText.textContent = obj.response_text;
+    const meta = {...obj};
+    delete meta.response_text;
+    traceMeta.textContent = JSON.stringify(meta, null, 2);
+    parseState.textContent = 'Response object parsed locally. No external execution or persistence performed.';
+    return obj;
+  }
+
+  document.getElementById('renderButton').addEventListener('click', () => {
+    try { parseResponse(); }
+    catch (err) { parseState.textContent = 'Invalid response object: ' + err.message; }
+  });
+
+  document.getElementById('speakButton').addEventListener('click', () => {
+    if (!hasTTS) { parseState.textContent = 'Speech synthesis unavailable. Text response remains valid.'; return; }
+    try {
+      const obj = parseResponse();
+      speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(obj.response_text);
+      utterance.lang = 'en-US';
+      speechSynthesis.speak(utterance);
+    } catch (err) {
+      parseState.textContent = 'Cannot speak response: ' + err.message;
+    }
+  });
+
+  document.getElementById('stopButton').addEventListener('click', () => {
+    if (hasTTS) speechSynthesis.cancel();
+  });
+})();
+</script>
+</body>
+</html>
