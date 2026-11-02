@@ -46,29 +46,36 @@
 
   <section class="panel">
     <h2>2 · Traced response object</h2>
-    <p class="muted">Paste a response emitted by the future ATR/AVOT runtime. Only <code>response_text</code> is spoken.</p>
+    <p class="muted">Manual input only. Validation checks structure, not source authenticity or whether references support the text. No response here is authenticated. Only <code>response_text</code> can be spoken.</p>
     <textarea id="responseJson" spellcheck="false">{
   "lineage_id": "MA-001",
-  "response_text": "A traced response would appear here.",
+  "request_id": "demo-001",
+  "response_text": "Simulated example only. There is insufficient evidence to reconstruct an answer.",
+  "simulation": true,
+  "status": "completed",
+  "authority_effect": "analysis_return",
+  "provenance_refs": ["fixture:atr-002v"],
   "trace_receipt_id": "UNCONNECTED-DEMO",
-  "inference_classes": ["D"],
+  "inference_classes": ["E"],
   "temporal_boundary": "modern counterfactual",
-  "confidence": "unverified",
+  "confidence": "insufficient",
   "evidence_refs": []
 }</textarea>
     <div>
-      <button id="renderButton" type="button">Render traced response</button>
-      <button id="speakButton" type="button">Speak response</button>
+      <button id="renderButton" type="button">Validate and render</button>
+      <button id="speakButton" type="button">Speak unverified response</button>
       <button id="stopButton" type="button">Stop speech</button>
     </div>
+    <label><input id="speechConsent" type="checkbox"> I understand this is unverified text, not an authenticated historical voice or reconstruction.</label>
     <p id="parseState" class="muted">No runtime connection. Manual response-object injection only.</p>
   </section>
 
   <section class="panel">
-    <h2>3 · Response</h2>
+    <h2>3 · Unauthenticated response preview</h2>
+    <p id="responseStatus" role="status">No validated structure.</p>
     <p id="responseText">No response rendered.</p>
     <details>
-      <summary>Trace receipt metadata</summary>
+      <summary>Supplied trace metadata · not verified</summary>
       <pre id="traceMeta" class="trace">{}</pre>
     </details>
   </section>
@@ -85,6 +92,43 @@
   </section>
 </main>
 <script>
+// Presentation-only profile of AVOT-engine atr-lineage.ts at 0084644.
+// No lookup, signature verification, claim verification, or institutional TRACE write.
+function validateATRResponse(obj) {
+  const errors = [];
+  const bounded = (v, max) => typeof v === 'string' && v.trim() === v && v.length > 0 && v.length <= max;
+  const refs = v => Array.isArray(v) && v.length <= 100 && v.every(x => bounded(x, 2048));
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
+    return {ok:false, kind:'invalid', errors:['Response must be a JSON object.']};
+  }
+  for (const [key, max] of Object.entries({request_id:128, response_text:12000, temporal_boundary:1000, trace_receipt_id:256})) {
+    if (!bounded(obj[key], max)) errors.push(key + ' is missing or invalid.');
+  }
+  if (obj.lineage_id !== 'MA-001') errors.push('Unsupported lineage_id; this probe expects MA-001.');
+  const classes = obj.inference_classes;
+  const validClasses = Array.isArray(classes) && classes.length > 0 && classes.length <= 5 &&
+    classes.every(c => typeof c === 'string' && ['A','B','C','D','E'].includes(c)) &&
+    new Set(classes).size === classes.length;
+  if (!validClasses) errors.push('inference_classes must contain distinct A-E strings.');
+  if (!['high','moderate','low','insufficient'].includes(obj.confidence)) errors.push('Invalid confidence.');
+  if (!refs(obj.evidence_refs)) errors.push('evidence_refs must be bounded strings.');
+  if (!refs(obj.provenance_refs) || obj.provenance_refs.length === 0) errors.push('Missing provenance_refs.');
+  if (validClasses) {
+    if (classes.some(c => c !== 'E') && (!refs(obj.evidence_refs) || !obj.evidence_refs.length))
+      errors.push('Unsupported reconstruction: claims above E require evidence references.');
+    if (classes.includes('E') && obj.confidence !== 'insufficient')
+      errors.push('Class E requires insufficient confidence.');
+  }
+  if (!['completed','refused','degraded','failed'].includes(obj.status)) errors.push('Invalid status.');
+  if (obj.authority_effect !== 'analysis_return') errors.push('Only analysis_return is supported.');
+  if ('simulation' in obj && typeof obj.simulation !== 'boolean') errors.push('simulation must be boolean.');
+  if (errors.length) return {ok:false, kind:'invalid', errors};
+  const simulated = obj.simulation === true || /demo|fixture|simulat/i.test(obj.trace_receipt_id) ||
+    obj.provenance_refs.some(r => /^(fixture|demo|simulation):/i.test(r));
+  return {ok:true, kind:simulated ? 'simulated' : obj.status !== 'completed' ? 'non-completed' :
+    (classes.includes('E') || obj.confidence === 'insufficient') ? 'insufficient' : 'structured-unverified', errors:[]};
+}
+
 (() => {
   const transcript = document.getElementById('transcript');
   const responseJson = document.getElementById('responseJson');
@@ -100,6 +144,7 @@
   document.getElementById('ttsStatus').textContent = hasTTS ? 'available in this browser' : 'unavailable — text output only';
 
   let recognition = null;
+  try {
   if (Recognition) {
     recognition = new Recognition();
     recognition.lang = 'en-US';
@@ -120,9 +165,17 @@
     };
     recognition.onerror = event => { listenState.textContent = 'Speech input error: ' + event.error + '. Text input remains available.'; };
     recognition.onend = () => { listenState.textContent = 'Idle. Transcript preserved as canonical input.'; micButton.disabled = false; };
-    micButton.addEventListener('click', () => recognition.start());
+    micButton.addEventListener('click', () => {
+      try { recognition.start(); }
+      catch { listenState.textContent = 'Speech input unavailable. Text input remains available.'; micButton.disabled = false; }
+    });
   } else {
     micButton.disabled = true;
+  }
+
+  } catch {
+    micButton.disabled = true;
+    document.getElementById('sttStatus').textContent = 'unavailable — text fallback active';
   }
 
   document.getElementById('clearButton').addEventListener('click', () => {
@@ -130,40 +183,78 @@
     listenState.textContent = 'Idle.';
   });
 
+  const responseStatus = document.getElementById('responseStatus');
+  const speechConsent = document.getElementById('speechConsent');
+  function stopSpeech() {
+    try { if (hasTTS) window.speechSynthesis.cancel(); } catch { /* text remains available */ }
+  }
+  function clearResponse(message) {
+    stopSpeech();
+    responseText.textContent = 'No response rendered.';
+    traceMeta.textContent = '{}';
+    responseStatus.textContent = message;
+  }
+  responseJson.addEventListener('input', () => {
+    clearResponse('Edited input — validate again.');
+    speechConsent.checked = false;
+  });
   function parseResponse() {
-    const obj = JSON.parse(responseJson.value);
-    if (!obj || typeof obj.response_text !== 'string' || !obj.response_text.trim()) {
-      throw new Error('response_text must be a non-empty string');
+    clearResponse('Validating structure only…');
+    try {
+      if (responseJson.value.length > 50000) throw new Error('Response object exceeds 50000 characters.');
+      const obj = JSON.parse(responseJson.value);
+      const result = validateATRResponse(obj);
+      if (!result.ok) throw new Error(result.errors.join(' '));
+      responseText.textContent = obj.response_text;
+      // Explicit allowlist: do not reflect arbitrary claims of authentication in metadata.
+      const meta = {};
+      for (const key of ['request_id','lineage_id','trace_receipt_id','inference_classes',
+        'temporal_boundary','confidence','evidence_refs','provenance_refs','status','authority_effect'])
+        meta[key] = obj[key];
+      traceMeta.textContent = JSON.stringify(meta, null, 2);
+      const labels = {
+        simulated:'SIMULATED — demonstration only; no authenticated reconstruction.',
+        insufficient:'INSUFFICIENT EVIDENCE — unverified text; no supported reconstruction.',
+        'non-completed':'NON-COMPLETED — unverified return; not a completed reconstruction.',
+        'structured-unverified':'STRUCTURE VALID — provenance and historical claims remain unverified.'
+      };
+      responseStatus.textContent = labels[result.kind];
+      parseState.textContent = 'Local presentation checks only. No external execution or persistence.';
+      return {obj, result};
+    } catch (err) {
+      clearResponse('INVALID OR INCOMPLETE — response blocked.');
+      parseState.textContent = 'Invalid response object: ' + err.message;
+      throw err;
     }
-    responseText.textContent = obj.response_text;
-    const meta = {...obj};
-    delete meta.response_text;
-    traceMeta.textContent = JSON.stringify(meta, null, 2);
-    parseState.textContent = 'Response object parsed locally. No external execution or persistence performed.';
-    return obj;
   }
 
   document.getElementById('renderButton').addEventListener('click', () => {
-    try { parseResponse(); }
-    catch (err) { parseState.textContent = 'Invalid response object: ' + err.message; }
+    try { parseResponse(); } catch { /* rejection is already displayed */ }
   });
 
   document.getElementById('speakButton').addEventListener('click', () => {
-    if (!hasTTS) { parseState.textContent = 'Speech synthesis unavailable. Text response remains valid.'; return; }
+    let parsed;
+    try { parsed = parseResponse(); } catch { return; }
+    if (parsed.result.kind !== 'structured-unverified') {
+      parseState.textContent = 'Speech blocked: simulated, insufficient, or non-completed response.';
+      return;
+    }
+    if (!speechConsent.checked) {
+      parseState.textContent = 'Acknowledge the unverified-text warning before speech.';
+      return;
+    }
+    if (!hasTTS) { parseState.textContent = 'Speech synthesis unavailable. Text preview preserved.'; return; }
     try {
-      const obj = parseResponse();
-      speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(obj.response_text);
+      const utterance = new window.SpeechSynthesisUtterance(parsed.obj.response_text);
       utterance.lang = 'en-US';
-      speechSynthesis.speak(utterance);
-    } catch (err) {
-      parseState.textContent = 'Cannot speak response: ' + err.message;
+      utterance.onerror = () => { parseState.textContent = 'Speech failed. Unverified text preview preserved.'; };
+      window.speechSynthesis.speak(utterance);
+    } catch {
+      parseState.textContent = 'Speech failed. Unverified text preview preserved.';
     }
   });
 
-  document.getElementById('stopButton').addEventListener('click', () => {
-    if (hasTTS) speechSynthesis.cancel();
-  });
+  document.getElementById('stopButton').addEventListener('click', stopSpeech);
 })();
 </script>
 </body>

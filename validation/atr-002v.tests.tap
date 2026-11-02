@@ -1,0 +1,202 @@
+TAP version 13
+# Subtest: default fixture is consistent and explicitly simulated; speech blocked
+ok 1 - default fixture is consistent and explicitly simulated; speech blocked
+  ---
+  duration_ms: 3.331038
+  type: 'test'
+  ...
+# Subtest: missing evidence clears stale output and blocks speech
+ok 2 - missing evidence clears stale output and blocks speech
+  ---
+  duration_ms: 1.09326
+  type: 'test'
+  ...
+# Subtest: invalid confidence clears stale output and blocks speech
+ok 3 - invalid confidence clears stale output and blocks speech
+  ---
+  duration_ms: 0.901571
+  type: 'test'
+  ...
+# Subtest: inconsistent E confidence clears stale output and blocks speech
+ok 4 - inconsistent E confidence clears stale output and blocks speech
+  ---
+  duration_ms: 1.617431
+  type: 'test'
+  ...
+# Subtest: mixed E confidence clears stale output and blocks speech
+ok 5 - mixed E confidence clears stale output and blocks speech
+  ---
+  duration_ms: 0.654187
+  type: 'test'
+  ...
+# Subtest: unknown class clears stale output and blocks speech
+ok 6 - unknown class clears stale output and blocks speech
+  ---
+  duration_ms: 0.935782
+  type: 'test'
+  ...
+# Subtest: coerced class clears stale output and blocks speech
+ok 7 - coerced class clears stale output and blocks speech
+  ---
+  duration_ms: 0.620016
+  type: 'test'
+  ...
+# Subtest: duplicate classes clears stale output and blocks speech
+ok 8 - duplicate classes clears stale output and blocks speech
+  ---
+  duration_ms: 0.959969
+  type: 'test'
+  ...
+# Subtest: missing trace metadata clears stale output and blocks speech
+ok 9 - missing trace metadata clears stale output and blocks speech
+  ---
+  duration_ms: 0.751174
+  type: 'test'
+  ...
+# Subtest: missing request clears stale output and blocks speech
+ok 10 - missing request clears stale output and blocks speech
+  ---
+  duration_ms: 0.860659
+  type: 'test'
+  ...
+# Subtest: missing provenance clears stale output and blocks speech
+ok 11 - missing provenance clears stale output and blocks speech
+  ---
+  duration_ms: 0.796492
+  type: 'test'
+  ...
+# Subtest: unsupported historical claim clears stale output and blocks speech
+ok 12 - unsupported historical claim clears stale output and blocks speech
+  ---
+  duration_ms: 0.612544
+  type: 'test'
+  ...
+# Subtest: lineage mismatch clears stale output and blocks speech
+ok 13 - lineage mismatch clears stale output and blocks speech
+  ---
+  duration_ms: 0.678213
+  type: 'test'
+  ...
+# Subtest: unbounded text clears stale output and blocks speech
+ok 14 - unbounded text clears stale output and blocks speech
+  ---
+  duration_ms: 0.618283
+  type: 'test'
+  ...
+# Subtest: blank evidence clears stale output and blocks speech
+ok 15 - blank evidence clears stale output and blocks speech
+  ---
+  duration_ms: 0.535118
+  type: 'test'
+  ...
+# Subtest: elevated authority clears stale output and blocks speech
+ok 16 - elevated authority clears stale output and blocks speech
+  ---
+  duration_ms: 0.530992
+  type: 'test'
+  ...
+# Subtest: missing temporal boundary clears stale output and blocks speech
+ok 17 - missing temporal boundary clears stale output and blocks speech
+  ---
+  duration_ms: 0.64257
+  type: 'test'
+  ...
+# Subtest: invalid status clears stale output and blocks speech
+ok 18 - invalid status clears stale output and blocks speech
+  ---
+  duration_ms: 0.477731
+  type: 'test'
+  ...
+# Subtest: invalid simulation marker clears stale output and blocks speech
+ok 19 - invalid simulation marker clears stale output and blocks speech
+  ---
+  duration_ms: 1.479253
+  type: 'test'
+  ...
+# Subtest: valid structure remains unverified and speech requires acknowledgement
+ok 20 - valid structure remains unverified and speech requires acknowledgement
+  ---
+  duration_ms: 0.743452
+  type: 'test'
+  ...
+# Subtest: references cannot establish truth; supplied claims remain unverified
+ok 21 - references cannot establish truth; supplied claims remain unverified
+  ---
+  duration_ms: 0.550311
+  type: 'test'
+  ...
+# Subtest: edits clear prior output, revoke acknowledgement, and cancel queued audio
+ok 22 - edits clear prior output, revoke acknowledgement, and cancel queued audio
+  ---
+  duration_ms: 0.808641
+  type: 'test'
+  ...
+# Subtest: malformed or oversized input: {
+ok 23 - malformed or oversized input: {
+  ---
+  duration_ms: 0.453014
+  type: 'test'
+  ...
+# Subtest: malformed or oversized input: null
+ok 24 - malformed or oversized input: null
+  ---
+  duration_ms: 0.532144
+  type: 'test'
+  ...
+# Subtest: malformed or oversized input: []
+ok 25 - malformed or oversized input: []
+  ---
+  duration_ms: 0.394125
+  type: 'test'
+  ...
+# Subtest: malformed or oversized input: "text"
+ok 26 - malformed or oversized input: "text"
+  ---
+  duration_ms: 0.504863
+  type: 'test'
+  ...
+# Subtest: malformed or oversized input: xxxxxxxx
+ok 27 - malformed or oversized input: xxxxxxxx
+  ---
+  duration_ms: 0.444691
+  type: 'test'
+  ...
+# Subtest: E insufficient, mixed E, simulated and non-completed returns cannot speak
+ok 28 - E insufficient, mixed E, simulated and non-completed returns cannot speak
+  ---
+  duration_ms: 3.554997
+  type: 'test'
+  ...
+# Subtest: missing speech APIs preserve text input and response
+ok 29 - missing speech APIs preserve text input and response
+  ---
+  duration_ms: 0.745826
+  type: 'test'
+  ...
+# Subtest: TTS synchronous and asynchronous failure preserve text
+ok 30 - TTS synchronous and asynchronous failure preserve text
+  ---
+  duration_ms: 1.045939
+  type: 'test'
+  ...
+# Subtest: recognition constructor and start failures preserve typed input
+ok 31 - recognition constructor and start failures preserve typed input
+  ---
+  duration_ms: 1.180472
+  type: 'test'
+  ...
+# Subtest: recognition result uses same transcript and permission errors do not erase it
+ok 32 - recognition result uses same transcript and permission errors do not erase it
+  ---
+  duration_ms: 0.625023
+  type: 'test'
+  ...
+1..32
+# tests 32
+# suites 0
+# pass 32
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 127.718429
