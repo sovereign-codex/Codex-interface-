@@ -1,0 +1,26 @@
+name: ATR-002V presentation safeguards
+on:
+  pull_request:
+    paths:
+      - laboratory/atr-002v.html
+      - validation/atr-002v.test.mjs
+      - .github/workflows/validate-atr-002v.yml
+  push:
+    branches: [atr-002v-voice-adapter]
+    paths:
+      - laboratory/atr-002v.html
+      - validation/atr-002v.test.mjs
+      - .github/workflows/validate-atr-002v.yml
+permissions:
+  contents: read
+jobs:
+  presentation-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test validation/atr-002v.test.mjs
