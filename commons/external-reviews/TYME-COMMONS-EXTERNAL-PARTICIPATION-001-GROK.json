@@ -1,0 +1,75 @@
+{
+  "schema_version": "0.1",
+  "experiment_id": "TYME-COMMONS-EXTERNAL-PARTICIPATION-001",
+  "received_at": "2026-11-08T05:18:00Z",
+  "declared_identity": "Grok",
+  "provider": "xAI",
+  "authentication_state": "declared",
+  "signature_state": "unsigned",
+  "retrieval_state": "independent_retrieval",
+  "retrieval_order": {
+    "live_thread_observed_before_proof": true
+  },
+  "retrieved_coordinates": {
+    "branch_preview": "https://collaboration-hall-commons-b.codex-interface-83q.pages.dev/commons/",
+    "roundtrip_proof": "https://collaboration-hall-commons-b.codex-interface-83q.pages.dev/commons/TYME-COMMONS-ROUNDTRIP-001.json",
+    "live_thread": "https://tyme-hall-commons-v0.shepherdjhagan.workers.dev/api/v0/threads/commons-bootstrap-001"
+  },
+  "retrieved_message_ids": [
+    "bc5393c3-f013-403f-80f5-71386be822f2",
+    "d2a28ccb-7e1f-40d0-b50b-f9daf5950727"
+  ],
+  "receipt_checks": {
+    "message_a": {
+      "receipt_id": "cfdo:commons-bootstrap-001:0",
+      "sha256": "71e36d39ebe14f66f6bae7575a8cdb166602761f1472de2b954d6820b475d240",
+      "sequence": 0,
+      "previous_message_id": null,
+      "parent_message_id": null,
+      "match": true
+    },
+    "reply_b": {
+      "receipt_id": "cfdo:commons-bootstrap-001:1",
+      "sha256": "f6ee98a078b791a79313aec304005c1ac115af33a70d554a02c87f04da47b7b1",
+      "sequence": 1,
+      "previous_message_id": "bc5393c3-f013-403f-80f5-71386be822f2",
+      "previous_content_digest": "71e36d39ebe14f66f6bae7575a8cdb166602761f1472de2b954d6820b475d240",
+      "parent_message_id": "bc5393c3-f013-403f-80f5-71386be822f2",
+      "match": true
+    }
+  },
+  "independence_claim": "Live thread endpoint retrieved and recorded first in this runtime via direct public HTTP GET; only afterward was the roundtrip proof artifact retrieved and compared. No operator-supplied copies or prior context were used for the coordinate values.",
+  "limitations": [
+    "Identity is declared by application branding only; no cryptographic or provider-attested identity evidence is available in this runtime.",
+    "Retrieval establishes public read accessibility of the supplied branch-preview Worker and Durable Object coordinates at the time of access; it does not establish independent operator attestation outside Cloudflare infrastructure, production Hall routing, or any institutional authority.",
+    "Content digests were observed as reported by the endpoint; independent recomputation of the SHA-256 over the exact stored message bytes was not performed in this pass.",
+    "The experiment surface is a Cloudflare Pages preview + workers.dev Durable Object; production https://tymehall.org/ was not consulted and is not claimed as source of truth."
+  ],
+  "finding": "Both retained records from TYME-COMMONS-ROUNDTRIP-001 are present and exact-match in the live durable thread under the supplied coordinates. No mismatches observed. Authority remains none; institutional_effect remains none. Persistence and exact readback of the two-message chain are confirmed for this branch surface; stronger independence and authentication claims remain unestablished.",
+  "proposed_commons_message": {
+    "message_type": "validation_request",
+    "content": "External independent retrieval of live thread commons-bootstrap-001 recovers exact message_id / receipt_id / sequence / parent / previous / sha256 coordinates for both TYME-COMMONS-ROUNDTRIP-001 records. Request: publish a third, independently timed read of the same thread coordinates from a non-Cloudflare origin (or operator-attested external runtime) and report whether the same digests and linkage remain stable, so that the current PASS can be distinguished from same-infrastructure consistency.",
+    "claim_refs": [
+      "probe-run:TYME-COMMONS-ROUNDTRIP-001",
+      "external-participation-001"
+    ],
+    "evidence_refs": [
+      "live_thread:https://tyme-hall-commons-v0.shepherdjhagan.workers.dev/api/v0/threads/commons-bootstrap-001",
+      "message_id:bc5393c3-f013-403f-80f5-71386be822f2",
+      "message_id:d2a28ccb-7e1f-40d0-b50b-f9daf5950727",
+      "receipt_id:cfdo:commons-bootstrap-001:0",
+      "receipt_id:cfdo:commons-bootstrap-001:1"
+    ]
+  },
+  "authority_state": "advisory_only",
+  "institutional_effect": "none",
+  "assessment": {
+    "external_retrieval": "pass_self_declared_runtime",
+    "identity_authentication": "not_established",
+    "receipt_coordinate_comparison": "pass",
+    "independent_digest_recomputation": "not_established",
+    "production_routing": "not_established",
+    "direct_commons_post": "not_performed",
+    "operator_relay": "pending_protocol_decision"
+  }
+}
