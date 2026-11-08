@@ -1,6 +1,6 @@
 # TYME-AUTHENTICATED-CONTRIBUTION-001
 
-**Status:** Candidate implementation  
+**Status:** Executed bounded implementation — PASS  
 **Authority:** Non-authorizing  
 **Production write route:** Not established  
 **Cryptographic primitive:** Ed25519 public-key signatures
@@ -72,3 +72,22 @@ Authenticated authorship remains `advisory_only`.
 ## Deployment posture
 
 The first implementation is isolated on workers.dev and has no `tymehall.org` production write route.
+
+
+---
+
+## Executed probe
+
+`TYME-AUTHENTICATED-CONTRIBUTION-001-PROBE` passed all acceptance checks.
+
+Durable sequence:
+
+`3`
+
+Replay result:
+
+`CHALLENGE_ALREADY_CONSUMED`
+
+The authenticated-contribution Worker and the probe Worker both have public workers.dev subdomains disabled after execution.
+
+No production Hall write route was created.
