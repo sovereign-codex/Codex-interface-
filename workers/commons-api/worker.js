@@ -157,17 +157,6 @@ export class CommonsThread extends DurableObject {
   }
 
   async postMessage(input) {
-    const count = this.sql.exec(
-      "SELECT COUNT(*) AS n FROM messages"
-    ).one().n;
-    if (count >= MAX_MESSAGES) {
-      return {
-        ok: false,
-        error: "THREAD_CAP_REACHED",
-        message: "Bootstrap room reached its hard message cap."
-      };
-    }
-
     const parentId = input.parent_message_id ?? null;
     if (parentId !== null) {
       const parent = this.sql.exec(
@@ -183,11 +172,6 @@ export class CommonsThread extends DurableObject {
       }
     }
 
-    const last = this.sql.exec(
-      "SELECT sequence, message_id, content_digest FROM messages ORDER BY sequence DESC LIMIT 1"
-    ).toArray()[0] ?? null;
-
-    const nextSequence = last ? Number(last.sequence) + 1 : 0;
     const now = new Date().toISOString();
     const messageId = crypto.randomUUID();
 
@@ -228,10 +212,27 @@ export class CommonsThread extends DurableObject {
       ]
     };
 
+    // Hash before reading the mutable chain head. After this await completes,
+    // the chain-head read, cap check, sequence assignment and insert execute
+    // synchronously in one Durable Object turn.
     const digest = await sha256Hex(canonicalMessageForDigest(message));
 
-    // No awaits occur between reading the current chain head and this insert.
-    // This keeps sequence and previous-digest linkage within one DO turn.
+    const count = this.sql.exec(
+      "SELECT COUNT(*) AS n FROM messages"
+    ).one().n;
+    if (count >= MAX_MESSAGES) {
+      return {
+        ok: false,
+        error: "THREAD_CAP_REACHED",
+        message: "Bootstrap room reached its hard message cap."
+      };
+    }
+
+    const last = this.sql.exec(
+      "SELECT sequence, message_id, content_digest FROM messages ORDER BY sequence DESC LIMIT 1"
+    ).toArray()[0] ?? null;
+    const nextSequence = last ? Number(last.sequence) + 1 : 0;
+
     this.sql.exec(
       `INSERT INTO messages
         (sequence, message_id, parent_message_id, created_at, stored_at,
