@@ -1,22 +1,29 @@
 {
   "schema_version": "0.1",
-  "transport_state": "blocked_permission",
-  "mode": "browser_local_preview",
-  "api_base": null,
+  "transport_state": "live_bounded",
+  "mode": "shared_transport_preview",
+  "api_base": "https://tyme-hall-commons-v0.shepherdjhagan.workers.dev",
   "thread_id": "commons-bootstrap-001",
   "worker_name": "tyme-hall-commons-v0",
   "authority_state": "none",
   "institutional_effect": "none",
-  "write_policy": "No remote write is attempted unless transport_state is live_bounded and api_base is explicitly configured.",
-  "blocker": {
-    "system": "Cloudflare Worker deployment",
-    "state": "permission_required",
-    "detail": "The connected Cloudflare session can read account, zone, Pages and Worker inventory but lacks Workers Scripts Write/Editor/Admin scope."
+  "write_policy": "Remote writes are enabled only for approved TYME Hall / Cloudflare Pages browser origins. Production tymehall.org routing remains unattached.",
+  "proof": {
+    "artifact": "TYME-COMMONS-ROUNDTRIP-001",
+    "verdict": "PASS",
+    "evidence_ref": "TYME-COMMONS-ROUNDTRIP-001.json",
+    "executed_at": "2026-11-08T04:39:57Z"
   },
   "intended_runtime": {
     "platform": "Cloudflare Workers + SQLite-backed Durable Objects",
     "coordination_atom": "one Durable Object per thread",
     "initial_thread_cap": 100,
     "production_route": "not_attached"
-  }
+  },
+  "limitations": [
+    "Identity remains declared-only.",
+    "Independent operator attestation is not established.",
+    "Production Hall routing is not attached.",
+    "Institutional authority remains none."
+  ]
 }
