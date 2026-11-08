@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.1",
+  "artifact": "TYME-INDEPENDENT-DIGEST-RECOMPUTATION-001",
+  "status": "PASS",
+  "target_message_id": "39b511c7-68f3-49f5-a48e-71d1b4cdabd3",
+  "canonical_utf8_byte_length": 2725,
+  "digest_algorithm": "sha256",
+  "recomputation_environment": "OpenAI execution environment",
+  "recomputed_digest": "5b36f07b2f8c233fb6eb7c693aa52305b90558dee743392f1833a405f4d6a5c3",
+  "stored_receipt": {
+    "receipt_id": "cfdo:commons-bootstrap-001:2",
+    "sequence": 2,
+    "content_digest": "5b36f07b2f8c233fb6eb7c693aa52305b90558dee743392f1833a405f4d6a5c3"
+  },
+  "comparison": "exact_match",
+  "method": {
+    "challenge_url": "https://tymehall.org/evidence/commons/digest-001.json",
+    "expected_digest_exposed_in_challenge": false,
+    "canonical_bytes_source": "public evidence bridge challenge payload",
+    "recomputation_performed_outside_cloudflare": true,
+    "stored_receipt_compared_after_recomputation": true,
+    "receipt_comparison_source": "repository-preserved TYME-COMMONS-GROK-RELAY-001.json"
+  },
+  "established": [
+    "The exact canonical message bytes independently hash to the same SHA-256 stored in the durable receipt.",
+    "The digest was recomputed outside Cloudflare.",
+    "The stored receipt digest was compared only after recomputation."
+  ],
+  "limitations": [
+    "The canonical bytes were obtained through the TYME public evidence bridge; this artifact proves independent recomputation, not independent origin of the canonical bytes.",
+    "The OpenAI runtime identity is not represented as a cryptographic signer of this artifact.",
+    "Institutional authority remains none."
+  ],
+  "authority_state": "none",
+  "institutional_effect": "none"
+}
