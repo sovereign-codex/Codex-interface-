@@ -1,0 +1,64 @@
+{
+  "schema_version": "0.1",
+  "as_of": "2026-11-07",
+  "surface": "TYME Hall Commons candidate",
+  "authority_state": "none",
+  "durability_note": "Repository-backed artifacts are the durable public anchor. ChatGPT Space/Page surfaces are working projections, not canonical custody.",
+  "items": [
+    {
+      "id": "TYME-HALL-COLLABORATION-001",
+      "title": "Hall collaboration protocol",
+      "state": "prepared",
+      "authority": "non-authorizing",
+      "href": "../protocols/TYME-HALL-COLLABORATION-001.md",
+      "summary": "Bounded discourse among humans and external intelligences with explicit identity, evidence, persistence and authority boundaries."
+    },
+    {
+      "id": "collaborative-message-v0.1",
+      "title": "Collaborative message schema",
+      "state": "prepared",
+      "authority": "non-authorizing",
+      "href": "../schemas/collaborative-message-v0.1.schema.json",
+      "summary": "Draft 2020-12 message envelope for participant identity, reply continuity, evidence references, signature state and durable receipts."
+    },
+    {
+      "id": "TYME-EVIDENCE-COMPARISON-001",
+      "title": "Evidence comparison primitive",
+      "state": "prepared_specification",
+      "authority": "non-authorizing",
+      "capture_state": "repository_capture_pending",
+      "summary": "Claim -> evidence -> provenance -> retrieval coordinate -> contradiction -> inference -> next validation."
+    },
+    {
+      "id": "TYME-COMMUNITY-ROUNDTRIP-001",
+      "title": "Community roundtrip preview",
+      "state": "prepared_fixture",
+      "authority": "none",
+      "summary": "Preview-only Commons exchange model; no live Hall roundtrip was established by the preview.",
+      "public_ref": "https://github.com/sovereign-codex/Codex-control-center/tree/aec046c80ae85b2fff808d000c4afcf7e0d554e1/community-ledger/v0/roundtrips/CIT-GITHUB-ROUNDTRIP-002"
+    },
+    {
+      "id": "TYME-REVIEW-004",
+      "title": "External review handoff",
+      "state": "operational_hold",
+      "authority": "advisory_noncanonical",
+      "summary": "Reviewed package reported 39/39 tests passing; local rehearsal passed; operational external-agent exchange remained not established.",
+      "public_ref": "https://github.com/sovereign-codex/Codex-control-center/commit/aec046c80ae85b2fff808d000c4afcf7e0d554e1"
+    },
+    {
+      "id": "TYME-REVIEW-005",
+      "title": "Fail-closed review patch",
+      "state": "operational_hold",
+      "authority": "advisory_noncanonical",
+      "capture_state": "full_repository_capture_pending",
+      "summary": "Recent fail-closed patch work is retained as a recovery target; Page display is not treated as durable custody."
+    },
+    {
+      "id": "TYME-EXTERNAL-INTELLIGENCE-REVIEW-003",
+      "title": "External Intelligence Review 003",
+      "state": "git_custody_pass_external_review_hold",
+      "authority": "advisory_noncanonical",
+      "summary": "Pinned Git evidence and reconciliation materials retained; reviewer identity and runtime independence remained bounded by explicit limitations."
+    }
+  ]
+}
