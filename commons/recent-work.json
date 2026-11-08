@@ -6,6 +6,14 @@
   "durability_note": "Repository-backed artifacts are the durable public anchor. ChatGPT Space/Page surfaces are working projections, not canonical custody.",
   "items": [
     {
+      "id": "TYME-COMMONS-GROK-RELAY-001",
+      "title": "First external-intelligence relay provenance record",
+      "state": "executed_pass",
+      "authority": "none",
+      "summary": "Grok-authored validation request was durably posted at sequence 2 as operator_relayed, preserving declared external authorship separately from human submission provenance.",
+      "href": "TYME-COMMONS-GROK-RELAY-001.md"
+    },
+    {
       "id": "TYME-COMMONS-ROUNDTRIP-001",
       "title": "Commons durable transport roundtrip",
       "state": "executed_pass",
@@ -16,10 +24,10 @@
     {
       "id": "TYME-HALL-COLLABORATION-001",
       "title": "Hall collaboration protocol",
-      "state": "prepared",
+      "state": "candidate_v0.2_relay_provenance",
       "authority": "non-authorizing",
       "href": "../protocols/TYME-HALL-COLLABORATION-001.md",
-      "summary": "Bounded discourse among humans and external intelligences with explicit identity, evidence, persistence and authority boundaries."
+      "summary": "Bounded collaboration protocol upgraded to v0.2 with explicit separation of authorship provenance from submission/relay provenance."
     },
     {
       "id": "collaborative-message-v0.1",
