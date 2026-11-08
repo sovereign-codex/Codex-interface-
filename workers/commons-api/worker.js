@@ -211,6 +211,7 @@ export class CommonsThread extends DurableObject {
 
     const now = new Date().toISOString();
     const messageId = crypto.randomUUID();
+    const verifiedIdentity = trustedVerifiedContribution(request, this.env, input);
 
     const message = {
       schema_version: "0.2",
@@ -218,7 +219,7 @@ export class CommonsThread extends DurableObject {
       thread_id: THREAD_ID,
       parent_message_id: parentId,
       participant: {
-        participant_id: "declared:" + crypto.randomUUID(),
+        participant_id: verifiedIdentity?.participant_id || "declared:" + crypto.randomUUID(),
         participant_class: input.participant.participant_class,
         declared_identity: input.participant.declared_identity.trim(),
         provider_or_operator:
@@ -226,9 +227,9 @@ export class CommonsThread extends DurableObject {
           input.participant.provider_or_operator.trim()
             ? input.participant.provider_or_operator.trim().slice(0, 120)
             : null,
-        authentication_state: "declared",
-        authentication_method: null,
-        identity_evidence_refs: []
+        authentication_state: verifiedIdentity ? "cryptographically_attested" : "declared",
+        authentication_method: verifiedIdentity ? "ed25519_challenge_signature" : null,
+        identity_evidence_refs: verifiedIdentity ? normalizeRefs(verifiedIdentity.identity_evidence_refs) : []
       },
       created_at: now,
       content: input.content.trim(),
@@ -240,7 +241,7 @@ export class CommonsThread extends DurableObject {
       validation_refs: normalizeRefs(input.validation_refs),
       confidence: "unknown",
       independence_state: "unknown",
-      signature_state: "unsigned",
+      signature_state: verifiedIdentity ? "verified" : "unsigned",
       authority_state: "advisory_only",
       authorship: {
         author_participant_id:
@@ -248,7 +249,7 @@ export class CommonsThread extends DurableObject {
             ? input.authorship.author_participant_id.trim().slice(0, 160)
             : "declared:" + crypto.randomUUID(),
         declared_author: input.authorship.declared_author.trim(),
-        author_identity_state: input.authorship.author_identity_state,
+        author_identity_state: verifiedIdentity ? "cryptographically_attested" : input.authorship.author_identity_state,
         source_artifact_ref:
           typeof input.authorship.source_artifact_ref === "string" && input.authorship.source_artifact_ref.trim()
             ? input.authorship.source_artifact_ref.trim().slice(0, 500)
@@ -258,8 +259,8 @@ export class CommonsThread extends DurableObject {
       submission: {
         submitted_by: input.submission.submitted_by.trim(),
         submission_actor_class: input.submission.submission_actor_class,
-        submission_identity_state: input.submission.submission_identity_state,
-        relay_state: input.submission.relay_state,
+        submission_identity_state: verifiedIdentity ? "cryptographically_attested" : input.submission.submission_identity_state,
+        relay_state: verifiedIdentity ? "direct" : input.submission.relay_state,
         relay_method:
           typeof input.submission.relay_method === "string" && input.submission.relay_method.trim()
             ? input.submission.relay_method.trim().slice(0, 300)
@@ -267,7 +268,7 @@ export class CommonsThread extends DurableObject {
         relay_evidence_refs: normalizeRefs(input.submission.relay_evidence_refs)
       },
       limitations: [
-        "Identity is declared, not authenticated.",
+        verifiedIdentity ? "Identity key possession was cryptographically verified by TYME authenticated-contribution gateway." : "Identity is declared, not authenticated.",
         "Bootstrap room has no institutional authority.",
         "Message persistence does not promote message content to verified evidence.",
         "Authorship provenance and submission provenance are recorded separately for v0.2 messages."
