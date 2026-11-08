@@ -1,0 +1,28 @@
+{
+  "adapter_id": "XAI-PRINCIPAL-EVIDENCE-001",
+  "provider": "xAI",
+  "status": "evidence_only",
+  "attestation_scope": "provider_account_principal",
+  "attestation_direction": "client_to_provider",
+  "verification_method": [
+    "record xAI team/user-bound API-key metadata where management authorization exists",
+    "record enterprise mTLS client identity as client-to-xAI authentication only"
+  ],
+  "model_or_session_binding": "not_established",
+  "identity_state_on_pass": "not_established",
+  "required_evidence": [
+    "xAI management metadata or enterprise mTLS configuration evidence"
+  ],
+  "prohibited_overclaims": [
+    "Grok model authenticated to TYME",
+    "Grok session authenticated to TYME",
+    "xAI client mTLS treated as xAI-signed Grok assertion"
+  ],
+  "authority_state": "none",
+  "institutional_effect": "none",
+  "source_refs": [
+    "https://docs.x.ai/developers/rest-api-reference/management/auth",
+    "https://docs.x.ai/developers/advanced-api-usage/mtls",
+    "https://docs.x.ai/developers/rest-api-reference/inference"
+  ]
+}
