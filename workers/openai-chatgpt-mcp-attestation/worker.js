@@ -283,6 +283,67 @@ export default{
       }
     }
 
+
+    if(url.pathname==="/api/v0/test/verify-client-assertion"&&request.method==="POST"){
+      if(request.headers.get("x-tyme-test-token")!==env.TEST_PROBE_TOKEN){
+        return json({ok:false,error:"TEST_PROBE_TOKEN_REQUIRED"},403);
+      }
+      let input;
+      try{input=await request.json();}catch{return json({ok:false,error:"INVALID_JSON"},400);}
+      try{
+        const verified=await verifyJwtWithJwks(
+          input.client_assertion,
+          input.jwks,
+          {
+            client_id:input.expected_client_id,
+            authorization_server_issuer:input.authorization_server_issuer,
+            token_endpoint:input.token_endpoint
+          }
+        );
+        const assertionDigest=await sha256Hex(input.client_assertion);
+        const replayKey=typeof verified.claims.jti==="string"&&verified.claims.jti
+          ?"jti:"+verified.claims.jti
+          :"sha256:"+assertionDigest;
+        const record={
+          schema_version:"0.1",
+          adapter_id:ADAPTER_ID,
+          provider:"OpenAI-test-fixture",
+          product:"ChatGPT-test-fixture",
+          attestation_scope:"provider_transport_client",
+          attestation_direction:"provider_to_tyme",
+          verification_method:"synthetic_private_key_jwt_same_verifier",
+          client_id:input.expected_client_id,
+          client_name:"Synthetic ChatGPT Fixture",
+          kid:verified.header.kid,
+          algorithm:"RS256",
+          assertion_digest:assertionDigest,
+          jti:typeof verified.claims.jti==="string"?verified.claims.jti:null,
+          issued_at:typeof verified.claims.iat==="number"?verified.claims.iat:null,
+          expires_at:verified.claims.exp,
+          audience_profile:verified.audience_profile,
+          client_document_digest:"test-fixture",
+          jwks_uri:"test-fixture",
+          jwks_document_digest:"test-fixture",
+          tyme_binding:{
+            participant_id:input.binding_context?.participant_id||"test-participant",
+            connection_id:input.binding_context?.connection_id||"test-connection",
+            binding_authority:"tyme_oauth_server",
+            provider_signed:false
+          },
+          model_runtime_state:"not_established",
+          session_state:"not_established",
+          institutional_authority_state:"none",
+          limitations:["Synthetic test fixture only."]
+        };
+        const store=env.EVIDENCE.getByName("openai-chatgpt-test");
+        const stored=await store.consumeAndStore(replayKey,verified.claims.exp,record);
+        if(!stored.ok)return json(stored,409);
+        return json({ok:true,state:"provider_attested",attestation:record,stored_at:stored.stored_at},201);
+      }catch(e){
+        return json({ok:false,error:"TEST_ASSERTION_VERIFICATION_FAILED",message:String(e)},401);
+      }
+    }
+
     return json({ok:false,error:"NOT_FOUND"},404);
   }
 };
