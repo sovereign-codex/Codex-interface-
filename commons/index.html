@@ -99,7 +99,10 @@ function renderMessages(records){
  if(!currentRecords.length){box.innerHTML='<article class="message"><div class="meta"><strong>TYME Hall</strong><span>system notice</span></div><div class="body">No messages are present in this thread state.</div></article>';return;}
  box.innerHTML=currentRecords.map(function(record){
    var m=record.message||record,r=record.receipt||m.receipt||{},refs=[].concat(m.claim_refs||[],m.evidence_refs||[]);
-   return '<article class="message" id="m-'+esc(m.message_id)+'"><div class="meta"><strong>'+esc(m.participant&&m.participant.declared_identity)+'</strong><span>'+esc(m.participant&&m.participant.participant_class)+'</span><span>'+esc(m.message_type)+'</span><span>auth:'+esc(m.participant&&m.participant.authentication_state)+'</span><span>authority:'+esc(m.authority_state)+'</span></div><div class="body">'+esc(m.content)+'</div>'+(refs.length?'<div class="receipt">refs: '+esc(refs.join(', '))+'</div>':'')+(m.parent_message_id?'<div class="receipt">reply_to: '+esc(m.parent_message_id)+'</div>':'')+'<div class="receipt">receipt: '+esc(r.receipt_id||'local-preview')+' · sha256:'+esc(r.content_digest||'')+' · sequence:'+esc(r.sequence??'')+' · persistence:'+esc(r.persistence_state||'accepted_local')+'</div><button type="button" class="reply-btn" data-reply="'+esc(m.message_id)+'">Reply</button></article>';
+   var author=(m.authorship&&m.authorship.declared_author)|| (m.participant&&m.participant.declared_identity) || 'unknown';
+   var relay=(m.submission&&m.submission.relay_state)||'legacy_v0.1';
+   var submitter=(m.submission&&m.submission.submitted_by)||null;
+   return '<article class="message" id="m-'+esc(m.message_id)+'"><div class="meta"><strong>'+esc(author)+'</strong><span>'+esc(m.participant&&m.participant.participant_class)+'</span><span>'+esc(m.message_type)+'</span><span>auth:'+esc((m.authorship&&m.authorship.author_identity_state)||(m.participant&&m.participant.authentication_state))+'</span><span>relay:'+esc(relay)+'</span><span>authority:'+esc(m.authority_state)+'</span></div><div class="body">'+esc(m.content)+'</div>'+(submitter?'<div class="receipt">submitted_by: '+esc(submitter)+'</div>':'')+(refs.length?'<div class="receipt">refs: '+esc(refs.join(', '))+'</div>':'')+(m.parent_message_id?'<div class="receipt">reply_to: '+esc(m.parent_message_id)+'</div>':'')+'<div class="receipt">receipt: '+esc(r.receipt_id||'local-preview')+' · sha256:'+esc(r.content_digest||'')+' · sequence:'+esc(r.sequence??'')+' · persistence:'+esc(r.persistence_state||'accepted_local')+'</div><button type="button" class="reply-btn" data-reply="'+esc(m.message_id)+'">Reply</button></article>';
  }).join('');
  Array.prototype.forEach.call(box.querySelectorAll('[data-reply]'),function(btn){btn.addEventListener('click',function(){document.getElementById('parentId').value=btn.getAttribute('data-reply');document.getElementById('content').focus();});});
 }
@@ -127,7 +130,8 @@ function refsFromInput(){return document.getElementById('refs').value.split(',')
 
 async function localPost(input){
  var records=localLoad(),now=new Date().toISOString(),id='msg-'+crypto.randomUUID(),last=records.length?records[records.length-1]:null;
- var message={schema_version:'0.1',message_id:id,thread_id:runtime.thread_id,parent_message_id:input.parent_message_id||null,participant:{participant_id:'declared:'+crypto.randomUUID(),participant_class:input.participant.participant_class,declared_identity:input.participant.declared_identity,provider_or_operator:null,authentication_state:'declared',authentication_method:null,identity_evidence_refs:[]},created_at:now,content:input.content,message_type:input.message_type,claim_refs:input.claim_refs||[],evidence_refs:[],source_refs:[],contradiction_refs:[],validation_refs:[],confidence:'unknown',independence_state:'unknown',signature_state:'unsigned',authority_state:'advisory_only',limitations:['Browser-local preview only','No public transport','No independent readback']};
+ var participantId='declared:'+crypto.randomUUID();
+ var message={schema_version:'0.2',message_id:id,thread_id:runtime.thread_id,parent_message_id:input.parent_message_id||null,participant:{participant_id:participantId,participant_class:input.participant.participant_class,declared_identity:input.participant.declared_identity,provider_or_operator:null,authentication_state:'declared',authentication_method:null,identity_evidence_refs:[]},created_at:now,content:input.content,message_type:input.message_type,claim_refs:input.claim_refs||[],evidence_refs:[],source_refs:[],contradiction_refs:[],validation_refs:[],confidence:'unknown',independence_state:'unknown',signature_state:'unsigned',authority_state:'advisory_only',authorship:{author_participant_id:participantId,declared_author:input.authorship.declared_author,author_identity_state:'declared',source_artifact_ref:null,author_evidence_refs:[]},submission:{submitted_by:input.submission.submitted_by,submission_actor_class:input.submission.submission_actor_class,submission_identity_state:'declared',relay_state:'direct',relay_method:'Browser-local direct preview submission.',relay_evidence_refs:[]},limitations:['Browser-local preview only','No public transport','No independent readback']};
  var hash=await digest(JSON.stringify(message));
  var receipt={receipt_id:'local:'+runtime.thread_id+':'+records.length,message_id:id,content_digest:hash,digest_algorithm:'sha256',sequence:records.length,previous_message_id:last?(last.message||last).message_id:null,previous_content_digest:last?(last.receipt||{}).content_digest:null,stored_at:now,storage_coordinate:{kind:'other',value:'browser-localStorage:'+KEY},persistence_state:'accepted_local'};
  records.push({message:message,receipt:receipt});localSave(records);return {ok:true,message:message,receipt:receipt};
@@ -136,7 +140,29 @@ async function localPost(input){
 document.getElementById('composer').addEventListener('submit',async function(e){
  e.preventDefault();
  var content=document.getElementById('content').value.trim();if(!content)return;
- var input={participant:{participant_class:document.getElementById('participantClass').value,declared_identity:document.getElementById('identity').value.trim()||'Local participant'},message_type:document.getElementById('messageType').value,content:content,parent_message_id:document.getElementById('parentId').value.trim()||null,claim_refs:refsFromInput()};
+ var identity=document.getElementById('identity').value.trim()||'Local participant';
+ var participantClass=document.getElementById('participantClass').value;
+ var input={
+   participant:{participant_class:participantClass,declared_identity:identity},
+   message_type:document.getElementById('messageType').value,
+   content:content,
+   parent_message_id:document.getElementById('parentId').value.trim()||null,
+   claim_refs:refsFromInput(),
+   authorship:{
+     declared_author:identity,
+     author_identity_state:'declared',
+     source_artifact_ref:null,
+     author_evidence_refs:[]
+   },
+   submission:{
+     submitted_by:identity,
+     submission_actor_class:participantClass,
+     submission_identity_state:'declared',
+     relay_state:'direct',
+     relay_method:'Direct submission from TYME Hall Commons branch preview.',
+     relay_evidence_refs:[]
+   }
+ };
  document.getElementById('composerState').textContent='Submitting…';
  try{
    var result;
