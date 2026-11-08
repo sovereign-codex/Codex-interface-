@@ -6,6 +6,14 @@
   "durability_note": "Repository-backed artifacts are the durable public anchor. ChatGPT Space/Page surfaces are working projections, not canonical custody.",
   "items": [
     {
+      "id": "TYME-AUTHENTICATED-CONTRIBUTION-001",
+      "title": "Authenticated direct contribution",
+      "state": "executed_pass",
+      "authority": "none",
+      "summary": "Ed25519-enrolled participant completed a one-time challenge, direct signed contribution persisted at sequence 3, cryptographic identity state was preserved, and replay was rejected. No production write route created.",
+      "href": "TYME-AUTHENTICATED-CONTRIBUTION-001.md"
+    },
+    {
       "id": "TYME-MACHINE-GATEWAY-001",
       "title": "Public machine discovery gateway",
       "state": "deployed_read_only",
