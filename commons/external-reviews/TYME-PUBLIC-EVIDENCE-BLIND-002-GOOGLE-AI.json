@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.1",
+  "artifact": "TYME-PUBLIC-EVIDENCE-BLIND-002-GOOGLE-AI",
+  "observed_at": "2026-11-08T06:35:00.227Z",
+  "challenge_id": "TYME-PUBLIC-EVIDENCE-BLIND-002",
+  "returned_values": {
+    "opaque_token": "TYME-BLIND2-R6W3-N9KC-4JQ8",
+    "live_thread_sequence_count": 3,
+    "latest_message_id": "39b511c7-68f3-49f5-a48e-71d1b4cdabd3",
+    "latest_receipt_id": "cfdo:commons-bootstrap-001:2",
+    "latest_sequence": 2,
+    "latest_content_digest": "5b36f07b2f8c233fb6eb7c693aa52305b90558dee743392f1833a405f4d6a5c3",
+    "live_state_snapshot_digest": "fbe7a9e0e3dc253b38411a7acf1555c96e03e4cc9a660da2481ed60c67f5aa15",
+    "live_source": "service-binding:tyme-hall-commons-v0"
+  },
+  "google_ai_self_report": {
+    "retrieval_state": "operator_relayed",
+    "retrieval_mechanism": "external URL blocked/inaccessible via primary browsing environment; content extracted from user-provided file context"
+  },
+  "cloudflare_server_observation": {
+    "request_time": "2026-11-08T06:35:00.227Z",
+    "method": "GET",
+    "url": "https://tymehall.org/evidence/commons/blind-002.json",
+    "status": 200,
+    "as_organization": "Google LLC",
+    "asn": 15169,
+    "user_agent": "Google-Lens",
+    "colo": "SEA",
+    "country": "US",
+    "trace_id": "14ec45c52359e14e929930b25029f7e9",
+    "request_id": "87df3c882c651f441427ec64559576a1",
+    "internal_fetch": "https://commons.internal/api/v0/threads/commons-bootstrap-001",
+    "internal_fetch_status": 200
+  },
+  "classification": "provider_mediated_retrieval",
+  "finding": "Cloudflare observed an actual Google-origin GET for blind-002.json at the exact timestamp returned by Google AI. The request reached the first-party evidence bridge, which internally fetched the live Commons thread and returned current state. This establishes provider-mediated retrieval of live Hall evidence. Direct model-origin network access remains unestablished.",
+  "authority_state": "advisory_only",
+  "institutional_effect": "none",
+  "limitations": [
+    "The request is attributable to Google infrastructure, not cryptographically to a specific Gemini model instance.",
+    "User agent Google-Lens identifies a Google retrieval surface but does not authenticate model identity.",
+    "Direct model-runtime HTTP access is still not established; the evidence supports provider-mediated retrieval."
+  ]
+}
