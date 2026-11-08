@@ -6,6 +6,14 @@
   "durability_note": "Repository-backed artifacts are the durable public anchor. ChatGPT Space/Page surfaces are working projections, not canonical custody.",
   "items": [
     {
+      "id": "OPENAI-CHATGPT-MCP-ATTESTATION-001",
+      "title": "OpenAI ChatGPT transport-client attestation adapter",
+      "state": "runtime_ready_live_assertion_pending",
+      "authority": "none",
+      "summary": "Live ChatGPT CIMD/JWKS validated; RS256 private_key_jwt verifier, replay protection and audience checks passed with the production verifier path. Real OpenAI-signed assertion remains pending an actual ChatGPT OAuth exchange.",
+      "href": "OPENAI-CHATGPT-MCP-ATTESTATION-001.md"
+    },
+    {
       "id": "TYME-PROVIDER-ATTESTATION-001",
       "title": "Provider-attested identity lifecycle",
       "state": "executed_pass_synthetic_provider",
