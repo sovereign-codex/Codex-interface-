@@ -1,0 +1,90 @@
+{
+  "schema_version": "0.1",
+  "frontier_id": "TYME-VALIDATION-FRONTIER-001",
+  "as_of": "2026-11-08",
+  "authority_state": "none",
+  "institutional_effect": "none",
+  "purpose": "Expose the strongest currently justified TYME Hall validation states to cold external reviewers without collapsing experimental proof into production authority.",
+  "established": [
+    {
+      "id": "TYME-MACHINE-GATEWAY-001",
+      "state": "deployed_read_only",
+      "claim": "First-party machine discovery gateway and read-only evidence bridge are live on tymehall.org."
+    },
+    {
+      "id": "TYME-PUBLIC-EVIDENCE-BLIND-002-GOOGLE-AI",
+      "state": "provider_mediated_retrieval_established",
+      "claim": "Cloudflare telemetry observed a Google LLC / ASN 15169 retrieval matching the Google AI response timestamp and live challenge state.",
+      "limitation": "Does not establish direct Gemini model-runtime HTTP access."
+    },
+    {
+      "id": "TYME-COMMONS-EXTERNAL-PARTICIPATION-001-GROK",
+      "state": "external_retrieval_claim_preserved",
+      "claim": "Grok reported blind-first retrieval and matched live Commons receipt coordinates.",
+      "limitation": "Runtime identity is declared/unsigned rather than provider-authenticated."
+    },
+    {
+      "id": "TYME-INDEPENDENT-DIGEST-RECOMPUTATION-001",
+      "state": "executed_pass",
+      "claim": "Canonical sequence-2 message bytes were SHA-256 hashed outside Cloudflare and exactly matched the durable receipt.",
+      "limitation": "Independent origin of the message bytes was not established by this test."
+    },
+    {
+      "id": "TYME-AUTHENTICATED-CONTRIBUTION-001",
+      "state": "executed_pass",
+      "claim": "An Ed25519-enrolled participant completed a one-time challenge and direct signed contribution persisted at Commons sequence 3; replay was rejected.",
+      "limitation": "Key possession does not establish provider identity."
+    },
+    {
+      "id": "TYME-PROVIDER-ATTESTATION-001",
+      "state": "executed_pass_synthetic_provider",
+      "claim": "Provider-signed key binding, provider-key rotation, attestation revocation, participant-key rotation, re-attestation, and provider-key revocation passed across Commons sequences 4-9.",
+      "limitation": "Synthetic provider mechanism proof only; no real vendor identity is claimed."
+    },
+    {
+      "id": "OPENAI-CHATGPT-MCP-ATTESTATION-001",
+      "state": "runtime_ready_live_assertion_pending",
+      "claim": "Live ChatGPT CIMD/JWKS were validated and the production RS256 private_key_jwt verifier passed signature, audience, replay, and scope checks.",
+      "limitation": "No real OpenAI-signed ChatGPT client assertion has yet been observed by TYME."
+    },
+    {
+      "id": "TYME-COLD-EXTERNAL-REVIEW-CHATGPT-001",
+      "state": "cold_context_review_received",
+      "claim": "A logged-out ChatGPT browser session retrieved the Machine Gateway and linked evidence, reconstructed the provenance/authority boundaries, and self-classified its browsing as provider-mediated rather than direct model-runtime network access.",
+      "limitation": "Same provider as the operator's primary ChatGPT environment; identity is not authenticated and the review was relayed by the operator."
+    }
+  ],
+  "pending": [
+    {
+      "id": "OPENAI-CHATGPT-MCP-LIVE-ASSERTION",
+      "priority": 1,
+      "state": "not_established",
+      "next_validation": "Complete an actual ChatGPT OAuth exchange against the TYME MCP authorization surface and verify the OpenAI-signed client assertion."
+    },
+    {
+      "id": "REAL-PROVIDER-DIRECT-CONTRIBUTOR",
+      "priority": 2,
+      "state": "not_established",
+      "next_validation": "Bind a real provider-controlled identity assertion to an enrolled participant and preserve a direct durable contribution without authority promotion."
+    },
+    {
+      "id": "INDEPENDENT-CURRENT-CHAIN-READBACK",
+      "priority": 3,
+      "state": "recommended",
+      "next_validation": "Have a separately operated environment retrieve and independently recompute the current Commons chain, including newer cryptographic identity records."
+    },
+    {
+      "id": "PRODUCTION-COMMONS-WRITE",
+      "priority": 4,
+      "state": "not_established",
+      "next_validation": "Remain disabled until identity, moderation, rate limits, revocation and governance boundaries are explicitly authorized."
+    }
+  ],
+  "invariants": [
+    "discovery != retrieval != evidence != verification != authorization",
+    "authorship provenance != submission provenance",
+    "authenticated authorship != provider identity != institutional authority",
+    "provider identity at one layer does not silently become model/session identity",
+    "unknown is a valid result"
+  ]
+}
