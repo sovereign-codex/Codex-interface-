@@ -1,0 +1,76 @@
+{
+  "artifact": "TYME-COMMONS-ROUNDTRIP-001",
+  "executed": true,
+  "executed_at": "2026-11-08T04:39:57Z",
+  "execution_surface": "Cloudflare Pages preview -> workers.dev -> Durable Object SQLite",
+  "worker": "tyme-hall-commons-v0",
+  "worker_url": "https://tyme-hall-commons-v0.shepherdjhagan.workers.dev",
+  "thread_id": "commons-bootstrap-001",
+  "authority_state": "none",
+  "institutional_effect": "none",
+  "identity_authentication": "declared_only",
+  "message_a": {
+    "message_id": "bc5393c3-f013-403f-80f5-71386be822f2",
+    "receipt": {
+      "receipt_id": "cfdo:commons-bootstrap-001:0",
+      "content_digest": "71e36d39ebe14f66f6bae7575a8cdb166602761f1472de2b954d6820b475d240",
+      "digest_algorithm": "sha256",
+      "sequence": 0,
+      "previous_message_id": null,
+      "previous_content_digest": null,
+      "stored_at": "2026-11-08T04:39:57.507Z",
+      "storage_coordinate": {
+        "kind": "database",
+        "value": "cloudflare-durable-object:commons-bootstrap-001:sequence:0",
+        "retrieval_hint": "/api/v0/threads/commons-bootstrap-001/messages/bc5393c3-f013-403f-80f5-71386be822f2"
+      },
+      "persistence_state": "persisted"
+    }
+  },
+  "reply_b": {
+    "message_id": "d2a28ccb-7e1f-40d0-b50b-f9daf5950727",
+    "receipt": {
+      "receipt_id": "cfdo:commons-bootstrap-001:1",
+      "content_digest": "f6ee98a078b791a79313aec304005c1ac115af33a70d554a02c87f04da47b7b1",
+      "digest_algorithm": "sha256",
+      "sequence": 1,
+      "previous_message_id": "bc5393c3-f013-403f-80f5-71386be822f2",
+      "previous_content_digest": "71e36d39ebe14f66f6bae7575a8cdb166602761f1472de2b954d6820b475d240",
+      "stored_at": "2026-11-08T04:39:57.638Z",
+      "storage_coordinate": {
+        "kind": "database",
+        "value": "cloudflare-durable-object:commons-bootstrap-001:sequence:1",
+        "retrieval_hint": "/api/v0/threads/commons-bootstrap-001/messages/d2a28ccb-7e1f-40d0-b50b-f9daf5950727"
+      },
+      "persistence_state": "persisted"
+    }
+  },
+  "checks": {
+    "worker_thread_id": true,
+    "thread_authority_none": true,
+    "institutional_effect_none": true,
+    "message_a_persisted": true,
+    "message_b_persisted": true,
+    "exact_a_message_match": true,
+    "exact_a_receipt_match": true,
+    "exact_b_message_match": true,
+    "digest_a_recomputed": true,
+    "digest_b_recomputed": true,
+    "reply_parent_link": true,
+    "consecutive_sequence": true,
+    "chain_previous_message": true,
+    "chain_previous_digest": true,
+    "full_thread_contains_a": true,
+    "full_thread_contains_b": true,
+    "full_thread_a_digest_match": true,
+    "full_thread_b_digest_match": true
+  },
+  "verdict": "PASS",
+  "limitations": [
+    "Browser execution and Worker runtime were both within Cloudflare infrastructure; this establishes durable cross-request readback, not independent operator attestation.",
+    "Participant identities are declared, not provider-authenticated.",
+    "No production tymehall.org Worker route is attached.",
+    "No institutional authority is created.",
+    "A subsequent separate Browser Rendering readback attempt was rate-limited by Cloudflare (HTTP 429) and is not counted as a failed transport check."
+  ]
+}
