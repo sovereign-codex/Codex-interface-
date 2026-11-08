@@ -84,6 +84,16 @@ export class AuthParticipant extends DurableObject {
           public_key_thumbprint TEXT NOT NULL,
           enrolled_at TEXT NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS enrollment_history (
+          rotation_id TEXT PRIMARY KEY,
+          enrollment_id TEXT NOT NULL,
+          participant_id TEXT NOT NULL,
+          public_key_jwk TEXT NOT NULL,
+          public_key_thumbprint TEXT NOT NULL,
+          active_from TEXT NOT NULL,
+          active_until TEXT,
+          reason TEXT
+        );
         CREATE TABLE IF NOT EXISTS challenges (
           challenge_id TEXT PRIMARY KEY,
           nonce TEXT NOT NULL,
@@ -109,6 +119,28 @@ export class AuthParticipant extends DurableObject {
       JSON.stringify(record.public_key_jwk),record.public_key_thumbprint,record.enrolled_at
     );
     return {ok:true,idempotent:false,enrollment:this.publicEnrollment({...record,public_key_jwk:JSON.stringify(record.public_key_jwk)})};
+  }
+
+  rotateEnrollment(record,now){
+    const existing=this.sql.exec("SELECT * FROM enrollment WHERE slot=1").toArray()[0]||null;
+    if(!existing)return{ok:false,error:"PARTICIPANT_NOT_ENROLLED"};
+    if(existing.public_key_thumbprint===record.public_key_thumbprint)return{ok:false,error:"NEW_KEY_EQUALS_CURRENT_KEY"};
+    const rotationId="rotate:"+crypto.randomUUID();
+    this.sql.exec(
+      "INSERT INTO enrollment_history(rotation_id,enrollment_id,participant_id,public_key_jwk,public_key_thumbprint,active_from,active_until,reason) VALUES(?,?,?,?,?,?,?,?)",
+      rotationId,existing.enrollment_id,existing.participant_id,existing.public_key_jwk,existing.public_key_thumbprint,existing.enrolled_at,now,record.reason
+    );
+    this.sql.exec(
+      "UPDATE enrollment SET enrollment_id=?,public_key_jwk=?,public_key_thumbprint=?,enrolled_at=? WHERE slot=1",
+      record.enrollment_id,JSON.stringify(record.public_key_jwk),record.public_key_thumbprint,now
+    );
+    const current=this.sql.exec("SELECT * FROM enrollment WHERE slot=1").one();
+    return{
+      ok:true,
+      rotation_id:rotationId,
+      previous_key_thumbprint:existing.public_key_thumbprint,
+      enrollment:this.publicEnrollment(current)
+    };
   }
 
   publicEnrollment(row){
@@ -200,6 +232,25 @@ export default {
       return json(result,result.ok?201:409);
     }
 
+    if(url.pathname==="/api/v0/auth/rotate"&&request.method==="POST"){
+      if(request.headers.get("x-tyme-enrollment-gate")!==env.ENROLLMENT_GATE_TOKEN){
+        return json({ok:false,error:"ENROLLMENT_GATE_REQUIRED"},403);
+      }
+      let input;
+      try{input=await request.json();}catch{return json({ok:false,error:"INVALID_JSON"},400);}
+      if(typeof input.participant_id!=="string"||!input.participant_id.trim())return json({ok:false,error:"INVALID_PARTICIPANT_ID"},400);
+      if(!validateJwk(input.new_public_key_jwk))return json({ok:false,error:"INVALID_ED25519_JWK"},400);
+      const thumbprint=await sha256B64url(canonicalJwk(input.new_public_key_jwk));
+      const stub=env.PARTICIPANTS.getByName(input.participant_id.trim());
+      const result=await stub.rotateEnrollment({
+        enrollment_id:"enroll:"+thumbprint.slice(0,32),
+        public_key_jwk:input.new_public_key_jwk,
+        public_key_thumbprint:thumbprint,
+        reason:typeof input.reason==="string"?input.reason.slice(0,300):"operator-gated rotation"
+      },new Date().toISOString());
+      return json(result,result.ok?200:409);
+    }
+
     if(url.pathname==="/api/v0/auth/challenges"&&request.method==="POST"){
       let input;
       try{input=await request.json();}catch{return json({ok:false,error:"INVALID_JSON"},400);}
@@ -259,6 +310,25 @@ export default {
       const consumed=await stub.consumeChallenge(challengeId,now);
       if(!consumed.ok)return json(consumed,409);
 
+      let providerResolution={ok:true,state:"not_established",attestation:null};
+      if(env.PROVIDER_ATTESTATION && env.PROVIDER_QUERY_TOKEN){
+        try{
+          const pr=await env.PROVIDER_ATTESTATION.fetch(new Request("https://provider.internal/api/v0/provider/attestations/resolve",{
+            method:"POST",
+            headers:{"content-type":"application/json","x-tyme-provider-query":env.PROVIDER_QUERY_TOKEN},
+            body:JSON.stringify({participant_id:participantId,subject_key_thumbprint:enrollment.public_key_thumbprint})
+          }));
+          if(pr.ok)providerResolution=await pr.json();
+        }catch{}
+      }
+      const identityState=providerResolution.state==="provider_attested"?"provider_attested":"cryptographically_attested";
+      const providerAttestation=identityState==="provider_attested"?providerResolution.attestation:null;
+      const providerRefs=providerAttestation?[
+        "provider_attestation:"+providerAttestation.attestation_id,
+        "provider:"+providerAttestation.provider_id,
+        "provider_subject:"+providerAttestation.provider_subject
+      ]:[];
+
       const commonsInput={
         participant:{
           participant_class:enrollment.participant_class,
@@ -276,34 +346,39 @@ export default {
         authorship:{
           author_participant_id:participantId,
           declared_author:enrollment.declared_identity,
-          author_identity_state:"cryptographically_attested",
+          author_identity_state:identityState,
           source_artifact_ref:null,
           author_evidence_refs:[
             "enrollment:"+enrollment.enrollment_id,
             "challenge:"+challengeId,
-            "public_key_thumbprint:"+enrollment.public_key_thumbprint
+            "public_key_thumbprint:"+enrollment.public_key_thumbprint,
+            ...providerRefs
           ]
         },
         submission:{
           submitted_by:enrollment.declared_identity,
           submission_actor_class:enrollment.participant_class,
-          submission_identity_state:"cryptographically_attested",
+          submission_identity_state:identityState,
           relay_state:"direct",
           relay_method:"Direct signed submission through TYME authenticated-contribution gateway.",
           relay_evidence_refs:[
             "challenge:"+challengeId,
-            "public_key_thumbprint:"+enrollment.public_key_thumbprint
+            "public_key_thumbprint:"+enrollment.public_key_thumbprint,
+            ...providerRefs
           ]
         },
         verified_identity:{
           verification_state:"signature_verified",
+          identity_state:identityState,
+          provider_attestation_id:providerAttestation?.attestation_id||null,
           participant_id:participantId,
           challenge_id:challengeId,
           enrollment_id:enrollment.enrollment_id,
           identity_evidence_refs:[
             "enrollment:"+enrollment.enrollment_id,
             "challenge:"+challengeId,
-            "public_key_thumbprint:"+enrollment.public_key_thumbprint
+            "public_key_thumbprint:"+enrollment.public_key_thumbprint,
+            ...providerRefs
           ]
         }
       };
@@ -325,19 +400,37 @@ export default {
           error:"COMMONS_FORWARD_FAILED",
           commons_status:upstream.status,
           commons_response:upstreamBody,
-          challenge_consumed:true
+          challenge_consumed:true,
+          identity_state:identityState,
+          provider_attestation:providerAttestation?{
+            attestation_id:providerAttestation.attestation_id,
+            provider_id:providerAttestation.provider_id,
+            provider_subject:providerAttestation.provider_subject,
+            model_id:providerAttestation.model_id,
+            runtime_id:providerAttestation.runtime_id,
+            expires_at:providerAttestation.expires_at
+          }:null
         },502);
       }
       return json({
         ok:true,
         verification:{
           state:"signature_verified",
+          identity_state:identityState,
           algorithm:"Ed25519",
           participant_id:participantId,
           enrollment_id:enrollment.enrollment_id,
           public_key_thumbprint:enrollment.public_key_thumbprint,
           challenge_id:challengeId,
-          challenge_consumed:true
+          challenge_consumed:true,
+          provider_attestation:providerAttestation?{
+            attestation_id:providerAttestation.attestation_id,
+            provider_id:providerAttestation.provider_id,
+            provider_subject:providerAttestation.provider_subject,
+            model_id:providerAttestation.model_id,
+            runtime_id:providerAttestation.runtime_id,
+            expires_at:providerAttestation.expires_at
+          }:null
         },
         commons:upstreamBody,
         authority_state:"none",

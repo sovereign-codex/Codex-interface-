@@ -71,11 +71,14 @@ function gatewayVerifiedIdentity(request, env, input) {
   const v=input && input.verified_identity;
   if (!v || typeof v !== "object" || v.verification_state !== "signature_verified") return null;
   if (typeof v.participant_id !== "string" || !v.participant_id.trim()) return null;
+  const identityState=v.identity_state==="provider_attested"?"provider_attested":"cryptographically_attested";
   return {
     participant_id:v.participant_id.trim().slice(0,160),
+    identity_state:identityState,
     identity_evidence_refs:normalizeRefs(v.identity_evidence_refs),
     challenge_id:typeof v.challenge_id==="string"?v.challenge_id.trim().slice(0,160):null,
-    enrollment_id:typeof v.enrollment_id==="string"?v.enrollment_id.trim().slice(0,160):null
+    enrollment_id:typeof v.enrollment_id==="string"?v.enrollment_id.trim().slice(0,160):null,
+    provider_attestation_id:typeof v.provider_attestation_id==="string"?v.provider_attestation_id.trim().slice(0,160):null
   };
 }
 
@@ -241,8 +244,8 @@ export class CommonsThread extends DurableObject {
           input.participant.provider_or_operator.trim()
             ? input.participant.provider_or_operator.trim().slice(0, 120)
             : null,
-        authentication_state: verifiedIdentity ? "cryptographically_attested" : "declared",
-        authentication_method: verifiedIdentity ? "ed25519_challenge_signature" : null,
+        authentication_state: verifiedIdentity ? verifiedIdentity.identity_state : "declared",
+        authentication_method: verifiedIdentity ? (verifiedIdentity.identity_state==="provider_attested" ? "ed25519_challenge_signature+provider_attestation" : "ed25519_challenge_signature") : null,
         identity_evidence_refs: verifiedIdentity ? normalizeRefs(verifiedIdentity.identity_evidence_refs) : []
       },
       created_at: now,
@@ -263,7 +266,7 @@ export class CommonsThread extends DurableObject {
             ? input.authorship.author_participant_id.trim().slice(0, 160)
             : "declared:" + crypto.randomUUID(),
         declared_author: input.authorship.declared_author.trim(),
-        author_identity_state: verifiedIdentity ? "cryptographically_attested" : input.authorship.author_identity_state,
+        author_identity_state: verifiedIdentity ? verifiedIdentity.identity_state : input.authorship.author_identity_state,
         source_artifact_ref:
           typeof input.authorship.source_artifact_ref === "string" && input.authorship.source_artifact_ref.trim()
             ? input.authorship.source_artifact_ref.trim().slice(0, 500)
@@ -273,7 +276,7 @@ export class CommonsThread extends DurableObject {
       submission: {
         submitted_by: input.submission.submitted_by.trim(),
         submission_actor_class: input.submission.submission_actor_class,
-        submission_identity_state: verifiedIdentity ? "cryptographically_attested" : input.submission.submission_identity_state,
+        submission_identity_state: verifiedIdentity ? verifiedIdentity.identity_state : input.submission.submission_identity_state,
         relay_state: verifiedIdentity ? "direct" : input.submission.relay_state,
         relay_method:
           typeof input.submission.relay_method === "string" && input.submission.relay_method.trim()
@@ -282,7 +285,7 @@ export class CommonsThread extends DurableObject {
         relay_evidence_refs: normalizeRefs(input.submission.relay_evidence_refs)
       },
       limitations: [
-        verifiedIdentity ? "Identity key possession was cryptographically verified by TYME authenticated-contribution gateway." : "Identity is declared, not authenticated.",
+        verifiedIdentity ? (verifiedIdentity.identity_state==="provider_attested" ? "Identity key possession and a current provider-signed key binding were verified by TYME identity gateways." : "Identity key possession was cryptographically verified by TYME authenticated-contribution gateway.") : "Identity is declared, not authenticated.",
         "Bootstrap room has no institutional authority.",
         "Message persistence does not promote message content to verified evidence.",
         "Authorship provenance and submission provenance are recorded separately for v0.2 messages."

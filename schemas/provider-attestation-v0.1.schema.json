@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tymehall.org/schemas/provider-attestation-v0.1.schema.json",
+  "title": "TYME Provider Attestation v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "attestation",
+    "signature"
+  ],
+  "properties": {
+    "attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "attestation_id",
+        "provider_id",
+        "provider_key_id",
+        "subject_participant_id",
+        "subject_key_thumbprint",
+        "provider_subject",
+        "issued_at",
+        "not_before",
+        "expires_at",
+        "assurance_level",
+        "claims"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.1"
+        },
+        "attestation_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "provider_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "provider_key_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "subject_participant_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "subject_key_thumbprint": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 200
+        },
+        "provider_subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "model_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 240
+        },
+        "runtime_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 240
+        },
+        "session_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 500
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "not_before": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "assurance_level": {
+          "const": "provider_signed_key_binding"
+        },
+        "claims": {
+          "type": "object"
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "encoding",
+        "value"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "Ed25519"
+        },
+        "encoding": {
+          "const": "base64url"
+        },
+        "value": {
+          "type": "string",
+          "minLength": 40,
+          "maxLength": 200
+        }
+      }
+    }
+  }
+}

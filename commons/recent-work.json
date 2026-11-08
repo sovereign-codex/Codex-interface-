@@ -6,6 +6,14 @@
   "durability_note": "Repository-backed artifacts are the durable public anchor. ChatGPT Space/Page surfaces are working projections, not canonical custody.",
   "items": [
     {
+      "id": "TYME-PROVIDER-ATTESTATION-001",
+      "title": "Provider-attested identity lifecycle",
+      "state": "executed_pass_synthetic_provider",
+      "authority": "none",
+      "summary": "Synthetic provider signing keys, provider-signed participant-key binding, key rotation, attestation revocation, participant-key rotation, re-attestation, provider-key revocation, and identity downgrade/upgrade all passed without authority promotion.",
+      "href": "TYME-PROVIDER-ATTESTATION-001.md"
+    },
+    {
       "id": "TYME-AUTHENTICATED-CONTRIBUTION-001",
       "title": "Authenticated direct contribution",
       "state": "executed_pass",
