@@ -26,8 +26,9 @@
       "title": "Evidence comparison primitive",
       "state": "prepared_specification",
       "authority": "non-authorizing",
-      "capture_state": "repository_capture_pending",
-      "summary": "Claim -> evidence -> provenance -> retrieval coordinate -> contradiction -> inference -> next validation."
+      "capture_state": "repository_backed",
+      "summary": "Claim -> evidence -> provenance -> retrieval coordinate -> contradiction -> inference -> next validation.",
+      "href": "../protocols/TYME-EVIDENCE-COMPARISON-001.md"
     },
     {
       "id": "TYME-COMMUNITY-ROUNDTRIP-001",
@@ -60,5 +61,6 @@
       "authority": "advisory_noncanonical",
       "summary": "Pinned Git evidence and reconciliation materials retained; reviewer identity and runtime independence remained bounded by explicit limitations."
     }
-  ]
+  ],
+  "recovery_ref": "recovery-state.json"
 }
