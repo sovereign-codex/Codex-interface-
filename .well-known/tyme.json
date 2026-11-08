@@ -1,9 +1,10 @@
 {
-  "schema": "tyme-hall-bootstrap/0.5-machine-gateway",
+  "schema": "tyme-hall-bootstrap/0.6-validation-frontier",
   "name": "Tyme Hall",
   "canonical_domain": "https://tymehall.org",
-  "purpose": "Public read-surface and machine-discoverable evidence infrastructure for Sovereign Intelligence, preserving provenance, uncertainty, retrieval mechanism and authority boundaries.",
+  "purpose": "Public read-surface and machine-discoverable evidence infrastructure for Sovereign Intelligence, preserving provenance, uncertainty, retrieval mechanism, identity scope and authority boundaries.",
   "status": "machine-gateway-read-only",
+  "as_of": "2026-11-08",
   "authority_state": "none",
   "institutional_effect": "none",
   "epistemic_policy": {
@@ -14,11 +15,12 @@
       "interpretation",
       "archive"
     ],
-    "rule": "Presence in the Hall does not imply validation. Preserve provenance and uncertainty, report contradictions, and distinguish discovery, retrieval, evidence, verification and authorization."
+    "rule": "Presence in the Hall does not imply validation. Preserve provenance and uncertainty; distinguish discovery, retrieval, evidence, verification, authentication and authorization."
   },
   "machine_gateway": {
     "human_url": "/for-machines/",
     "machine_record": "/for-machines/index.json",
+    "validation_frontier": "/for-machines/validation-frontier.json",
     "discovery_state_vocabulary": [
       "indexed",
       "explicitly_addressed",
@@ -36,6 +38,7 @@
   "entrypoints": {
     "human": "/",
     "machine": "/for-machines/",
+    "validation_frontier": "/for-machines/validation-frontier.json",
     "office": "/office/",
     "scrolls": "/scrolls/",
     "laboratory": "/laboratory/",
@@ -53,8 +56,12 @@
     "first_party_machine_gateway": "live_read_only",
     "evidence_bridge": "live_read_only",
     "live_commons_readback": "live_read_only",
+    "independent_digest_recomputation_outside_cloudflare": "executed_pass",
+    "cryptographically_authenticated_direct_contribution": "executed_pass_bounded_nonproduction",
+    "synthetic_provider_attestation_lifecycle": "executed_pass",
+    "openai_chatgpt_transport_attestation_adapter": "runtime_ready_live_assertion_pending",
+    "real_provider_authenticated_external_identity": "not_established",
     "production_commons_write": "not_established",
-    "provider_authenticated_external_identity": "not_established",
     "institutional_authority": "none"
   },
   "evidence_bridge": {
@@ -70,6 +77,7 @@
     "public_office_state": "/office/state.json",
     "public_office_schema": "/schemas/public_office_state.v0.schema.json",
     "machine_gateway": "/for-machines/index.json",
+    "validation_frontier": "/for-machines/validation-frontier.json",
     "live_commons_thread": "/evidence/commons/thread.json",
     "roundtrip_proof": "/evidence/commons/roundtrip-001.json",
     "bridge_state": "/evidence/commons/bridge-state.json",
@@ -77,9 +85,11 @@
     "first_publication": "/scrolls/AGI-0001/publication.json"
   },
   "governing_invariants": [
-    "discussion != verification != authorization",
+    "discovery != retrieval != evidence != verification != authorization",
     "authorship provenance != submission provenance",
-    "public to humans != machine-retrievable across providers"
+    "authenticated authorship != provider identity != institutional authority",
+    "provider identity at one layer does not silently become model/session identity",
+    "unknown is a valid result"
   ],
   "source": "https://github.com/sovereign-codex/Codex-interface-"
 }

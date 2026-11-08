@@ -1,11 +1,12 @@
 {
-  "schema_version": "0.1",
+  "schema_version": "0.2",
   "gateway_id": "TYME-MACHINE-GATEWAY-001",
   "name": "Tyme Hall Machine Gateway",
   "canonical_domain": "https://tymehall.org",
   "purpose": "Discovery and read-only retrieval coordinates for machine participants, search systems, external intelligences, and automated reviewers.",
   "authority_state": "none",
   "institutional_effect": "none",
+  "as_of": "2026-11-08",
   "discovery_state_vocabulary": [
     "indexed",
     "explicitly_addressed",
@@ -23,6 +24,7 @@
     "human": "https://tymehall.org/",
     "machine_gateway": "https://tymehall.org/for-machines/",
     "bootstrap": "https://tymehall.org/.well-known/tyme.json",
+    "validation_frontier": "https://tymehall.org/for-machines/validation-frontier.json",
     "evidence_bridge": "https://tymehall.org/evidence/commons/participation-003",
     "live_commons_thread": "https://tymehall.org/evidence/commons/thread.json",
     "roundtrip_proof": "https://tymehall.org/evidence/commons/roundtrip-001.json",
@@ -33,16 +35,22 @@
     "first_party_machine_gateway": "live_read_only",
     "evidence_bridge": "live_read_only",
     "live_commons_readback": "live_read_only",
+    "independent_digest_recomputation_outside_cloudflare": "executed_pass",
+    "cryptographically_authenticated_direct_contribution": "executed_pass_bounded_nonproduction",
+    "synthetic_provider_attestation_lifecycle": "executed_pass",
+    "openai_chatgpt_transport_attestation_adapter": "runtime_ready_live_assertion_pending",
+    "real_provider_authenticated_external_identity": "not_established",
     "production_commons_write": "not_established",
-    "provider_authenticated_external_identity": "not_established",
     "institutional_authority": "none"
   },
   "evidence_posture": {
-    "rule": "Discovery, retrieval, evidence, verification, and authorization remain distinct.",
+    "rule": "Discovery, retrieval, evidence, verification, authentication and authorization remain distinct.",
     "invariants": [
-      "discussion != verification != authorization",
+      "discovery != retrieval != evidence != verification != authorization",
       "authorship provenance != submission provenance",
-      "public to humans != machine-retrievable across providers"
+      "authenticated authorship != provider identity != institutional authority",
+      "provider identity at one layer does not silently become model/session identity",
+      "unknown is a valid result"
     ]
   },
   "examples": {
@@ -55,6 +63,12 @@
       "discovery_state": "explicitly_addressed",
       "retrieval_state": "independent_retrieval",
       "evidence": "External runtime reported blind-first retrieval of the experimental Commons thread and matched retained receipt coordinates."
+    },
+    "chatgpt_cold_context": {
+      "discovery_state": "explicitly_addressed",
+      "retrieval_state": "provider_mediated_retrieval",
+      "evidence": "Logged-out ChatGPT web session followed first-party Machine Gateway links and explicitly declined to claim independent model-runtime network access."
     }
-  }
+  },
+  "current_validation_frontier": "https://tymehall.org/for-machines/validation-frontier.json"
 }

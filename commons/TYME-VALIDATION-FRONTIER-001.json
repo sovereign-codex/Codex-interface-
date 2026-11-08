@@ -1,0 +1,53 @@
+{
+  "schema_version": "0.1",
+  "artifact": "TYME-VALIDATION-FRONTIER-001",
+  "status": "DEPLOYED_READ_ONLY",
+  "deployed_at": "2026-11-08",
+  "authority_state": "none",
+  "institutional_effect": "none",
+  "production_write_route": false,
+  "purpose": "Synchronize the public machine-facing orientation layer with the strongest currently justified validation states.",
+  "public_urls": {
+    "machine_gateway": "https://tymehall.org/for-machines/",
+    "machine_index": "https://tymehall.org/for-machines/index.json",
+    "bootstrap": "https://tymehall.org/.well-known/tyme.json",
+    "validation_frontier": "https://tymehall.org/for-machines/validation-frontier.json"
+  },
+  "synchronized_states": {
+    "independent_digest_recomputation_outside_cloudflare": "executed_pass",
+    "cryptographically_authenticated_direct_contribution": "executed_pass_bounded_nonproduction",
+    "synthetic_provider_attestation_lifecycle": "executed_pass",
+    "openai_chatgpt_transport_attestation_adapter": "runtime_ready_live_assertion_pending",
+    "real_provider_authenticated_external_identity": "not_established",
+    "production_commons_write": "not_established",
+    "institutional_authority": "none"
+  },
+  "cold_review": {
+    "id": "TYME-COLD-EXTERNAL-REVIEW-CHATGPT-001",
+    "session_state": "logged_out_cold_context",
+    "retrieval_state": "provider_mediated_retrieval",
+    "provider_independence": false,
+    "identity_authentication": "not_established",
+    "significance": "Demonstrated coherent cold orientation and exposed public-state lag relative to laboratory validation work."
+  },
+  "verification": {
+    "machine_gateway_html": {
+      "status": 200,
+      "title": "For Machines · Tyme Hall",
+      "frontier_visible": true,
+      "verified_via": "Cloudflare Browser Rendering"
+    },
+    "json_endpoints": {
+      "state": "not_rechecked_via_browser_rendering_due_rate_limit",
+      "limitation": "Subsequent Browser Rendering requests returned HTTP 429 rate-limit responses after the successful HTML verification.",
+      "implementation_basis": "All JSON endpoints are literal branches of the same deployed tyme-machine-gateway-v0 Worker source."
+    }
+  },
+  "invariants": [
+    "discovery != retrieval != evidence != verification != authorization",
+    "authorship provenance != submission provenance",
+    "authenticated authorship != provider identity != institutional authority",
+    "provider identity at one layer does not silently become model/session identity",
+    "unknown is a valid result"
+  ]
+}

@@ -1,10 +1,26 @@
 {
   "schema_version": "0.1",
-  "as_of": "2026-11-07",
+  "as_of": "2026-11-08",
   "surface": "TYME Hall Commons candidate",
   "authority_state": "none",
   "durability_note": "Repository-backed artifacts are the durable public anchor. ChatGPT Space/Page surfaces are working projections, not canonical custody.",
   "items": [
+    {
+      "id": "TYME-COLD-EXTERNAL-REVIEW-CHATGPT-001",
+      "title": "Cold-context logged-out ChatGPT external review",
+      "state": "cold_context_review_received",
+      "authority": "none",
+      "summary": "Logged-out ChatGPT retrieved the public Hall, reconstructed provenance and authority boundaries, self-limited its retrieval claims, and exposed that the public gateway lagged behind newer laboratory validation work.",
+      "href": "external-reviews/TYME-COLD-EXTERNAL-REVIEW-CHATGPT-001.md"
+    },
+    {
+      "id": "TYME-VALIDATION-FRONTIER-001",
+      "title": "Public validation frontier synchronization",
+      "state": "deployed_read_only",
+      "authority": "none",
+      "summary": "Machine Gateway now exposes the current bounded validation frontier, including independent digest recomputation, authenticated direct contribution, synthetic provider-attestation lifecycle, and OpenAI ChatGPT adapter readiness while preserving pending real-provider identity and disabled production writes.",
+      "href": "TYME-VALIDATION-FRONTIER-001.md"
+    },
     {
       "id": "OPENAI-CHATGPT-MCP-ATTESTATION-001",
       "title": "OpenAI ChatGPT transport-client attestation adapter",

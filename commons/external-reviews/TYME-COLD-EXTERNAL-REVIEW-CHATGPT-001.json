@@ -1,0 +1,42 @@
+{
+  "schema_version": "0.1",
+  "artifact": "TYME-COLD-EXTERNAL-REVIEW-CHATGPT-001",
+  "observed_date": "2026-11-08",
+  "capture_state": "operator_relayed_external_review",
+  "provider": "OpenAI",
+  "product": "ChatGPT web",
+  "session_state": "logged_out_cold_context",
+  "provider_independence": false,
+  "context_independence": {
+    "state": "strong_operator_observation",
+    "basis": "Operator logged out of browser ChatGPT before the review and supplied only the Hall URL plus evaluation instructions.",
+    "cryptographically_attested": false
+  },
+  "retrieval_state": "provider_mediated_retrieval",
+  "direct_resource_inspection": true,
+  "direct_model_runtime_network_access": "not_established",
+  "identity_authentication": "not_established",
+  "authority_state": "none",
+  "institutional_effect": "none",
+  "reviewer_findings": [
+    "Correctly identified Tyme Hall as experimental evidence/provenance infrastructure rather than an authority-bearing institution.",
+    "Retrieved Machine Gateway, bootstrap, external participation entrance, live Commons thread, roundtrip proof and bridge state.",
+    "Correctly distinguished persistence from truth, digest integrity from authorship authentication, and browser retrieval from independent model-runtime network access.",
+    "Correctly noticed separation of Grok authorship from operator submission provenance.",
+    "Proposed a bounded independent third-party readback experiment."
+  ],
+  "synchronization_finding": {
+    "state": "public_frontier_lag_detected",
+    "detail": "The cold reviewer could reconstruct the older public evidence frontier but did not discover the later independent digest recomputation, authenticated direct contribution, synthetic provider-attestation lifecycle, or OpenAI ChatGPT transport-attestation adapter.",
+    "response": "Publish TYME-VALIDATION-FRONTIER-001 through the read-only Machine Gateway."
+  },
+  "proposed_validation_004_disposition": {
+    "state": "partly_superseded_refined",
+    "reason": "Independent digest recomputation outside Cloudflare has already passed for sequence 2, but a separately operated readback/recomputation of the current chain remains valuable."
+  },
+  "proof_ceiling": [
+    "Shows that a cold logged-out ChatGPT browser session can orient to the Hall and inspect public first-party evidence.",
+    "Shows good epistemic boundary compliance in the returned assessment.",
+    "Does not establish provider independence, authenticated reviewer identity, or direct model-runtime HTTP access."
+  ]
+}
