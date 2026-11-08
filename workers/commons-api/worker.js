@@ -64,6 +64,21 @@ function normalizeRefs(value) {
   return out;
 }
 
+
+function gatewayVerifiedIdentity(request, env, input) {
+  const supplied=request.headers.get("x-tyme-auth-gateway-token");
+  if (!supplied || !env.AUTH_GATEWAY_TOKEN || supplied !== env.AUTH_GATEWAY_TOKEN) return null;
+  const v=input && input.verified_identity;
+  if (!v || typeof v !== "object" || v.verification_state !== "signature_verified") return null;
+  if (typeof v.participant_id !== "string" || !v.participant_id.trim()) return null;
+  return {
+    participant_id:v.participant_id.trim().slice(0,160),
+    identity_evidence_refs:normalizeRefs(v.identity_evidence_refs),
+    challenge_id:typeof v.challenge_id==="string"?v.challenge_id.trim().slice(0,160):null,
+    enrollment_id:typeof v.enrollment_id==="string"?v.enrollment_id.trim().slice(0,160):null
+  };
+}
+
 function validateMessageInput(input) {
   if (!input || typeof input !== "object" || Array.isArray(input)) {
     return "JSON object required";
@@ -193,7 +208,7 @@ export class CommonsThread extends DurableObject {
     });
   }
 
-  async postMessage(input) {
+  async postMessage(input, verifiedIdentity = null) {
     const parentId = input.parent_message_id ?? null;
     if (parentId !== null) {
       const parent = this.sql.exec(
@@ -211,7 +226,6 @@ export class CommonsThread extends DurableObject {
 
     const now = new Date().toISOString();
     const messageId = crypto.randomUUID();
-    const verifiedIdentity = trustedVerifiedContribution(request, this.env, input);
 
     const message = {
       schema_version: "0.2",
@@ -476,7 +490,15 @@ export default {
         );
       }
 
-      const result = await stub.postMessage(input);
+      const verifiedIdentity=gatewayVerifiedIdentity(request, env, input);
+      if (verifiedIdentity) {
+        input={...input};
+        delete input.verified_identity;
+      } else if (input && Object.prototype.hasOwnProperty.call(input,"verified_identity")) {
+        input={...input};
+        delete input.verified_identity;
+      }
+      const result = await stub.postMessage(input, verifiedIdentity);
       return json(result, result.ok ? 201 : 409, cors);
     }
 
