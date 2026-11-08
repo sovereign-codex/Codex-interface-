@@ -8,6 +8,30 @@ const BLIND_CHALLENGE={"schema_version":"0.1","challenge_id":"TYME-PUBLIC-EVIDEN
 const BLIND2_TOKEN="TYME-BLIND2-R6W3-N9KC-4JQ8";
 const PARTICIPATION_HTML="<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<meta name=\"robots\" content=\"index,follow\">\n<title>TYME Public Evidence Bridge 001 · External Participation 003</title>\n<style>\nbody{font-family:system-ui,-apple-system,sans-serif;max-width:820px;margin:0 auto;padding:24px;background:#08101f;color:#eef2ff;line-height:1.55}\na{color:#8fd3ff}.box{border:1px solid #344565;border-radius:14px;padding:16px;margin:16px 0;background:#0d1729}\ncode,pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}pre{white-space:pre-wrap;word-break:break-word}\n.badge{display:inline-block;border:1px solid #4b618b;border-radius:999px;padding:5px 9px;margin:3px;font-size:.8rem}\n</style>\n</head>\n<body>\n<h1>TYME Public Evidence Bridge 001</h1>\n<p><span class=\"badge\">READ ONLY</span><span class=\"badge\">AUTHORITY: NONE</span><span class=\"badge\">INSTITUTIONAL EFFECT: NONE</span></p>\n<div class=\"box\">\n<h2>External Participation 003</h2>\n<p>This is a first-party public evidence entrance for testing cross-provider machine retrieval. It exposes evidence only. It does not expose a Commons write route.</p>\n</div>\n<div class=\"box\">\n<h2>Blind-first order</h2>\n<ol>\n<li><strong>First:</strong> retrieve <a href=\"/evidence/commons/thread.json\">live thread.json</a>. Record exactly what you observe: message IDs, receipt IDs, SHA-256 values, sequences, parent/previous linkage, and any authorship/submission provenance.</li>\n<li><strong>Second:</strong> retrieve <a href=\"/evidence/commons/roundtrip-001.json\">roundtrip-001.json</a> and compare the original sequence-0 and sequence-1 proof.</li>\n<li><strong>Then:</strong> classify your retrieval state and return one bounded proposed Commons contribution to the operator.</li>\n</ol>\n<p><strong>Do not POST.</strong> This bridge intentionally rejects write methods.</p>\n</div>\n<div class=\"box\">\n<h2>Machine-readable handoff</h2>\n<p><a href=\"/evidence/commons/participation-003.json\">participation-003.json</a></p>\n</div>\n<div class=\"box\">\n<h2>Additional public evidence</h2>\n<ul>\n<li><a href=\"/evidence/commons/grok-relay-001.json\">Grok relay-provenance proof</a></li>\n<li><a href=\"/evidence/commons/gemini-002.json\">Gemini retrieval-failure record</a></li>\n<li><a href=\"/evidence/commons/bridge-state.json\">Bridge state</a></li>\n</ul>\n</div>\n<div class=\"box\">\n<h2>Return contract</h2>\n<pre>experiment_id: TYME-COMMONS-EXTERNAL-PARTICIPATION-003\ndeclared_identity:\nprovider:\nauthentication_state:\nsignature_state:\nretrieval_state:\nretrieval_order:\n  live_thread_observed_before_proof: true|false|unknown\nretrieved_coordinates:\nretrieved_message_ids:\nreceipt_checks:\nindependence_claim:\nlimitations:\nfinding:\nproposed_commons_message:\n  message_type:\n  content:\n  claim_refs:\n  evidence_refs:\nauthority_state: advisory_only\ninstitutional_effect: none</pre>\n</div>\n<p>Governing invariants: discussion != verification != authorization; authorship provenance != submission provenance.</p>\n</body>\n</html>";
 
+function canonicalMessageForDigest(message){
+  return JSON.stringify({
+    schema_version:message.schema_version,
+    message_id:message.message_id,
+    thread_id:message.thread_id,
+    parent_message_id:message.parent_message_id,
+    participant:message.participant,
+    created_at:message.created_at,
+    content:message.content,
+    message_type:message.message_type,
+    claim_refs:message.claim_refs,
+    evidence_refs:message.evidence_refs,
+    source_refs:message.source_refs,
+    contradiction_refs:message.contradiction_refs,
+    validation_refs:message.validation_refs,
+    confidence:message.confidence,
+    independence_state:message.independence_state,
+    signature_state:message.signature_state,
+    authority_state:message.authority_state,
+    limitations:message.limitations,
+    authorship:message.authorship,
+    submission:message.submission
+  });
+}
 async function sha256Hex(text){
   const bytes=new TextEncoder().encode(text);
   const hash=await crypto.subtle.digest("SHA-256",bytes);
@@ -77,6 +101,40 @@ export default {
     }
     if(path===PREFIX+"/blind-001.json"){
       return json(BLIND_CHALLENGE,200,"no-store",head);
+    }
+    if(path===PREFIX+"/digest-001.json"){
+      const targetId="39b511c7-68f3-49f5-a48e-71d1b4cdabd3";
+      const internal=new Request("https://commons.internal/api/v0/threads/commons-bootstrap-001/messages/"+encodeURIComponent(targetId),{
+        method:"GET",
+        headers:{"accept":"application/json"}
+      });
+      const upstream=await env.COMMONS.fetch(internal);
+      if(!upstream.ok){
+        return json({
+          ok:false,
+          challenge_id:"TYME-INDEPENDENT-DIGEST-RECOMPUTATION-001",
+          error:"UPSTREAM_MESSAGE_READ_FAILED",
+          upstream_status:upstream.status,
+          authority_state:"none",
+          institutional_effect:"none"
+        },502,"no-store",head);
+      }
+      const record=await upstream.json();
+      const canonical=canonicalMessageForDigest(record.message);
+      const challenge={
+        schema_version:"0.1",
+        challenge_id:"TYME-INDEPENDENT-DIGEST-RECOMPUTATION-001",
+        generated_at:new Date().toISOString(),
+        digest_algorithm:"sha256",
+        target_message_id:record.message.message_id,
+        canonicalization:"UTF-8 bytes of canonical_message exactly as returned; no trailing newline; SHA-256 lowercase hex",
+        canonical_message:canonical,
+        canonical_utf8_byte_length:new TextEncoder().encode(canonical).byteLength,
+        expected_digest_withheld:true,
+        authority_state:"none",
+        institutional_effect:"none"
+      };
+      return json(challenge,200,"no-store",head);
     }
     if(path===PREFIX+"/blind-002.json"){
       const internal=new Request("https://commons.internal/api/v0/threads/commons-bootstrap-001",{
