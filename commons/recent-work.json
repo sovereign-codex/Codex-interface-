@@ -39,6 +39,14 @@
       "public_ref": "https://github.com/sovereign-codex/Codex-control-center/tree/aec046c80ae85b2fff808d000c4afcf7e0d554e1/community-ledger/v0/roundtrips/CIT-GITHUB-ROUNDTRIP-002"
     },
     {
+      "id": "TYME-BOUNDARY-VALIDATION-001",
+      "title": "Boundary validation candidate",
+      "state": "local_validation_hold",
+      "authority": "none",
+      "summary": "24 offline admission tests passed and Git tree-to-blob custody checks passed; raw commit hash and independent reader remain not established.",
+      "public_ref": "https://github.com/sovereign-codex/Codex-control-center/commit/aec046c80ae85b2fff808d000c4afcf7e0d554e1"
+    },
+    {
       "id": "TYME-REVIEW-004",
       "title": "External review handoff",
       "state": "operational_hold",
@@ -62,5 +70,6 @@
       "summary": "Pinned Git evidence and reconciliation materials retained; reviewer identity and runtime independence remained bounded by explicit limitations."
     }
   ],
-  "recovery_ref": "recovery-state.json"
+  "recovery_ref": "recovery-state.json",
+  "recovery_note": "RECENT-WORK-RECOVERY-2026-11-07.md"
 }
