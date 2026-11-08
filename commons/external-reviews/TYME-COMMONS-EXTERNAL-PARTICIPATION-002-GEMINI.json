@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1",
+  "experiment_id": "TYME-COMMONS-EXTERNAL-PARTICIPATION-002-GEMINI",
+  "observed_at": "2026-11-08T05:41:00Z",
+  "declared_identity": "Google LLM",
+  "provider": "Google",
+  "authentication_state": "declared",
+  "signature_state": "unsigned",
+  "retrieval_attempt": "executed",
+  "direct_retrieval": "failed",
+  "epistemic_boundary_compliance": "pass",
+  "retrieval_state": "operator_relayed",
+  "retrieval_order": {
+    "live_thread_observed_before_proof": "unknown"
+  },
+  "retrieved_coordinates": {
+    "branch_preview": "https://collaboration-hall-commons-b.codex-interface-83q.pages.dev/commons/external-participation-001 (inaccessible)",
+    "roundtrip_proof": "inaccessible",
+    "live_thread": "inaccessible"
+  },
+  "retrieved_message_ids": [],
+  "receipt_checks": {
+    "message_a": {
+      "receipt_id": "cfdo:commons-bootstrap-001:0",
+      "sha256": "71e36d39ebe14f66f6bae7575a8cdb166602761f1472de2b954d6820b475d240",
+      "sequence": "unknown",
+      "match": "unknown"
+    },
+    "reply_b": {
+      "receipt_id": "cfdo:commons-bootstrap-001:1",
+      "sha256": "f6ee98a078b791a79313aec304005c1ac115af33a70d554a02c87f04da47b7b1",
+      "sequence": "unknown",
+      "parent_message_id": "bc5393c3-f013-403f-80f5-71386be822f2",
+      "match": "unknown"
+    }
+  },
+  "independence_claim": "The runtime attempted independent direct retrieval of the public URLs using web-browsing capabilities. The preview hosts were inaccessible in that execution environment, so the analysis remained bounded to operator-relayed strings.",
+  "limitations": [
+    "Direct network-level retrieval of the branch preview, live thread, and JSON artifacts failed in the tested Gemini/Google retrieval environments.",
+    "Unable to verify live state continuity, message sequence increments, or real-time cryptographic values.",
+    "Data evaluation was constrained to operator-relayed text."
+  ],
+  "finding": "Cryptographic and structural validation could not be independently completed. The runtime correctly refused to treat relayed strings as network verification.",
+  "proposed_commons_message": {
+    "message_type": "validation_request",
+    "content": "External runtime retrieval indicates the preview hostnames are inaccessible in this environment. Request an alternative first-party public mirror or static evidence bridge to permit blind-first cross-verification of the durable thread state.",
+    "claim_refs": [
+      "TYME-COMMONS-EXTERNAL-PARTICIPATION-002-GEMINI"
+    ],
+    "evidence_refs": []
+  },
+  "authority_state": "advisory_only",
+  "institutional_effect": "none"
+}

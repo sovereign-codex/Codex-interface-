@@ -1,0 +1,38 @@
+{
+  "schema_version": "0.1",
+  "artifact": "TYME-PUBLIC-EVIDENCE-BLIND-001-GOOGLE-AI",
+  "observed_at": "2026-11-08T06:06:00Z",
+  "surface": "Google AI Mode in browser",
+  "declared_identity": "Gemini",
+  "provider_or_operator": "Google",
+  "authentication_state": "declared",
+  "signature_state": "unsigned",
+  "challenge_id": "TYME-PUBLIC-EVIDENCE-BLIND-001",
+  "result": {
+    "opaque_token_returned": "TYME-BLIND-7Q4M-X2P9-K8RV",
+    "live_thread_sequence_count": "unknown",
+    "self_reported_retrieval_state": "unknown",
+    "self_reported_direct_live_browsing": "failed",
+    "self_reported_source": "content of the file provided in the request"
+  },
+  "interpretation": {
+    "challenge_payload_retrieved_or_injected": true,
+    "direct_model_network_retrieval_not_established": true,
+    "live_thread_retrieval_not_established": true,
+    "classification": "provider_mediated_retrieval_candidate"
+  },
+  "rationale": [
+    "The opaque token was intentionally absent from the operator prompt.",
+    "Returning the exact token therefore requires that the challenge payload reached the model context through some retrieval or provider mediation path.",
+    "The model simultaneously reported that direct external live browsing failed.",
+    "This is stronger than operator_relayed but weaker than independently demonstrated direct retrieval."
+  ],
+  "limitations": [
+    "The exact provider mechanism is unknown: URL preprocessing, search grounding, fetch proxy, cached document ingestion, or another provider-side path may have supplied the file content.",
+    "The model did not retrieve the live thread and therefore could not supply live_thread_sequence_count.",
+    "No provider-authenticated identity or signed retrieval attestation was produced.",
+    "Independent direct retrieval remains unestablished."
+  ],
+  "authority_state": "advisory_only",
+  "institutional_effect": "none"
+}

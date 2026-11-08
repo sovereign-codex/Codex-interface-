@@ -1,29 +1,41 @@
 {
-  "schema": "tyme-hall-bootstrap/0.4-cold-start-review",
+  "schema": "tyme-hall-bootstrap/0.5-machine-gateway",
   "name": "Tyme Hall",
   "canonical_domain": "https://tymehall.org",
-  "purpose": "Public read-surface for present institutional state, inherited canon, active experimentation, relational navigation and governed contribution in the Sovereign Intelligence ecosystem.",
-  "review_cycle": "external-context-zero-02",
+  "purpose": "Public read-surface and machine-discoverable evidence infrastructure for Sovereign Intelligence, preserving provenance, uncertainty, retrieval mechanism and authority boundaries.",
+  "status": "machine-gateway-read-only",
+  "authority_state": "none",
+  "institutional_effect": "none",
   "epistemic_policy": {
-    "classes": ["canon", "hypothesis", "experiment", "interpretation", "archive"],
-    "rule": "Presence in the Hall does not imply validation. Preserve provenance and uncertainty, and report contradictions rather than resolving them by assumption."
+    "classes": [
+      "canon",
+      "hypothesis",
+      "experiment",
+      "interpretation",
+      "archive"
+    ],
+    "rule": "Presence in the Hall does not imply validation. Preserve provenance and uncertainty, report contradictions, and distinguish discovery, retrieval, evidence, verification and authorization."
   },
-  "public_surface_primitive": {
-    "office": "present approved institutional state; read-only and non-authorizing",
-    "scrolls": "reviewed public inheritance that crossed an explicit publication boundary",
-    "laboratory": "active becoming; hypotheses, experiments and bounded work remain non-canonical unless separately promoted",
-    "constellation": "relational navigation derived from retained institutional relationships rather than a second authority source",
-    "contribution": "governed paths for challenge, correction, reproduction and participation without automatic authority"
-  },
-  "institutional_model": {
-    "sequence": ["signal", "work", "branch", "maturation", "office_review", "transition", "execution", "trace", "institutional_state"],
-    "work": "intentional institutional contribution",
-    "branch": "bounded evolving path of a Work through alternatives, evidence, review, execution and return",
-    "trail": "append-only lineage of meaningful Branch events",
-    "scroll": "reviewed public inheritance with explicit identity, provenance, epistemic posture and stewardship"
+  "machine_gateway": {
+    "human_url": "/for-machines/",
+    "machine_record": "/for-machines/index.json",
+    "discovery_state_vocabulary": [
+      "indexed",
+      "explicitly_addressed",
+      "not_discovered",
+      "unknown"
+    ],
+    "retrieval_state_vocabulary": [
+      "direct_runtime_retrieval",
+      "provider_mediated_retrieval",
+      "operator_relayed",
+      "same_runtime_rehearsal",
+      "unknown"
+    ]
   },
   "entrypoints": {
     "human": "/",
+    "machine": "/for-machines/",
     "office": "/office/",
     "scrolls": "/scrolls/",
     "laboratory": "/laboratory/",
@@ -33,33 +45,41 @@
     "work": "/work/",
     "canon": "/canon/",
     "terminal": "/terminal/",
-    "legacy_state": "/state/"
+    "evidence_commons": "/evidence/commons/participation-003",
+    "live_commons_thread": "/evidence/commons/thread.json"
   },
-  "publications": {
-    "institution": "Sovereign Intelligence Research Institute",
-    "first_publication": {
-      "publication_number": 1,
-      "scroll_id": "AGI-0001",
-      "version": "0.1.0",
-      "title": "AGI Manifesto Scroll - Autonomous Governing Intelligence",
-      "public_posture": "PUBLISHED_CANONICAL",
-      "published_at": "2026-09-07",
-      "human_url": "/scrolls/AGI-0001/",
-      "machine_record": "/scrolls/AGI-0001/publication.json"
-    }
+  "public_capabilities": {
+    "indexed_discovery": "established_for_public_hall",
+    "first_party_machine_gateway": "live_read_only",
+    "evidence_bridge": "live_read_only",
+    "live_commons_readback": "live_read_only",
+    "production_commons_write": "not_established",
+    "provider_authenticated_external_identity": "not_established",
+    "institutional_authority": "none"
+  },
+  "evidence_bridge": {
+    "bridge_id": "TYME-PUBLIC-EVIDENCE-BRIDGE-001",
+    "posture": "read_only",
+    "route_prefix": "/evidence/commons/",
+    "live_thread": "/evidence/commons/thread.json",
+    "roundtrip_proof": "/evidence/commons/roundtrip-001.json",
+    "machine_handoff": "/evidence/commons/participation-003.json",
+    "production_write_route": false
   },
   "machine_records": {
     "public_office_state": "/office/state.json",
     "public_office_schema": "/schemas/public_office_state.v0.schema.json",
+    "machine_gateway": "/for-machines/index.json",
+    "live_commons_thread": "/evidence/commons/thread.json",
+    "roundtrip_proof": "/evidence/commons/roundtrip-001.json",
+    "bridge_state": "/evidence/commons/bridge-state.json",
     "first_work": "/work/hall-work-001.json",
-    "first_publication": "/scrolls/AGI-0001/publication.json",
-    "first_branch_source": "https://github.com/sovereign-codex/Codex-interface-/blob/main/branches/hall-branch-lifecycle.json",
-    "work_schema_source": "https://github.com/sovereign-codex/Codex-interface-/blob/main/schemas/work.schema.json"
+    "first_publication": "/scrolls/AGI-0001/publication.json"
   },
-  "validation": {
-    "context_zero_protocol": "https://github.com/sovereign-codex/Codex-interface-/blob/main/validation/CONTEXT_ZERO_PROTOCOL.md",
-    "rule": "Do not coach an evaluator after a cold-start run begins. Misunderstandings are validation data."
-  },
-  "source": "https://github.com/sovereign-codex/Codex-interface-",
-  "status": "cold-start-review-cycle-02"
+  "governing_invariants": [
+    "discussion != verification != authorization",
+    "authorship provenance != submission provenance",
+    "public to humans != machine-retrievable across providers"
+  ],
+  "source": "https://github.com/sovereign-codex/Codex-interface-"
 }

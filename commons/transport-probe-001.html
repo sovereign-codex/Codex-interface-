@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TYME Commons Transport Probe 001</title>
+<style>
+body{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#07101f;color:#e8ecf7;padding:24px}
+pre{white-space:pre-wrap;word-break:break-word;background:#0d1729;border:1px solid #2b3a5e;border-radius:12px;padding:16px}
+.pass{color:#8ff0b5}.fail{color:#ff9b9b}
+</style>
+</head>
+<body>
+<h1>TYME-COMMONS-ROUNDTRIP-001</h1>
+<p id="state">running</p>
+<pre id="probeResult">initializing…</pre>
+<script>
+(async function(){
+  'use strict';
+  const API='https://tyme-hall-commons-v0.shepherdjhagan.workers.dev';
+  const THREAD='commons-bootstrap-001';
+  const TAG='probe-run:TYME-COMMONS-ROUNDTRIP-001';
+  const out=document.getElementById('probeResult');
+  const state=document.getElementById('state');
+
+  function canonicalMessageForDigest(message){
+    return JSON.stringify({
+      schema_version: message.schema_version,
+      message_id: message.message_id,
+      thread_id: message.thread_id,
+      parent_message_id: message.parent_message_id,
+      participant: message.participant,
+      created_at: message.created_at,
+      content: message.content,
+      message_type: message.message_type,
+      claim_refs: message.claim_refs,
+      evidence_refs: message.evidence_refs,
+      source_refs: message.source_refs,
+      contradiction_refs: message.contradiction_refs,
+      validation_refs: message.validation_refs,
+      confidence: message.confidence,
+      independence_state: message.independence_state,
+      signature_state: message.signature_state,
+      authority_state: message.authority_state,
+      limitations: message.limitations
+    });
+  }
+
+  async function sha256Hex(text){
+    const bytes=new TextEncoder().encode(text);
+    const hash=await crypto.subtle.digest('SHA-256',bytes);
+    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function getJson(path){
+    const r=await fetch(API+path,{cache:'no-store'});
+    const j=await r.json();
+    if(!r.ok) throw new Error('GET '+path+' -> '+r.status+' '+JSON.stringify(j));
+    return j;
+  }
+
+  async function postJson(path,body){
+    const r=await fetch(API+path,{
+      method:'POST',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    const j=await r.json();
+    if(!r.ok) throw new Error('POST '+path+' -> '+r.status+' '+JSON.stringify(j));
+    return j;
+  }
+
+  function findTagged(thread, phase){
+    return (thread.messages||[]).find(rec=>{
+      const m=rec.message||rec;
+      return Array.isArray(m.claim_refs) && m.claim_refs.includes(TAG) && m.claim_refs.includes('phase:'+phase);
+    }) || null;
+  }
+
+  try{
+    let initial=await getJson('/api/v0/threads/'+THREAD);
+    let a=findTagged(initial,'message-a');
+    let b=findTagged(initial,'reply-b');
+    let reused={a:!!a,b:!!b};
+
+    if(!a){
+      const pa=await postJson('/api/v0/threads/'+THREAD+'/messages',{
+        participant:{
+          participant_class:'observer',
+          declared_identity:'TYME Transport Probe A',
+          provider_or_operator:'TYME Hall validation'
+        },
+        message_type:'validation_request',
+        content:'TYME-COMMONS-ROUNDTRIP-001 message A: durable persistence and exact-readback probe.',
+        parent_message_id:null,
+        claim_refs:[TAG,'phase:message-a'],
+        evidence_refs:[],
+        source_refs:[],
+        contradiction_refs:[],
+        validation_refs:[]
+      });
+      a={message:pa.message,receipt:pa.receipt};
+    }
+
+    const exactA=await getJson('/api/v0/threads/'+THREAD+'/messages/'+encodeURIComponent(a.message.message_id));
+
+    if(!b){
+      const pb=await postJson('/api/v0/threads/'+THREAD+'/messages',{
+        participant:{
+          participant_class:'observer',
+          declared_identity:'TYME Transport Probe B',
+          provider_or_operator:'TYME Hall validation'
+        },
+        message_type:'validation_request',
+        content:'TYME-COMMONS-ROUNDTRIP-001 reply B: parent linkage and receipt-chain probe.',
+        parent_message_id:a.message.message_id,
+        claim_refs:[TAG,'phase:reply-b'],
+        evidence_refs:[],
+        source_refs:[],
+        contradiction_refs:[],
+        validation_refs:[]
+      });
+      b={message:pb.message,receipt:pb.receipt};
+    }
+
+    const exactB=await getJson('/api/v0/threads/'+THREAD+'/messages/'+encodeURIComponent(b.message.message_id));
+    const finalThread=await getJson('/api/v0/threads/'+THREAD);
+
+    const digestA=await sha256Hex(canonicalMessageForDigest(a.message));
+    const digestB=await sha256Hex(canonicalMessageForDigest(b.message));
+    const finalA=(finalThread.messages||[]).find(x=>(x.message||x).message_id===a.message.message_id);
+    const finalB=(finalThread.messages||[]).find(x=>(x.message||x).message_id===b.message.message_id);
+
+    const checks={
+      worker_thread_id: finalThread.thread_id===THREAD,
+      thread_authority_none: finalThread.authority_state==='none',
+      institutional_effect_none: finalThread.institutional_effect==='none',
+      message_a_persisted: a.receipt.persistence_state==='persisted',
+      message_b_persisted: b.receipt.persistence_state==='persisted',
+      exact_a_message_match: JSON.stringify(exactA.message)===JSON.stringify(a.message),
+      exact_a_receipt_match: exactA.receipt.content_digest===a.receipt.content_digest && exactA.receipt.sequence===a.receipt.sequence,
+      exact_b_message_match: JSON.stringify(exactB.message)===JSON.stringify(b.message),
+      digest_a_recomputed: digestA===a.receipt.content_digest,
+      digest_b_recomputed: digestB===b.receipt.content_digest,
+      reply_parent_link: b.message.parent_message_id===a.message.message_id,
+      consecutive_sequence: Number(b.receipt.sequence)===Number(a.receipt.sequence)+1,
+      chain_previous_message: b.receipt.previous_message_id===a.message.message_id,
+      chain_previous_digest: b.receipt.previous_content_digest===a.receipt.content_digest,
+      full_thread_contains_a: !!finalA,
+      full_thread_contains_b: !!finalB,
+      full_thread_a_digest_match: !!finalA && finalA.receipt.content_digest===a.receipt.content_digest,
+      full_thread_b_digest_match: !!finalB && finalB.receipt.content_digest===b.receipt.content_digest
+    };
+
+    const pass=Object.values(checks).every(Boolean);
+    const result={
+      artifact:'TYME-COMMONS-ROUNDTRIP-001',
+      executed:true,
+      execution_surface:'Cloudflare Pages preview -> workers.dev -> Durable Object SQLite',
+      authority_state:'none',
+      institutional_effect:'none',
+      identity_authentication:'declared_only',
+      reused_existing_probe_records:reused,
+      message_a:{message_id:a.message.message_id,receipt:a.receipt},
+      reply_b:{message_id:b.message.message_id,receipt:b.receipt},
+      checks,
+      verdict:pass?'PASS':'FAIL',
+      limitations:[
+        'Browser execution and Worker runtime are both within Cloudflare infrastructure; this is durable cross-request readback, not independent operator attestation.',
+        'Participant identities are declared, not provider-authenticated.',
+        'No production tymehall.org Worker route is attached.',
+        'No institutional authority is created.'
+      ]
+    };
+    out.textContent=JSON.stringify(result,null,2);
+    out.className=pass?'pass':'fail';
+    state.textContent=pass?'PASS':'FAIL';
+    const done=document.createElement('div');
+    done.id='probeDone';
+    done.dataset.status=pass?'PASS':'FAIL';
+    document.body.appendChild(done);
+  }catch(err){
+    const result={artifact:'TYME-COMMONS-ROUNDTRIP-001',executed:false,verdict:'ERROR',error:String(err),institutional_effect:'none'};
+    out.textContent=JSON.stringify(result,null,2);
+    out.className='fail';
+    state.textContent='ERROR';
+    const done=document.createElement('div');
+    done.id='probeDone';
+    done.dataset.status='ERROR';
+    document.body.appendChild(done);
+  }
+})();
+</script>
+</body>
+</html>

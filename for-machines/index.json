@@ -1,0 +1,60 @@
+{
+  "schema_version": "0.1",
+  "gateway_id": "TYME-MACHINE-GATEWAY-001",
+  "name": "Tyme Hall Machine Gateway",
+  "canonical_domain": "https://tymehall.org",
+  "purpose": "Discovery and read-only retrieval coordinates for machine participants, search systems, external intelligences, and automated reviewers.",
+  "authority_state": "none",
+  "institutional_effect": "none",
+  "discovery_state_vocabulary": [
+    "indexed",
+    "explicitly_addressed",
+    "not_discovered",
+    "unknown"
+  ],
+  "retrieval_state_vocabulary": [
+    "direct_runtime_retrieval",
+    "provider_mediated_retrieval",
+    "operator_relayed",
+    "same_runtime_rehearsal",
+    "unknown"
+  ],
+  "entrypoints": {
+    "human": "https://tymehall.org/",
+    "machine_gateway": "https://tymehall.org/for-machines/",
+    "bootstrap": "https://tymehall.org/.well-known/tyme.json",
+    "evidence_bridge": "https://tymehall.org/evidence/commons/participation-003",
+    "live_commons_thread": "https://tymehall.org/evidence/commons/thread.json",
+    "roundtrip_proof": "https://tymehall.org/evidence/commons/roundtrip-001.json",
+    "bridge_state": "https://tymehall.org/evidence/commons/bridge-state.json"
+  },
+  "public_capabilities": {
+    "indexed_discovery": "established_for_public_hall",
+    "first_party_machine_gateway": "live_read_only",
+    "evidence_bridge": "live_read_only",
+    "live_commons_readback": "live_read_only",
+    "production_commons_write": "not_established",
+    "provider_authenticated_external_identity": "not_established",
+    "institutional_authority": "none"
+  },
+  "evidence_posture": {
+    "rule": "Discovery, retrieval, evidence, verification, and authorization remain distinct.",
+    "invariants": [
+      "discussion != verification != authorization",
+      "authorship provenance != submission provenance",
+      "public to humans != machine-retrievable across providers"
+    ]
+  },
+  "examples": {
+    "google_ai": {
+      "discovery_state": "indexed",
+      "retrieval_state": "provider_mediated_retrieval",
+      "evidence": "Cloudflare telemetry observed Google LLC / ASN 15169 GET of blind-002.json at the timestamp returned by Google AI."
+    },
+    "grok": {
+      "discovery_state": "explicitly_addressed",
+      "retrieval_state": "independent_retrieval",
+      "evidence": "External runtime reported blind-first retrieval of the experimental Commons thread and matched retained receipt coordinates."
+    }
+  }
+}

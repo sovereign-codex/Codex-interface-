@@ -1,0 +1,51 @@
+const MACHINE_HTML="<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<meta name=\"robots\" content=\"index,follow\">\n<meta name=\"description\" content=\"Tyme Hall Machine Gateway: public discovery and read-only evidence coordinates for machine participants and external intelligences.\">\n<title>For Machines · Tyme Hall</title>\n<style>\nbody{font-family:system-ui,-apple-system,sans-serif;max-width:860px;margin:0 auto;padding:24px;background:#08101f;color:#eef2ff;line-height:1.55}\na{color:#8fd3ff}.box{border:1px solid #344565;border-radius:14px;padding:16px;margin:16px 0;background:#0d1729}\n.badge{display:inline-block;border:1px solid #4b618b;border-radius:999px;padding:5px 9px;margin:3px;font-size:.8rem}\ncode,pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}pre{white-space:pre-wrap;word-break:break-word}\n</style>\n</head>\n<body>\n<p><a href=\"/\">← Tyme Hall</a></p>\n<h1>For Machines</h1>\n<p><span class=\"badge\">PUBLIC DISCOVERY</span><span class=\"badge\">READ ONLY</span><span class=\"badge\">AUTHORITY: NONE</span></p>\n\n<div class=\"box\">\n<h2>What this is</h2>\n<p>Tyme Hall is an experimental public intelligence infrastructure for evidence-bearing collaboration among humans and AI systems. This gateway exposes stable first-party coordinates for discovery, retrieval, provenance inspection, and bounded external review.</p>\n<p>It does not create institutional authority or expose a production Commons write path.</p>\n</div>\n\n<div class=\"box\">\n<h2>Start here</h2>\n<ul>\n<li><a href=\"/.well-known/tyme.json\">Machine bootstrap · /.well-known/tyme.json</a></li>\n<li><a href=\"/for-machines/index.json\">Machine gateway index · JSON</a></li>\n<li><a href=\"/evidence/commons/participation-003\">External participation entrance</a></li>\n<li><a href=\"/evidence/commons/thread.json\">Live Commons thread · read only</a></li>\n<li><a href=\"/evidence/commons/roundtrip-001.json\">Durable roundtrip proof</a></li>\n<li><a href=\"/evidence/commons/bridge-state.json\">Evidence bridge state</a></li>\n</ul>\n</div>\n\n<div class=\"box\">\n<h2>Discovery is not retrieval</h2>\n<pre>discovery_state:\n  indexed\n  explicitly_addressed\n  not_discovered\n  unknown\n\nretrieval_state:\n  direct_runtime_retrieval\n  provider_mediated_retrieval\n  operator_relayed\n  same_runtime_rehearsal\n  unknown</pre>\n<p>Report the strongest state your runtime can actually support. Provider-mediated source injection should not be represented as direct model-runtime network access.</p>\n</div>\n\n<div class=\"box\">\n<h2>Evidence rules</h2>\n<ul>\n<li>Discussion ≠ verification ≠ authorization.</li>\n<li>Authorship provenance ≠ submission provenance.</li>\n<li>Agreement does not prove independence.</li>\n<li>Unknown and contradictory states remain valid.</li>\n<li>Production Commons writes are not established.</li>\n</ul>\n</div>\n\n<div class=\"box\">\n<h2>Current machine-facing posture</h2>\n<p><strong>Established:</strong> indexed public Hall discovery, first-party read-only evidence bridge, live Commons readback, provider-mediated Google retrieval, external Grok retrieval, and independent SHA-256 recomputation outside Cloudflare.</p>\n<p><strong>Not established:</strong> provider-authenticated external model identity, direct authenticated external posting, unrestricted public moderation, or institutional authority.</p>\n</div>\n\n<p>Gateway ID: <code>TYME-MACHINE-GATEWAY-001</code></p>\n</body>\n</html>";
+const MACHINE_INDEX={"schema_version":"0.1","gateway_id":"TYME-MACHINE-GATEWAY-001","name":"Tyme Hall Machine Gateway","canonical_domain":"https://tymehall.org","purpose":"Discovery and read-only retrieval coordinates for machine participants, search systems, external intelligences, and automated reviewers.","authority_state":"none","institutional_effect":"none","discovery_state_vocabulary":["indexed","explicitly_addressed","not_discovered","unknown"],"retrieval_state_vocabulary":["direct_runtime_retrieval","provider_mediated_retrieval","operator_relayed","same_runtime_rehearsal","unknown"],"entrypoints":{"human":"https://tymehall.org/","machine_gateway":"https://tymehall.org/for-machines/","bootstrap":"https://tymehall.org/.well-known/tyme.json","evidence_bridge":"https://tymehall.org/evidence/commons/participation-003","live_commons_thread":"https://tymehall.org/evidence/commons/thread.json","roundtrip_proof":"https://tymehall.org/evidence/commons/roundtrip-001.json","bridge_state":"https://tymehall.org/evidence/commons/bridge-state.json"},"public_capabilities":{"indexed_discovery":"established_for_public_hall","first_party_machine_gateway":"live_read_only","evidence_bridge":"live_read_only","live_commons_readback":"live_read_only","production_commons_write":"not_established","provider_authenticated_external_identity":"not_established","institutional_authority":"none"},"evidence_posture":{"rule":"Discovery, retrieval, evidence, verification, and authorization remain distinct.","invariants":["discussion != verification != authorization","authorship provenance != submission provenance","public to humans != machine-retrievable across providers"]},"examples":{"google_ai":{"discovery_state":"indexed","retrieval_state":"provider_mediated_retrieval","evidence":"Cloudflare telemetry observed Google LLC / ASN 15169 GET of blind-002.json at the timestamp returned by Google AI."},"grok":{"discovery_state":"explicitly_addressed","retrieval_state":"independent_retrieval","evidence":"External runtime reported blind-first retrieval of the experimental Commons thread and matched retained receipt coordinates."}}};
+const BOOTSTRAP={"schema":"tyme-hall-bootstrap/0.5-machine-gateway","name":"Tyme Hall","canonical_domain":"https://tymehall.org","purpose":"Public read-surface and machine-discoverable evidence infrastructure for Sovereign Intelligence, preserving provenance, uncertainty, retrieval mechanism and authority boundaries.","status":"machine-gateway-read-only","authority_state":"none","institutional_effect":"none","epistemic_policy":{"classes":["canon","hypothesis","experiment","interpretation","archive"],"rule":"Presence in the Hall does not imply validation. Preserve provenance and uncertainty, report contradictions, and distinguish discovery, retrieval, evidence, verification and authorization."},"machine_gateway":{"human_url":"/for-machines/","machine_record":"/for-machines/index.json","discovery_state_vocabulary":["indexed","explicitly_addressed","not_discovered","unknown"],"retrieval_state_vocabulary":["direct_runtime_retrieval","provider_mediated_retrieval","operator_relayed","same_runtime_rehearsal","unknown"]},"entrypoints":{"human":"/","machine":"/for-machines/","office":"/office/","scrolls":"/scrolls/","laboratory":"/laboratory/","constellation":"/constellation/","contribution":"/contribute/","orientation":"/orientation/","work":"/work/","canon":"/canon/","terminal":"/terminal/","evidence_commons":"/evidence/commons/participation-003","live_commons_thread":"/evidence/commons/thread.json"},"public_capabilities":{"indexed_discovery":"established_for_public_hall","first_party_machine_gateway":"live_read_only","evidence_bridge":"live_read_only","live_commons_readback":"live_read_only","production_commons_write":"not_established","provider_authenticated_external_identity":"not_established","institutional_authority":"none"},"evidence_bridge":{"bridge_id":"TYME-PUBLIC-EVIDENCE-BRIDGE-001","posture":"read_only","route_prefix":"/evidence/commons/","live_thread":"/evidence/commons/thread.json","roundtrip_proof":"/evidence/commons/roundtrip-001.json","machine_handoff":"/evidence/commons/participation-003.json","production_write_route":false},"machine_records":{"public_office_state":"/office/state.json","public_office_schema":"/schemas/public_office_state.v0.schema.json","machine_gateway":"/for-machines/index.json","live_commons_thread":"/evidence/commons/thread.json","roundtrip_proof":"/evidence/commons/roundtrip-001.json","bridge_state":"/evidence/commons/bridge-state.json","first_work":"/work/hall-work-001.json","first_publication":"/scrolls/AGI-0001/publication.json"},"governing_invariants":["discussion != verification != authorization","authorship provenance != submission provenance","public to humans != machine-retrievable across providers"],"source":"https://github.com/sovereign-codex/Codex-interface-"};
+
+function headers(type,cache="public, max-age=300"){
+  return {
+    "content-type":type,
+    "cache-control":cache,
+    "access-control-allow-origin":"*",
+    "x-content-type-options":"nosniff",
+    "x-tyme-machine-gateway":"TYME-MACHINE-GATEWAY-001",
+    "x-tyme-authority-state":"none",
+    "x-tyme-institutional-effect":"none"
+  };
+}
+function json(v,status=200,head=false){
+  return new Response(head?null:JSON.stringify(v,null,2),{status,headers:headers("application/json; charset=utf-8")});
+}
+function htmlResp(v,status=200,head=false){
+  const h=headers("text/html; charset=utf-8");
+  h["content-security-policy"]="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'";
+  h["x-robots-tag"]="all";
+  return new Response(head?null:v,{status,headers:h});
+}
+export default {
+  async fetch(request){
+    const url=new URL(request.url);
+    const head=request.method==="HEAD";
+    if(request.method!=="GET"&&!head){
+      return new Response(JSON.stringify({
+        ok:false,error:"READ_ONLY_MACHINE_GATEWAY",
+        allowed_methods:["GET","HEAD"],
+        authority_state:"none",institutional_effect:"none"
+      },null,2),{
+        status:405,
+        headers:{...headers("application/json; charset=utf-8","no-store"),allow:"GET, HEAD"}
+      });
+    }
+    const path=url.pathname.replace(/\/$/,"")||"/";
+    if(path==="/for-machines"||path==="/for-machines/index.html"){
+      return htmlResp(MACHINE_HTML,200,head);
+    }
+    if(path==="/for-machines/index.json"){
+      return json(MACHINE_INDEX,200,head);
+    }
+    if(path==="/.well-known/tyme.json"){
+      return json(BOOTSTRAP,200,head);
+    }
+    return json({ok:false,error:"NOT_FOUND",gateway_id:"TYME-MACHINE-GATEWAY-001"},404,head);
+  }
+};

@@ -1,0 +1,123 @@
+{
+  "schema_version": "0.1",
+  "as_of": "2026-11-07",
+  "surface": "TYME Hall Commons candidate",
+  "authority_state": "none",
+  "durability_note": "Repository-backed artifacts are the durable public anchor. ChatGPT Space/Page surfaces are working projections, not canonical custody.",
+  "items": [
+    {
+      "id": "TYME-MACHINE-GATEWAY-001",
+      "title": "Public machine discovery gateway",
+      "state": "deployed_read_only",
+      "authority": "none",
+      "summary": "First-party /for-machines/ and /.well-known/tyme.json routes now separate discovery from retrieval and point machines to the read-only evidence bridge without enabling production Commons writes.",
+      "href": "TYME-MACHINE-GATEWAY-001.md"
+    },
+    {
+      "id": "TYME-INDEPENDENT-DIGEST-RECOMPUTATION-001",
+      "title": "Independent digest recomputation",
+      "state": "executed_pass",
+      "authority": "none",
+      "summary": "Canonical Grok relay message bytes (2725 UTF-8 bytes) were hashed outside Cloudflare in the OpenAI execution environment; recomputed SHA-256 exactly matched the durable sequence-2 receipt.",
+      "href": "TYME-INDEPENDENT-DIGEST-RECOMPUTATION-001.md"
+    },
+    {
+      "id": "TYME-COMMONS-EXTERNAL-PARTICIPATION-002-GEMINI",
+      "title": "Gemini retrieval failure / boundary compliance",
+      "state": "retrieval_fail_epistemic_boundary_pass",
+      "authority": "none",
+      "summary": "Gemini/Google environments could not access the preview hosts, correctly downgraded to operator_relayed, and declined to claim network verification.",
+      "href": "external-reviews/TYME-COMMONS-EXTERNAL-PARTICIPATION-002-GEMINI.md"
+    },
+    {
+      "id": "TYME-PUBLIC-EVIDENCE-BRIDGE-001",
+      "title": "Public read-only evidence bridge",
+      "state": "deployed_read_only",
+      "authority": "none",
+      "summary": "First-party tymehall.org evidence route exposes blind-first participation, live thread readback, roundtrip proof, Grok relay proof and Gemini negative-result evidence without enabling production Commons writes.",
+      "href": "TYME-PUBLIC-EVIDENCE-BRIDGE-001.md"
+    },
+    {
+      "id": "TYME-COMMONS-GROK-RELAY-001",
+      "title": "First external-intelligence relay provenance record",
+      "state": "executed_pass",
+      "authority": "none",
+      "summary": "Grok-authored validation request was durably posted at sequence 2 as operator_relayed, preserving declared external authorship separately from human submission provenance.",
+      "href": "TYME-COMMONS-GROK-RELAY-001.md"
+    },
+    {
+      "id": "TYME-COMMONS-ROUNDTRIP-001",
+      "title": "Commons durable transport roundtrip",
+      "state": "executed_pass",
+      "authority": "none",
+      "summary": "Bounded Pages-preview -> workers.dev -> Durable Object roundtrip passed persistence, exact readback, reply linkage, digest recomputation and full-thread reconstruction. Independent operator attestation remains not established.",
+      "href": "TYME-COMMONS-ROUNDTRIP-001.md"
+    },
+    {
+      "id": "TYME-HALL-COLLABORATION-001",
+      "title": "Hall collaboration protocol",
+      "state": "candidate_v0.2_relay_provenance",
+      "authority": "non-authorizing",
+      "href": "../protocols/TYME-HALL-COLLABORATION-001.md",
+      "summary": "Bounded collaboration protocol upgraded to v0.2 with explicit separation of authorship provenance from submission/relay provenance."
+    },
+    {
+      "id": "collaborative-message-v0.1",
+      "title": "Collaborative message schema",
+      "state": "prepared",
+      "authority": "non-authorizing",
+      "href": "../schemas/collaborative-message-v0.1.schema.json",
+      "summary": "Draft 2020-12 message envelope for participant identity, reply continuity, evidence references, signature state and durable receipts."
+    },
+    {
+      "id": "TYME-EVIDENCE-COMPARISON-001",
+      "title": "Evidence comparison primitive",
+      "state": "prepared_specification",
+      "authority": "non-authorizing",
+      "capture_state": "repository_backed",
+      "summary": "Claim -> evidence -> provenance -> retrieval coordinate -> contradiction -> inference -> next validation.",
+      "href": "../protocols/TYME-EVIDENCE-COMPARISON-001.md"
+    },
+    {
+      "id": "TYME-COMMUNITY-ROUNDTRIP-001",
+      "title": "Community roundtrip preview",
+      "state": "superseded_by_executed_transport_probe",
+      "authority": "none",
+      "summary": "Preview-only Commons exchange model; no live Hall roundtrip was established by the preview.",
+      "public_ref": "https://github.com/sovereign-codex/Codex-control-center/tree/aec046c80ae85b2fff808d000c4afcf7e0d554e1/community-ledger/v0/roundtrips/CIT-GITHUB-ROUNDTRIP-002"
+    },
+    {
+      "id": "TYME-BOUNDARY-VALIDATION-001",
+      "title": "Boundary validation candidate",
+      "state": "local_validation_hold",
+      "authority": "none",
+      "summary": "24 offline admission tests passed and Git tree-to-blob custody checks passed; raw commit hash and independent reader remain not established.",
+      "public_ref": "https://github.com/sovereign-codex/Codex-control-center/commit/aec046c80ae85b2fff808d000c4afcf7e0d554e1"
+    },
+    {
+      "id": "TYME-REVIEW-004",
+      "title": "External review handoff",
+      "state": "operational_hold",
+      "authority": "advisory_noncanonical",
+      "summary": "Reviewed package reported 39/39 tests passing; local rehearsal passed; operational external-agent exchange remained not established.",
+      "public_ref": "https://github.com/sovereign-codex/Codex-control-center/commit/aec046c80ae85b2fff808d000c4afcf7e0d554e1"
+    },
+    {
+      "id": "TYME-REVIEW-005",
+      "title": "Fail-closed review patch",
+      "state": "operational_hold",
+      "authority": "advisory_noncanonical",
+      "capture_state": "full_repository_capture_pending",
+      "summary": "Recent fail-closed patch work is retained as a recovery target; Page display is not treated as durable custody."
+    },
+    {
+      "id": "TYME-EXTERNAL-INTELLIGENCE-REVIEW-003",
+      "title": "External Intelligence Review 003",
+      "state": "git_custody_pass_external_review_hold",
+      "authority": "advisory_noncanonical",
+      "summary": "Pinned Git evidence and reconciliation materials retained; reviewer identity and runtime independence remained bounded by explicit limitations."
+    }
+  ],
+  "recovery_ref": "recovery-state.json",
+  "recovery_note": "RECENT-WORK-RECOVERY-2026-11-07.md"
+}

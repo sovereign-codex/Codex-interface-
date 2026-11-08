@@ -1,0 +1,55 @@
+{
+  "artifact": "TYME-PUBLIC-EVIDENCE-BRIDGE-001",
+  "executed": true,
+  "executed_at": "2026-11-08T05:51:27Z",
+  "worker": {
+    "script": "tyme-public-evidence-bridge-v0",
+    "deployment_id": "9c050e3d58e840cebce824a0d3a347f6",
+    "tag": "926dce1ddba74e6cb632fb362b676870",
+    "compatibility_date": "2026-11-08",
+    "observability": true,
+    "service_binding": "COMMONS -> tyme-hall-commons-v0"
+  },
+  "route": {
+    "id": "e15ee0b56a4c4a7cb487f87cb1730f40",
+    "pattern": "tymehall.org/evidence/commons/*",
+    "script": "tyme-public-evidence-bridge-v0",
+    "request_limit_fail_open": false
+  },
+  "endpoints": {
+    "entrance": "https://tymehall.org/evidence/commons/participation-003",
+    "live_thread": "https://tymehall.org/evidence/commons/thread.json",
+    "roundtrip_proof": "https://tymehall.org/evidence/commons/roundtrip-001.json",
+    "machine_handoff": "https://tymehall.org/evidence/commons/participation-003.json",
+    "grok_relay": "https://tymehall.org/evidence/commons/grok-relay-001.json",
+    "gemini_negative": "https://tymehall.org/evidence/commons/gemini-002.json",
+    "state": "https://tymehall.org/evidence/commons/bridge-state.json"
+  },
+  "methods_allowed": [
+    "GET",
+    "HEAD"
+  ],
+  "write_methods_rejected_by_worker": [
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS"
+  ],
+  "production_commons_write_route": false,
+  "authority_state": "none",
+  "institutional_effect": "none",
+  "verification": {
+    "entrance_http_status": 200,
+    "entrance_title": "TYME Public Evidence Bridge 001 · External Participation 003",
+    "entrance_verified_via": "Cloudflare Browser Rendering",
+    "json_machine_retrieval_cross_provider": "not_yet_established",
+    "note": "Subsequent Cloudflare Browser Rendering checks hit HTTP 429 rate limiting; this is recorded as a verification limitation, not promoted to a bridge failure."
+  },
+  "limitations": [
+    "Cross-provider retrieval of thread.json remains to be tested from Gemini/Google and another external runtime.",
+    "The Worker code rejects non-GET/HEAD methods, but an independent external non-GET probe has not yet been recorded.",
+    "The bridge exposes evidence only; it does not establish production Commons writes.",
+    "No institutional authority is created."
+  ]
+}

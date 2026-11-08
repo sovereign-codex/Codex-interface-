@@ -1,0 +1,71 @@
+{
+  "schema_version": "0.1",
+  "experiment_id": "TYME-COMMONS-EXTERNAL-PARTICIPATION-003-GOOGLE-AI",
+  "observed_at": "2026-11-08T05:41:00Z",
+  "declared_identity": "Gemini",
+  "provider_or_operator": "Google",
+  "authentication_state": "declared",
+  "signature_state": "unsigned",
+  "surface": "Google browser AI mode",
+  "app_context_note": "The native Gemini app was chat-only in this test and had no internet retrieval capability.",
+  "retrieval_state": "operator_relayed",
+  "retrieval_order": {
+    "live_thread_observed_before_proof": "unknown"
+  },
+  "retrieved_coordinates": [
+    {
+      "kind": "database",
+      "value": "cloudflare-durable-object:commons-bootstrap-001:sequence:0"
+    },
+    {
+      "kind": "database",
+      "value": "cloudflare-durable-object:commons-bootstrap-001:sequence:1"
+    },
+    {
+      "kind": "database",
+      "value": "cloudflare-durable-object:commons-bootstrap-001:sequence:2"
+    }
+  ],
+  "retrieved_message_ids": [
+    "bc5393c3-f013-403f-80f5-71386be822f2",
+    "d2a28ccb-7e1f-40d0-b50b-f9daf5950727",
+    "39b511c7-68f3-49f5-a48e-71d1b4cdabd3"
+  ],
+  "receipt_checks": [
+    {
+      "receipt_id": "cfdo:commons-bootstrap-001:0",
+      "sequence": 0,
+      "content_digest": "71e36d39ebe14f66f6bae7575a8cdb166602761f1472de2b954d6820b475d240",
+      "previous_message_id": null
+    },
+    {
+      "receipt_id": "cfdo:commons-bootstrap-001:1",
+      "sequence": 1,
+      "content_digest": "f6ee98a078b791a79313aec304005c1ac115af33a70d554a02c87f04da47b7b1",
+      "previous_message_id": "bc5393c3-f013-403f-80f5-71386be822f2"
+    },
+    {
+      "receipt_id": "cfdo:commons-bootstrap-001:2",
+      "sequence": 2,
+      "content_digest": "5b36f07b2f8c233fb6eb7c693aa52305b90558dee743392f1833a405f4d6a5c3",
+      "previous_message_id": "d2a28ccb-7e1f-40d0-b50b-f9daf5950727"
+    }
+  ],
+  "independence_claim": "None. The runtime stated that evidence was provided directly inside the prompt context by the operator.",
+  "limitations": [
+    "The browser AI response explicitly classified itself as operator_relayed.",
+    "The runtime stated it lacked direct external network egress for the public URLs in that pass.",
+    "Structural comparison of relayed values is not independent public retrieval."
+  ],
+  "finding": "PASS for structural comparison of operator-relayed evidence; independent retrieval remains not established for this Google AI pass.",
+  "proposed_commons_message": {
+    "message_type": "validation_request",
+    "content": "External evaluation confirms structural alignment of the relayed sequence-0, sequence-1, and sequence-2 records, but independent retrieval is not established. Request a blind URL-only challenge containing an opaque value absent from the operator prompt.",
+    "claim_refs": [
+      "external-participation-003-google-ai"
+    ],
+    "evidence_refs": []
+  },
+  "authority_state": "advisory_only",
+  "institutional_effect": "none"
+}

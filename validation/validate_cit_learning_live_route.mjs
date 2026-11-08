@@ -46,6 +46,12 @@ ok &&= expect("mobile-viewport", foyer.includes('name="viewport"'));
 ok &&= expect("institutional-five-preserved", institutionalEntries.every(([href, title]) => institutionalGrid.includes(href) && institutionalGrid.includes(title)));
 ok &&= expect("institutional-first-grid-has-five-cards", (institutionalGrid.match(/class="card-link"/g) || []).length === 5);
 ok &&= expect("learning-route-not-sixth-card", participationPanel.length > 0 && !participationPanel.includes('class="card-link"'));
+ok &&= expect("commons-not-sixth-institutional-organ",
+  institutionalGrid.includes("<h3>Contribution</h3>") &&
+  !institutionalGrid.includes("<h3>Commons</h3>") &&
+  foyer.includes('data-route-role="commons-candidate"') &&
+  foyer.includes("Commons is a collaboration surface, not a sixth institutional organ.")
+);
 ok &&= expect("learning-route-after-institutional-grid", firstGridEnd >= 0 && participationStart > firstGridEnd);
 ok &&= expect("learning-route-before-deeper-orientation", participationStart >= 0 && orientationStart > participationStart);
 ok &&= expect("inspection-versus-participation-distinction-visible",
@@ -68,7 +74,7 @@ ok &&= expect("foyer-surface-status-visible",
   foyer.includes('data-surface-status="public-foyer"') &&
   foyer.includes("Surface: PUBLIC FOYER") &&
   foyer.includes("Authority: NON-AUTHORIZING") &&
-  foyer.includes("Role: INSTITUTIONAL INSPECTION")
+  foyer.includes("Role: INTENT ROUTING")
 );
 ok &&= expect("participation-surface-status-visible",
   participationPanel.includes("Destination: CANDIDATE") &&

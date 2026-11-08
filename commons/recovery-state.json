@@ -1,0 +1,42 @@
+{
+  "schema_version": "0.1",
+  "observed_at": "2026-11-07",
+  "authority_state": "none",
+  "purpose": "Track recovery and durable custody of recent TYME Hall work while ChatGPT Space/Page projections are unstable or blank.",
+  "observations": [
+    {
+      "id": "SPACE-CONNECTOR-OBS-001",
+      "state": "observed",
+      "observation": "The connected ChatGPT Space backend returned zero accessible Drive-backed Spaces during this recovery pass.",
+      "interpretation": "The blank or Untitled Page entries visible in the client could not be inspected or repaired through the available Space connector in this session.",
+      "limitation": "This does not prove the underlying Pages were deleted; it establishes only that they were not backend-accessible through the connector used here."
+    },
+    {
+      "id": "PUBLIC-HALL-OBS-001",
+      "state": "verified_by_repository_readback",
+      "observation": "The public Hall source repository remains accessible and contains the existing foyer, Office, Laboratory, Scrolls, Contribution and related static surfaces.",
+      "repository": "sovereign-codex/Codex-interface-"
+    },
+    {
+      "id": "LIBRARY-RECOVERY-001",
+      "state": "partially_recovered",
+      "observation": "Recent generated artifacts remain discoverable in the file library even where Page projections are unreliable.",
+      "recovered_titles": [
+        "TYME-Hall-External-Review-Unification.html",
+        "TYME-Hall-External-Review-Console.html",
+        "TYME-COMMUNITY-ROUNDTRIP-001-preview.html",
+        "TYME-HALL-COLLABORATION-001.md",
+        "collaborative-message-v0.1.schema.json"
+      ]
+    }
+  ],
+  "durable_repository_capture": [
+    "protocols/TYME-HALL-COLLABORATION-001.md",
+    "protocols/TYME-EVIDENCE-COMPARISON-001.md",
+    "schemas/collaborative-message-v0.1.schema.json",
+    "commons/index.html",
+    "commons/recent-work.json",
+    "commons/README.md"
+  ],
+  "rule": "Repository-backed artifacts are the durable public anchor. Space/Page surfaces may project or summarize them but should not be the sole custody layer."
+}
