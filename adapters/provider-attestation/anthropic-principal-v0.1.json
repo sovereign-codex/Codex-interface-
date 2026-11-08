@@ -1,0 +1,28 @@
+{
+  "adapter_id": "ANTHROPIC-PRINCIPAL-EVIDENCE-001",
+  "provider": "Anthropic",
+  "status": "evidence_only",
+  "attestation_scope": "provider_account_principal",
+  "attestation_direction": "client_to_provider",
+  "verification_method": [
+    "record identity-backed service-account/API-key principal metadata when organization-authorized",
+    "record Anthropic WIF target service account and federation rule evidence"
+  ],
+  "model_or_session_binding": "not_established",
+  "identity_state_on_pass": "not_established",
+  "required_evidence": [
+    "Anthropic organization-admin evidence or provider-documented federation metadata"
+  ],
+  "prohibited_overclaims": [
+    "Claude model authenticated to TYME",
+    "Claude session authenticated to TYME",
+    "Anthropic access token treated as externally verifiable provider assertion without a documented verification surface"
+  ],
+  "authority_state": "none",
+  "institutional_effect": "none",
+  "source_refs": [
+    "https://platform.claude.com/docs/en/manage-claude/authentication",
+    "https://platform.claude.com/docs/en/manage-claude/workload-identity-federation",
+    "https://platform.claude.com/docs/en/manage-claude/admin-api"
+  ]
+}
