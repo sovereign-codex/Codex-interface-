@@ -1,0 +1,62 @@
+{
+  "schema_version": "0.1",
+  "artifact": "TYME-MACHINE-GATEWAY-001",
+  "status": "deployed_read_only",
+  "deployed_at": "2026-11-08T06:57:11.704979Z",
+  "worker": {
+    "script": "tyme-machine-gateway-v0",
+    "deployment_id": "4892fcd418804be2907ca6e6f1c1b260",
+    "tag": "bdc0282ac05b41b0b8ff99369e033341",
+    "compatibility_date": "2026-11-08",
+    "observability": true
+  },
+  "routes": [
+    {
+      "id": "9b8305a94353437681061dac818960df",
+      "pattern": "tymehall.org/for-machines/*",
+      "script": "tyme-machine-gateway-v0"
+    },
+    {
+      "id": "78feb26a9ce3409dbf28fb072648fa3f",
+      "pattern": "tymehall.org/.well-known/tyme.json",
+      "script": "tyme-machine-gateway-v0"
+    }
+  ],
+  "public_urls": {
+    "human_gateway": "https://tymehall.org/for-machines/",
+    "machine_index": "https://tymehall.org/for-machines/index.json",
+    "bootstrap": "https://tymehall.org/.well-known/tyme.json",
+    "evidence_bridge": "https://tymehall.org/evidence/commons/participation-003",
+    "live_thread": "https://tymehall.org/evidence/commons/thread.json"
+  },
+  "verification": {
+    "machine_gateway_http_status": 200,
+    "machine_gateway_title": "For Machines · Tyme Hall",
+    "verified_via": "Cloudflare Browser Rendering",
+    "subsequent_bootstrap_and_root_checks": "not_completed_due_to_browser_rendering_429"
+  },
+  "boundaries": {
+    "methods_allowed": [
+      "GET",
+      "HEAD"
+    ],
+    "production_commons_write_route": false,
+    "human_foyer_route_changed": false,
+    "authority_state": "none",
+    "institutional_effect": "none"
+  },
+  "discovery_taxonomy": [
+    "indexed",
+    "explicitly_addressed",
+    "not_discovered",
+    "unknown"
+  ],
+  "retrieval_taxonomy": [
+    "direct_runtime_retrieval",
+    "provider_mediated_retrieval",
+    "operator_relayed",
+    "same_runtime_rehearsal",
+    "unknown"
+  ],
+  "governing_invariant": "discovery != retrieval != evidence != verification != authorization"
+}
