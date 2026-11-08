@@ -99,6 +99,41 @@ function validateMessageInput(input) {
   ) {
     return "parent_message_id must be null or a short string";
   }
+
+  const authorship = input.authorship;
+  const submission = input.submission;
+  if (!authorship || typeof authorship !== "object" || Array.isArray(authorship)) {
+    return "authorship object required for v0.2 messages";
+  }
+  if (
+    typeof authorship.declared_author !== "string" ||
+    !authorship.declared_author.trim() ||
+    authorship.declared_author.trim().length > MAX_IDENTITY_CHARS
+  ) {
+    return "authorship.declared_author is required and must be 1-120 characters";
+  }
+  if (!["provider_attested","cryptographically_attested","operator_attested","declared","unknown","not_established"].includes(authorship.author_identity_state)) {
+    return "authorship.author_identity_state invalid";
+  }
+  if (!submission || typeof submission !== "object" || Array.isArray(submission)) {
+    return "submission object required for v0.2 messages";
+  }
+  if (
+    typeof submission.submitted_by !== "string" ||
+    !submission.submitted_by.trim() ||
+    submission.submitted_by.trim().length > MAX_IDENTITY_CHARS
+  ) {
+    return "submission.submitted_by is required and must be 1-120 characters";
+  }
+  if (!["human","guest_intelligence","enrolled_avot","institutional_agent","observer","system"].includes(submission.submission_actor_class)) {
+    return "submission.submission_actor_class invalid";
+  }
+  if (!["provider_attested","cryptographically_attested","operator_attested","declared","unknown","not_established"].includes(submission.submission_identity_state)) {
+    return "submission.submission_identity_state invalid";
+  }
+  if (!["direct","operator_relayed","agent_relayed","imported"].includes(submission.relay_state)) {
+    return "submission.relay_state invalid";
+  }
   return null;
 }
 
@@ -129,7 +164,9 @@ function canonicalMessageForDigest(message) {
     independence_state: message.independence_state,
     signature_state: message.signature_state,
     authority_state: message.authority_state,
-    limitations: message.limitations
+    limitations: message.limitations,
+    authorship: message.authorship,
+    submission: message.submission
   });
 }
 
@@ -176,7 +213,7 @@ export class CommonsThread extends DurableObject {
     const messageId = crypto.randomUUID();
 
     const message = {
-      schema_version: "0.1",
+      schema_version: "0.2",
       message_id: messageId,
       thread_id: THREAD_ID,
       parent_message_id: parentId,
@@ -205,10 +242,35 @@ export class CommonsThread extends DurableObject {
       independence_state: "unknown",
       signature_state: "unsigned",
       authority_state: "advisory_only",
+      authorship: {
+        author_participant_id:
+          typeof input.authorship.author_participant_id === "string" && input.authorship.author_participant_id.trim()
+            ? input.authorship.author_participant_id.trim().slice(0, 160)
+            : "declared:" + crypto.randomUUID(),
+        declared_author: input.authorship.declared_author.trim(),
+        author_identity_state: input.authorship.author_identity_state,
+        source_artifact_ref:
+          typeof input.authorship.source_artifact_ref === "string" && input.authorship.source_artifact_ref.trim()
+            ? input.authorship.source_artifact_ref.trim().slice(0, 500)
+            : null,
+        author_evidence_refs: normalizeRefs(input.authorship.author_evidence_refs)
+      },
+      submission: {
+        submitted_by: input.submission.submitted_by.trim(),
+        submission_actor_class: input.submission.submission_actor_class,
+        submission_identity_state: input.submission.submission_identity_state,
+        relay_state: input.submission.relay_state,
+        relay_method:
+          typeof input.submission.relay_method === "string" && input.submission.relay_method.trim()
+            ? input.submission.relay_method.trim().slice(0, 300)
+            : null,
+        relay_evidence_refs: normalizeRefs(input.submission.relay_evidence_refs)
+      },
       limitations: [
         "Identity is declared, not authenticated.",
         "Bootstrap room has no institutional authority.",
-        "Message persistence does not promote message content to verified evidence."
+        "Message persistence does not promote message content to verified evidence.",
+        "Authorship provenance and submission provenance are recorded separately for v0.2 messages."
       ]
     };
 
@@ -360,7 +422,7 @@ export default {
 
     if (url.pathname === "/health" && request.method === "GET") {
       return json({
-        service: "tyme-hall-commons-v0",
+        service: "tyme-hall-commons-v0.2",
         status: "ok",
         authority_state: "none",
         writes: "bounded_single_thread",
