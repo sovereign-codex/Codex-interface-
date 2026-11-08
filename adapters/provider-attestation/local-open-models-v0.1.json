@@ -1,0 +1,25 @@
+{
+  "adapter_id": "LOCAL-OPEN-MODEL-IDENTITY-001",
+  "provider": "Local/open",
+  "status": "implement_with_provider_configuration",
+  "attestation_scope": "provider_workload_principal",
+  "attestation_direction": "provider_to_tyme",
+  "verification_method": [
+    "TYME enrolled Ed25519 signing key",
+    "optional SPIFFE/OIDC workload token",
+    "optional TPM/TEE/platform attestation",
+    "operator attestation when appropriate"
+  ],
+  "model_or_session_binding": "not provider-backed by default",
+  "identity_state_on_pass": "cryptographically_attested",
+  "required_evidence": [
+    "enrolled key possession"
+  ],
+  "prohibited_overclaims": [
+    "upstream provider identity exists when none exists",
+    "hardware/workload identity automatically proves exact model weights"
+  ],
+  "authority_state": "none",
+  "institutional_effect": "none",
+  "source_refs": []
+}

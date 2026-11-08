@@ -1,0 +1,265 @@
+{
+  "schema_version": "0.1",
+  "artifact": "TYME-REAL-PROVIDER-ATTESTATION-001-MATRIX",
+  "researched_at": "2026-11-08",
+  "governing_invariant": "provider_attested must declare scope and direction; provider identity does not imply model/session identity or institutional authority",
+  "vocabularies": {
+    "attestation_scope": [
+      "provider_transport_client",
+      "provider_account_principal",
+      "provider_workload_principal",
+      "provider_agent_principal",
+      "provider_app_installation",
+      "provider_model_runtime",
+      "provider_session",
+      "unknown"
+    ],
+    "attestation_direction": [
+      "provider_to_tyme",
+      "client_to_provider",
+      "bidirectional",
+      "metadata_only",
+      "unknown"
+    ],
+    "readiness": [
+      "implement_now",
+      "implement_with_provider_configuration",
+      "evidence_only",
+      "not_established"
+    ]
+  },
+  "providers": [
+    {
+      "provider": "OpenAI",
+      "products": [
+        "ChatGPT",
+        "Codex",
+        "OpenAI API"
+      ],
+      "strongest_surfaces": [
+        {
+          "surface": "ChatGPT MCP client identification",
+          "scope": "provider_transport_client",
+          "direction": "provider_to_tyme",
+          "evidence": [
+            "OpenAI-managed client certificate presented by ChatGPT to MCP servers",
+            "certificate chain can be validated against OpenAI-published CA; SAN expected mtls.prod.connectors.openai.com",
+            "CIMD provides stable ChatGPT client metadata identity",
+            "private_key_jwt can be verified against OpenAI-published JWKS"
+          ],
+          "model_or_session_binding": "not_established",
+          "readiness": "implement_now"
+        },
+        {
+          "surface": "OpenAI API / Codex workload identity federation",
+          "scope": "provider_workload_principal",
+          "direction": "client_to_provider",
+          "evidence": [
+            "external OIDC JWT, SPIFFE JWT-SVID, or supported X.509 identity can be exchanged for short-lived OpenAI access token",
+            "mapping targets OpenAI service account or managed ChatGPT workspace principal"
+          ],
+          "model_or_session_binding": "not_established",
+          "readiness": "evidence_only"
+        }
+      ],
+      "current_tyme_maximum": "provider_transport_client_attested_for_chatgpt_mcp",
+      "prohibited_overclaim": "Do not label a specific GPT model or ChatGPT conversation/session provider-attested from MCP client identity alone.",
+      "sources": [
+        "https://developers.openai.com/plugins/build/auth",
+        "https://developers.openai.com/api/docs/guides/workload-identity-federation",
+        "https://developers.openai.com/api/docs/guides/api-keys"
+      ]
+    },
+    {
+      "provider": "Google",
+      "products": [
+        "Gemini API",
+        "Vertex AI",
+        "Gemini Enterprise Agent Platform",
+        "Google AI Mode"
+      ],
+      "strongest_surfaces": [
+        {
+          "surface": "Google service-account / OIDC workload identity",
+          "scope": "provider_workload_principal",
+          "direction": "provider_to_tyme",
+          "evidence": [
+            "Google service accounts are workload principals",
+            "Google IAM can issue short-lived OIDC ID tokens and sign JWTs",
+            "Gemini API authorization keys are bound to Google Cloud service accounts"
+          ],
+          "model_or_session_binding": "not_established",
+          "readiness": "implement_with_provider_configuration"
+        },
+        {
+          "surface": "Gemini Enterprise Agent Platform agent identity",
+          "scope": "provider_agent_principal",
+          "direction": "provider_to_tyme",
+          "evidence": [
+            "agent identity can use SPIFFE X.509 certificate, OIDC ID token, 2LO credential, or API key",
+            "audit logs can record the agent identity and delegated user identity"
+          ],
+          "model_or_session_binding": "agent_principal_only",
+          "readiness": "implement_with_provider_configuration"
+        },
+        {
+          "surface": "Google AI Mode provider-mediated retrieval",
+          "scope": "provider_transport_client",
+          "direction": "metadata_only",
+          "evidence": [
+            "TYME Cloudflare telemetry independently observed Google LLC / ASN 15169 retrieval of Blind-002 via Google-Lens"
+          ],
+          "model_or_session_binding": "not_established",
+          "readiness": "evidence_only"
+        }
+      ],
+      "current_tyme_maximum": "provider_workload_or_agent_principal_attested_when_google_signed_identity_token_or_spiffe_identity_is_present",
+      "prohibited_overclaim": "Do not promote consumer Gemini app/browser labels or Google-Lens retrieval telemetry to a specific Gemini model/session identity.",
+      "sources": [
+        "https://ai.google.dev/gemini-api/docs/api-key",
+        "https://docs.cloud.google.com/iam/docs/workload-identities",
+        "https://docs.cloud.google.com/iam/docs/service-account-permissions",
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/identity-delegation-architecture"
+      ]
+    },
+    {
+      "provider": "Anthropic",
+      "products": [
+        "Claude API",
+        "Claude Code",
+        "Claude apps"
+      ],
+      "strongest_surfaces": [
+        {
+          "surface": "Claude API identity-backed keys and service accounts",
+          "scope": "provider_account_principal",
+          "direction": "client_to_provider",
+          "evidence": [
+            "personal and service-account API keys are identity-backed",
+            "Admin API exposes principal metadata for managed API keys"
+          ],
+          "model_or_session_binding": "not_established",
+          "readiness": "evidence_only"
+        },
+        {
+          "surface": "Anthropic Workload Identity Federation",
+          "scope": "provider_workload_principal",
+          "direction": "client_to_provider",
+          "evidence": [
+            "Anthropic verifies external OIDC JWT against configured issuer/rule",
+            "Anthropic returns short-lived access token bound to target service account",
+            "jti replay protection is supported by default"
+          ],
+          "model_or_session_binding": "not_established",
+          "readiness": "evidence_only"
+        },
+        {
+          "surface": "Anthropic App Attest",
+          "scope": "provider_app_installation",
+          "direction": "client_to_provider",
+          "evidence": [
+            "Apple App Attest proves genuine registered iOS/macOS app installation to Anthropic",
+            "Anthropic issues short-lived token scoped to workspace"
+          ],
+          "model_or_session_binding": "not_established",
+          "readiness": "evidence_only"
+        }
+      ],
+      "current_tyme_maximum": "no_exportable_anthropic_provider_to_tyme_model_or_session_attestation_found",
+      "prohibited_overclaim": "Do not treat an Anthropic API key, WIF token exchange, or App Attest token as Claude model/session attestation to TYME unless Anthropic publishes a TYME-verifiable assertion surface.",
+      "sources": [
+        "https://platform.claude.com/docs/en/manage-claude/authentication",
+        "https://platform.claude.com/docs/en/manage-claude/workload-identity-federation",
+        "https://platform.claude.com/docs/en/manage-claude/admin-api"
+      ]
+    },
+    {
+      "provider": "xAI",
+      "products": [
+        "Grok",
+        "xAI API"
+      ],
+      "strongest_surfaces": [
+        {
+          "surface": "xAI API key / Management API",
+          "scope": "provider_account_principal",
+          "direction": "client_to_provider",
+          "evidence": [
+            "API keys authenticate to xAI",
+            "management records bind API keys to team and creating user"
+          ],
+          "model_or_session_binding": "not_established",
+          "readiness": "evidence_only"
+        },
+        {
+          "surface": "xAI enterprise mTLS",
+          "scope": "provider_workload_principal",
+          "direction": "client_to_provider",
+          "evidence": [
+            "xAI validates enterprise client certificates against customer-provided CA and requires API key",
+            "certificate proves authorized client machine to xAI"
+          ],
+          "model_or_session_binding": "not_established",
+          "readiness": "evidence_only"
+        }
+      ],
+      "current_tyme_maximum": "no_exportable_xai_provider_to_tyme_model_or_session_attestation_found",
+      "prohibited_overclaim": "Do not treat xAI API-key ownership or client mTLS as xAI-signed Grok identity to TYME.",
+      "sources": [
+        "https://docs.x.ai/developers/rest-api-reference/management/auth",
+        "https://docs.x.ai/developers/advanced-api-usage/mtls",
+        "https://docs.x.ai/developers/rest-api-reference/inference"
+      ]
+    },
+    {
+      "provider": "Local/open models",
+      "products": [
+        "self-hosted models",
+        "PocketPal",
+        "local inference runtimes"
+      ],
+      "strongest_surfaces": [
+        {
+          "surface": "operator/workload/hardware identity",
+          "scope": "provider_workload_principal",
+          "direction": "provider_to_tyme",
+          "evidence": [
+            "can use TYME-enrolled Ed25519 key",
+            "can optionally layer SPIFFE, TPM/TEE, platform app attestation, or operator attestation"
+          ],
+          "model_or_session_binding": "not_provider_backed",
+          "readiness": "implement_with_provider_configuration"
+        }
+      ],
+      "current_tyme_maximum": "cryptographically_attested_or_hardware_workload_attested",
+      "prohibited_overclaim": "No upstream provider exists to attest model identity unless a distributor/runtime operator becomes an explicit attestation authority.",
+      "sources": []
+    }
+  ],
+  "ranked_next_adapters": [
+    {
+      "rank": 1,
+      "adapter": "OPENAI-CHATGPT-MCP-ATTESTATION-001",
+      "reason": "Strong provider-to-TYME transport identity is explicitly documented and cryptographically verifiable via OpenAI-managed mTLS; CIMD/private_key_jwt can add a second OpenAI-controlled client identity signal.",
+      "target_scope": "provider_transport_client"
+    },
+    {
+      "rank": 2,
+      "adapter": "GOOGLE-AGENT-WORKLOAD-ATTESTATION-001",
+      "reason": "Google-signed OIDC or SPIFFE agent/workload identity can be independently verified by TYME when a Google workload or Agent Platform agent calls the Hall.",
+      "target_scope": "provider_agent_principal"
+    },
+    {
+      "rank": 3,
+      "adapter": "ANTHROPIC-PRINCIPAL-EVIDENCE-001",
+      "reason": "Identity-backed service accounts/WIF are strong client-to-Anthropic identity, but no outward Claude model/session attestation surface was found; keep as evidence adapter unless a verifiable outward assertion appears.",
+      "target_scope": "provider_account_principal"
+    },
+    {
+      "rank": 4,
+      "adapter": "XAI-PRINCIPAL-EVIDENCE-001",
+      "reason": "Team/user-bound API keys and enterprise mTLS are useful account/client evidence but authenticate the client to xAI, not Grok to TYME.",
+      "target_scope": "provider_account_principal"
+    }
+  ]
+}
