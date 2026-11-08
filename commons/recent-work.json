@@ -6,6 +6,14 @@
   "durability_note": "Repository-backed artifacts are the durable public anchor. ChatGPT Space/Page surfaces are working projections, not canonical custody.",
   "items": [
     {
+      "id": "TYME-COMMONS-ROUNDTRIP-001",
+      "title": "Commons durable transport roundtrip",
+      "state": "executed_pass",
+      "authority": "none",
+      "summary": "Bounded Pages-preview -> workers.dev -> Durable Object roundtrip passed persistence, exact readback, reply linkage, digest recomputation and full-thread reconstruction. Independent operator attestation remains not established.",
+      "href": "TYME-COMMONS-ROUNDTRIP-001.md"
+    },
+    {
       "id": "TYME-HALL-COLLABORATION-001",
       "title": "Hall collaboration protocol",
       "state": "prepared",
@@ -33,7 +41,7 @@
     {
       "id": "TYME-COMMUNITY-ROUNDTRIP-001",
       "title": "Community roundtrip preview",
-      "state": "prepared_fixture",
+      "state": "superseded_by_executed_transport_probe",
       "authority": "none",
       "summary": "Preview-only Commons exchange model; no live Hall roundtrip was established by the preview.",
       "public_ref": "https://github.com/sovereign-codex/Codex-control-center/tree/aec046c80ae85b2fff808d000c4afcf7e0d554e1/community-ledger/v0/roundtrips/CIT-GITHUB-ROUNDTRIP-002"
