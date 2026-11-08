@@ -1,0 +1,1 @@
+# TYME Provider Attestation Worker\n\nProvider-neutral preview service for \`TYME-PROVIDER-ATTESTATION-001\`.\n\nIt stores trusted provider signing keys, verifies provider-signed participant-key attestations, tracks attestation revocation/expiry, and resolves current provider identity state for the authenticated-contribution gateway.\n\nNo production route is attached.\n
