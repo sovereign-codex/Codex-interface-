@@ -1,0 +1,76 @@
+{
+  "schema_version": "0.1",
+  "artifact": "TYME-PROVIDER-ATTESTATION-001",
+  "status": "EXECUTED_PASS",
+  "executed_at": "2026-11-08T14:24:44Z",
+  "authority_state": "none",
+  "institutional_effect": "none",
+  "production_route": "not_established",
+  "synthetic_provider": true,
+  "provider_id": "synthetic-provider:922a61e2-a2d4-4bc2-ae2d-08e4bdbd9f3f",
+  "participant_id": "provider-probe:dd9796e5-5033-49bd-8563-803f49920651",
+  "attestations": {
+    "A": {
+      "id": "att-A:3af914e4-55e8-4c1e-97ca-931fbbaea6a7",
+      "key_thumbprint": "DXldysed3B9Yc5azUlo1RQLdVkr5APtZZSDYUvEcqqo"
+    },
+    "B": {
+      "id": "att-B:335a2601-54eb-4912-8058-3567fe2894fa",
+      "key_thumbprint": "eIsB7IkJrU7aoLr9Pmn1Xo3k45xbVFcytWQT0CH5OuU"
+    }
+  },
+  "identity_state_sequence": [
+    "provider_attested",
+    "provider_attested",
+    "cryptographically_attested",
+    "cryptographically_attested",
+    "provider_attested",
+    "cryptographically_attested"
+  ],
+  "commons_sequences": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "checks": {
+    "provider_root_enrolled": true,
+    "participant_enrolled": true,
+    "attestation_A_verified": true,
+    "provider_attested_before_rotation": true,
+    "provider_key_rotated": true,
+    "retired_provider_key_preserves_valid_attestation": true,
+    "attestation_revoked": true,
+    "revocation_downgrades_to_crypto": true,
+    "participant_key_rotated": true,
+    "stale_attestation_does_not_transfer_to_rotated_participant_key": true,
+    "attestation_B_verified": true,
+    "rotated_participant_key_upgrades_after_fresh_attestation": true,
+    "provider_key_revoked": true,
+    "provider_key_revocation_downgrades_to_crypto": true,
+    "all_contributions_persisted": true,
+    "authority_never_promoted": true
+  },
+  "boundary_check": {
+    "tymehall_routes": [
+      "tymehall.org/evidence/commons/*",
+      "tymehall.org/for-machines/*",
+      "tymehall.org/.well-known/tyme.json"
+    ],
+    "provider_attestation_public_subdomain": false,
+    "authenticated_contribution_public_subdomain": false,
+    "provider_probe_public_subdomain": false,
+    "provider_attestation_production_route": false
+  },
+  "proof_ceiling": [
+    "Proves provider-attestation mechanism with a synthetic provider keypair.",
+    "Proves provider-signed binding to the exact participant key thumbprint.",
+    "Proves provider-key rotation, individual attestation revocation, participant-key rotation, stale-attestation non-transfer, fresh re-attestation, and provider-key revocation.",
+    "Proves identity downgrade to cryptographic-only when provider evidence becomes invalid.",
+    "Does not prove compatibility with or identity from Google, xAI, OpenAI, Anthropic, or another real provider.",
+    "Does not create institutional authority."
+  ],
+  "governing_invariant": "provider_attested identity != institutional authority"
+}
