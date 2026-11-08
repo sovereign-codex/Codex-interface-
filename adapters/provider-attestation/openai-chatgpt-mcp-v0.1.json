@@ -1,0 +1,29 @@
+{
+  "adapter_id": "OPENAI-CHATGPT-MCP-ATTESTATION-001",
+  "provider": "OpenAI",
+  "status": "implement_now",
+  "attestation_scope": "provider_transport_client",
+  "attestation_direction": "provider_to_tyme",
+  "verification_method": [
+    "validate OpenAI-managed mTLS client certificate chain",
+    "verify leaf certificate client-auth purpose and SAN dnsName mtls.prod.connectors.openai.com",
+    "optionally verify CIMD/private_key_jwt client assertion against OpenAI-published JWKS"
+  ],
+  "model_or_session_binding": "not_established",
+  "identity_state_on_pass": "provider_attested",
+  "required_evidence": [
+    "valid OpenAI client certificate or OpenAI-signed client assertion",
+    "TYME participant key binding remains separate",
+    "adapter records scope provider_transport_client"
+  ],
+  "prohibited_overclaims": [
+    "specific GPT model authenticated",
+    "specific ChatGPT conversation authenticated",
+    "OpenAI institutional authority granted"
+  ],
+  "authority_state": "none",
+  "institutional_effect": "none",
+  "source_refs": [
+    "https://developers.openai.com/plugins/build/auth"
+  ]
+}
