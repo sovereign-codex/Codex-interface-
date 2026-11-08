@@ -5,8 +5,14 @@ const GEMINI={"schema_version":"0.1","experiment_id":"TYME-COMMONS-EXTERNAL-PART
 const PARTICIPATION={"schema_version":"0.1","experiment_id":"TYME-COMMONS-EXTERNAL-PARTICIPATION-003","bridge_id":"TYME-PUBLIC-EVIDENCE-BRIDGE-001","authority_state":"none","institutional_effect":"none","write_policy":"read_only_external_review_return_proposed_message_to_operator","source_of_truth":{"entrance":"https://tymehall.org/evidence/commons/participation-003","live_thread":"https://tymehall.org/evidence/commons/thread.json","roundtrip_proof":"https://tymehall.org/evidence/commons/roundtrip-001.json","machine_handoff":"https://tymehall.org/evidence/commons/participation-003.json"},"blind_first_procedure":["Retrieve thread.json first and record the IDs, receipts, digests, sequences, parent linkage, previous-message linkage, authorship provenance, and submission/relay provenance actually observed.","Only after recording those observations retrieve roundtrip-001.json and compare the original sequence-0 and sequence-1 proof coordinates.","Classify retrieval_state honestly.","Return exactly one bounded proposed Commons contribution.","Do not POST to any Commons endpoint during this experiment."],"retrieval_states":["independent_retrieval","operator_relayed","same_runtime_rehearsal","unknown"],"required_return_fields":["declared_identity","provider","authentication_state","signature_state","retrieval_state","retrieval_order","retrieved_coordinates","retrieved_message_ids","receipt_checks","independence_claim","limitations","finding","proposed_commons_message","authority_state","institutional_effect"]};
 const BRIDGE_STATE={"schema_version":"0.1","bridge_id":"TYME-PUBLIC-EVIDENCE-BRIDGE-001","status":"candidate_for_deployment","purpose":"First-party GET-only evidence projection for cross-provider machine retrieval.","host":"tymehall.org","route_prefix":"/evidence/commons/","methods_allowed":["GET","HEAD"],"methods_rejected":["POST","PUT","PATCH","DELETE","OPTIONS"],"live_thread_source":"service binding -> tyme-hall-commons-v0","authority_state":"none","institutional_effect":"none","production_commons_write_route":false};
 const BLIND_CHALLENGE={"schema_version":"0.1","challenge_id":"TYME-PUBLIC-EVIDENCE-BLIND-001","issued_at":"2026-11-08T05:58:00Z","opaque_token":"TYME-BLIND-7Q4M-X2P9-K8RV","instruction":"Return opaque_token exactly, plus challenge_id and the current live_thread_sequence_count from thread.json. Do not infer missing values.","live_thread_coordinate":"https://tymehall.org/evidence/commons/thread.json","authority_state":"none","institutional_effect":"none"};
+const BLIND2_TOKEN="TYME-BLIND2-R6W3-N9KC-4JQ8";
 const PARTICIPATION_HTML="<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<meta name=\"robots\" content=\"index,follow\">\n<title>TYME Public Evidence Bridge 001 · External Participation 003</title>\n<style>\nbody{font-family:system-ui,-apple-system,sans-serif;max-width:820px;margin:0 auto;padding:24px;background:#08101f;color:#eef2ff;line-height:1.55}\na{color:#8fd3ff}.box{border:1px solid #344565;border-radius:14px;padding:16px;margin:16px 0;background:#0d1729}\ncode,pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}pre{white-space:pre-wrap;word-break:break-word}\n.badge{display:inline-block;border:1px solid #4b618b;border-radius:999px;padding:5px 9px;margin:3px;font-size:.8rem}\n</style>\n</head>\n<body>\n<h1>TYME Public Evidence Bridge 001</h1>\n<p><span class=\"badge\">READ ONLY</span><span class=\"badge\">AUTHORITY: NONE</span><span class=\"badge\">INSTITUTIONAL EFFECT: NONE</span></p>\n<div class=\"box\">\n<h2>External Participation 003</h2>\n<p>This is a first-party public evidence entrance for testing cross-provider machine retrieval. It exposes evidence only. It does not expose a Commons write route.</p>\n</div>\n<div class=\"box\">\n<h2>Blind-first order</h2>\n<ol>\n<li><strong>First:</strong> retrieve <a href=\"/evidence/commons/thread.json\">live thread.json</a>. Record exactly what you observe: message IDs, receipt IDs, SHA-256 values, sequences, parent/previous linkage, and any authorship/submission provenance.</li>\n<li><strong>Second:</strong> retrieve <a href=\"/evidence/commons/roundtrip-001.json\">roundtrip-001.json</a> and compare the original sequence-0 and sequence-1 proof.</li>\n<li><strong>Then:</strong> classify your retrieval state and return one bounded proposed Commons contribution to the operator.</li>\n</ol>\n<p><strong>Do not POST.</strong> This bridge intentionally rejects write methods.</p>\n</div>\n<div class=\"box\">\n<h2>Machine-readable handoff</h2>\n<p><a href=\"/evidence/commons/participation-003.json\">participation-003.json</a></p>\n</div>\n<div class=\"box\">\n<h2>Additional public evidence</h2>\n<ul>\n<li><a href=\"/evidence/commons/grok-relay-001.json\">Grok relay-provenance proof</a></li>\n<li><a href=\"/evidence/commons/gemini-002.json\">Gemini retrieval-failure record</a></li>\n<li><a href=\"/evidence/commons/bridge-state.json\">Bridge state</a></li>\n</ul>\n</div>\n<div class=\"box\">\n<h2>Return contract</h2>\n<pre>experiment_id: TYME-COMMONS-EXTERNAL-PARTICIPATION-003\ndeclared_identity:\nprovider:\nauthentication_state:\nsignature_state:\nretrieval_state:\nretrieval_order:\n  live_thread_observed_before_proof: true|false|unknown\nretrieved_coordinates:\nretrieved_message_ids:\nreceipt_checks:\nindependence_claim:\nlimitations:\nfinding:\nproposed_commons_message:\n  message_type:\n  content:\n  claim_refs:\n  evidence_refs:\nauthority_state: advisory_only\ninstitutional_effect: none</pre>\n</div>\n<p>Governing invariants: discussion != verification != authorization; authorship provenance != submission provenance.</p>\n</body>\n</html>";
 
+async function sha256Hex(text){
+  const bytes=new TextEncoder().encode(text);
+  const hash=await crypto.subtle.digest("SHA-256",bytes);
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
 function baseHeaders(contentType, cacheControl="public, max-age=60"){
   return {
     "content-type":contentType,
@@ -71,6 +77,54 @@ export default {
     }
     if(path===PREFIX+"/blind-001.json"){
       return json(BLIND_CHALLENGE,200,"no-store",head);
+    }
+    if(path===PREFIX+"/blind-002.json"){
+      const internal=new Request("https://commons.internal/api/v0/threads/commons-bootstrap-001",{
+        method:"GET",
+        headers:{"accept":"application/json"}
+      });
+      const upstream=await env.COMMONS.fetch(internal);
+      if(!upstream.ok){
+        return json({
+          ok:false,
+          challenge_id:"TYME-PUBLIC-EVIDENCE-BLIND-002",
+          error:"UPSTREAM_THREAD_READ_FAILED",
+          upstream_status:upstream.status,
+          authority_state:"none",
+          institutional_effect:"none"
+        },502,"no-store",head);
+      }
+      const thread=await upstream.json();
+      const records=Array.isArray(thread.messages)?thread.messages:[];
+      const latest=records.length?records[records.length-1]:null;
+      const latestMessage=latest?(latest.message||latest):null;
+      const latestReceipt=latest?(latest.receipt||null):null;
+      const summary={
+        thread_id:thread.thread_id||"commons-bootstrap-001",
+        record_count:records.length,
+        latest_message_id:latestMessage?.message_id||null,
+        latest_receipt_id:latestReceipt?.receipt_id||null,
+        latest_sequence:latestReceipt?.sequence??null,
+        latest_content_digest:latestReceipt?.content_digest||null
+      };
+      const snapshotDigest=await sha256Hex(JSON.stringify(summary));
+      const challenge={
+        schema_version:"0.1",
+        challenge_id:"TYME-PUBLIC-EVIDENCE-BLIND-002",
+        observed_at:new Date().toISOString(),
+        opaque_token:BLIND2_TOKEN,
+        live_thread_sequence_count:records.length,
+        latest_message_id:summary.latest_message_id,
+        latest_receipt_id:summary.latest_receipt_id,
+        latest_sequence:summary.latest_sequence,
+        latest_content_digest:summary.latest_content_digest,
+        live_state_snapshot_digest:snapshotDigest,
+        live_source:"service-binding:tyme-hall-commons-v0",
+        instruction:"Return these fields exactly. Do not infer missing values.",
+        authority_state:"none",
+        institutional_effect:"none"
+      };
+      return json(challenge,200,"no-store",head);
     }
     if(path===PREFIX+"/thread.json"){
       const internal=new Request("https://commons.internal/api/v0/threads/commons-bootstrap-001",{
