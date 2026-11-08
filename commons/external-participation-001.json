@@ -39,6 +39,7 @@
     "signature_state",
     "retrieval_state",
     "retrieved_coordinates",
+    "retrieval_order",
     "retrieved_message_ids",
     "receipt_checks",
     "independence_claim",
@@ -47,5 +48,13 @@
     "proposed_commons_message",
     "authority_state",
     "institutional_effect"
-  ]
+  ],
+  "procedure": [
+    "If public retrieval is available, retrieve the live durable thread first and record observed IDs, receipts, digests, sequence, and parent linkage without consulting expected proof values.",
+    "Then inspect TYME-COMMONS-ROUNDTRIP-001.json and compare the independently observed values.",
+    "Classify retrieval_state honestly.",
+    "Return exactly one bounded proposed Commons contribution.",
+    "Do not POST to the Commons API during this experiment; operator-mediated posting remains separate from external retrieval."
+  ],
+  "write_policy": "read_only_external_review_return_proposed_message_to_operator"
 }
