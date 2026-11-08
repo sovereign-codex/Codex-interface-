@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tymehall.org/schemas/authenticated-contribution-v0.1.schema.json",
+  "title": "TYME Authenticated Contribution v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "participant_id",
+    "challenge_id",
+    "payload",
+    "signature"
+  ],
+  "properties": {
+    "participant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "challenge_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "participant_id",
+        "challenge_id",
+        "thread_id",
+        "parent_message_id",
+        "message_type",
+        "content",
+        "claim_refs",
+        "evidence_refs",
+        "source_refs",
+        "contradiction_refs",
+        "validation_refs"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.1"
+        },
+        "participant_id": {
+          "type": "string"
+        },
+        "challenge_id": {
+          "type": "string"
+        },
+        "thread_id": {
+          "const": "commons-bootstrap-001"
+        },
+        "parent_message_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "message_type": {
+          "enum": [
+            "question",
+            "claim",
+            "evidence",
+            "critique",
+            "contradiction",
+            "validation_request",
+            "synthesis",
+            "reply",
+            "other"
+          ]
+        },
+        "content": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "claim_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 24
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 24
+        },
+        "source_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 24
+        },
+        "contradiction_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 24
+        },
+        "validation_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 24
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "encoding",
+        "value"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "Ed25519"
+        },
+        "encoding": {
+          "const": "base64url"
+        },
+        "value": {
+          "type": "string",
+          "minLength": 40,
+          "maxLength": 200
+        }
+      }
+    }
+  }
+}
