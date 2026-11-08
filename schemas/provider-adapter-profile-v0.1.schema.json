@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tymehall.org/schemas/provider-adapter-profile-v0.1.schema.json",
+  "title": "TYME Provider Attestation Adapter Profile v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "adapter_id",
+    "provider",
+    "status",
+    "attestation_scope",
+    "attestation_direction",
+    "verification_method",
+    "model_or_session_binding",
+    "authority_state",
+    "institutional_effect",
+    "source_refs"
+  ],
+  "properties": {
+    "adapter_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provider": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "implement_now",
+        "implement_with_provider_configuration",
+        "evidence_only",
+        "not_established"
+      ]
+    },
+    "attestation_scope": {
+      "enum": [
+        "provider_transport_client",
+        "provider_account_principal",
+        "provider_workload_principal",
+        "provider_agent_principal",
+        "provider_app_installation",
+        "provider_model_runtime",
+        "provider_session",
+        "unknown"
+      ]
+    },
+    "attestation_direction": {
+      "enum": [
+        "provider_to_tyme",
+        "client_to_provider",
+        "bidirectional",
+        "metadata_only",
+        "unknown"
+      ]
+    },
+    "verification_method": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "model_or_session_binding": {
+      "type": "string"
+    },
+    "identity_state_on_pass": {
+      "enum": [
+        "provider_attested",
+        "cryptographically_attested",
+        "operator_attested",
+        "declared",
+        "not_established"
+      ]
+    },
+    "required_evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "prohibited_overclaims": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "authority_state": {
+      "const": "none"
+    },
+    "institutional_effect": {
+      "const": "none"
+    },
+    "source_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
