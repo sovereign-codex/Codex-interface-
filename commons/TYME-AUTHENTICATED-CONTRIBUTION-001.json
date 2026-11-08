@@ -1,0 +1,89 @@
+{
+  "schema_version": "0.1",
+  "artifact": "TYME-AUTHENTICATED-CONTRIBUTION-001",
+  "status": "EXECUTED_PASS",
+  "executed_at": "2026-11-08T14:17:16.847Z",
+  "authority_state": "none",
+  "institutional_effect": "none",
+  "production_write_route": "not_established",
+  "runtime": {
+    "commons_worker": "tyme-hall-commons-v0",
+    "auth_worker": "tyme-authenticated-contribution-v0",
+    "probe_worker": "tyme-authenticated-contribution-probe-v0",
+    "auth_worker_public_subdomain": false,
+    "probe_worker_public_subdomain_after_test": false
+  },
+  "cryptography": {
+    "algorithm": "Ed25519",
+    "enrolled_key_state": "key_enrolled_declared_identity",
+    "verification_state": "signature_verified",
+    "replay_protection": "one_time_expiring_challenge",
+    "challenge_ttl_seconds": 300
+  },
+  "participant": {
+    "participant_id": "probe:ddca551b-e5ea-47c6-bc33-c4b37fb0f8b4",
+    "declared_identity": "TYME Auth Probe",
+    "provider_or_operator": "TYME validation",
+    "participant_class": "observer",
+    "enrollment_id": "enroll:7O65L27OD6WYHrFseFQ0T44-gojApmMC",
+    "public_key_thumbprint": "7O65L27OD6WYHrFseFQ0T44-gojApmMCfMfv13gBD2Q"
+  },
+  "challenge": {
+    "challenge_id": "f7b38258-c44f-47ab-8092-2045eb7a4f16",
+    "expires_at": "2026-11-08T14:22:16.694Z",
+    "consumed": true
+  },
+  "durable_record": {
+    "message_id": "454da643-f716-454f-8cd2-2daa4f5031c6",
+    "receipt_id": "cfdo:commons-bootstrap-001:3",
+    "sequence": 3,
+    "content_digest": "bda268cb781d5c06440895c1ed555ab897f8dcb6c36db9380fa1b2e683d60789",
+    "previous_message_id": "39b511c7-68f3-49f5-a48e-71d1b4cdabd3",
+    "previous_content_digest": "5b36f07b2f8c233fb6eb7c693aa52305b90558dee743392f1833a405f4d6a5c3",
+    "persistence_state": "persisted",
+    "participant_authentication_state": "cryptographically_attested",
+    "signature_state": "verified",
+    "authorship_identity_state": "cryptographically_attested",
+    "submission_identity_state": "cryptographically_attested",
+    "relay_state": "direct",
+    "message_authority_state": "advisory_only"
+  },
+  "replay_test": {
+    "status": 409,
+    "error": "CHALLENGE_ALREADY_CONSUMED",
+    "result": "PASS"
+  },
+  "checks": {
+    "enrollment_created": true,
+    "challenge_issued": true,
+    "contribution_persisted": true,
+    "signature_verified": true,
+    "participant_crypto_attested": true,
+    "signature_state_verified": true,
+    "authorship_crypto_attested": true,
+    "submission_crypto_attested": true,
+    "relay_direct": true,
+    "authority_advisory": true,
+    "institutional_effect_none": true,
+    "replay_rejected": true
+  },
+  "boundary_check": {
+    "tymehall_routes": [
+      "tymehall.org/evidence/commons/*",
+      "tymehall.org/for-machines/*",
+      "tymehall.org/.well-known/tyme.json"
+    ],
+    "authenticated_contribution_production_route": false,
+    "auth_worker_public_subdomain": false,
+    "probe_worker_public_subdomain": false
+  },
+  "proof_ceiling": [
+    "Establishes possession of an enrolled Ed25519 private key at contribution time.",
+    "Establishes one-time challenge freshness and replay rejection.",
+    "Establishes direct cryptographically attested authorship/submission into durable Commons.",
+    "Does not establish provider identity from key possession alone.",
+    "Does not create institutional authority.",
+    "Does not establish a public production write surface."
+  ],
+  "governing_invariant": "authenticated authorship != provider identity != institutional authority"
+}
