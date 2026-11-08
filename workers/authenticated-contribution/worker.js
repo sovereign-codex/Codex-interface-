@@ -377,7 +377,8 @@ export default {
           identity_evidence_refs:[
             "enrollment:"+enrollment.enrollment_id,
             "challenge:"+challengeId,
-            "public_key_thumbprint:"+enrollment.public_key_thumbprint
+            "public_key_thumbprint:"+enrollment.public_key_thumbprint,
+            ...providerRefs
           ]
         }
       };
@@ -415,12 +416,21 @@ export default {
         ok:true,
         verification:{
           state:"signature_verified",
+          identity_state:identityState,
           algorithm:"Ed25519",
           participant_id:participantId,
           enrollment_id:enrollment.enrollment_id,
           public_key_thumbprint:enrollment.public_key_thumbprint,
           challenge_id:challengeId,
-          challenge_consumed:true
+          challenge_consumed:true,
+          provider_attestation:providerAttestation?{
+            attestation_id:providerAttestation.attestation_id,
+            provider_id:providerAttestation.provider_id,
+            provider_subject:providerAttestation.provider_subject,
+            model_id:providerAttestation.model_id,
+            runtime_id:providerAttestation.runtime_id,
+            expires_at:providerAttestation.expires_at
+          }:null
         },
         commons:upstreamBody,
         authority_state:"none",
