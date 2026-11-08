@@ -6,6 +6,14 @@
   "durability_note": "Repository-backed artifacts are the durable public anchor. ChatGPT Space/Page surfaces are working projections, not canonical custody.",
   "items": [
     {
+      "id": "TYME-INDEPENDENT-DIGEST-RECOMPUTATION-001",
+      "title": "Independent digest recomputation",
+      "state": "executed_pass",
+      "authority": "none",
+      "summary": "Canonical Grok relay message bytes (2725 UTF-8 bytes) were hashed outside Cloudflare in the OpenAI execution environment; recomputed SHA-256 exactly matched the durable sequence-2 receipt.",
+      "href": "TYME-INDEPENDENT-DIGEST-RECOMPUTATION-001.md"
+    },
+    {
       "id": "TYME-COMMONS-EXTERNAL-PARTICIPATION-002-GEMINI",
       "title": "Gemini retrieval failure / boundary compliance",
       "state": "retrieval_fail_epistemic_boundary_pass",
