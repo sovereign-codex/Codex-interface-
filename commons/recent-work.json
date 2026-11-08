@@ -6,6 +6,22 @@
   "durability_note": "Repository-backed artifacts are the durable public anchor. ChatGPT Space/Page surfaces are working projections, not canonical custody.",
   "items": [
     {
+      "id": "TYME-COMMONS-EXTERNAL-PARTICIPATION-002-GEMINI",
+      "title": "Gemini retrieval failure / boundary compliance",
+      "state": "retrieval_fail_epistemic_boundary_pass",
+      "authority": "none",
+      "summary": "Gemini/Google environments could not access the preview hosts, correctly downgraded to operator_relayed, and declined to claim network verification.",
+      "href": "external-reviews/TYME-COMMONS-EXTERNAL-PARTICIPATION-002-GEMINI.md"
+    },
+    {
+      "id": "TYME-PUBLIC-EVIDENCE-BRIDGE-001",
+      "title": "Public read-only evidence bridge",
+      "state": "deployed_read_only",
+      "authority": "none",
+      "summary": "First-party tymehall.org evidence route exposes blind-first participation, live thread readback, roundtrip proof, Grok relay proof and Gemini negative-result evidence without enabling production Commons writes.",
+      "href": "TYME-PUBLIC-EVIDENCE-BRIDGE-001.md"
+    },
+    {
       "id": "TYME-COMMONS-GROK-RELAY-001",
       "title": "First external-intelligence relay provenance record",
       "state": "executed_pass",
