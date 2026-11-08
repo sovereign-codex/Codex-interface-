@@ -1,6 +1,6 @@
 # OPENAI-CHATGPT-MCP-ATTESTATION-001
 
-**Status:** Candidate implementation  
+**Status:** Runtime ready — live OpenAI assertion pending  
 **Provider:** OpenAI  
 **Product surface:** ChatGPT MCP / plugin client  
 **Attestation scope:** `provider_transport_client`  
@@ -113,3 +113,21 @@ mTLS is treated as a second provider-controlled transport signal. It is not requ
 ## Governing invariant
 
 > **OpenAI-authenticated ChatGPT transport != specific GPT model/session != institutional authority**
+
+
+---
+
+## Executed adapter acceptance probe
+
+The internal adapter runtime successfully:
+
+- retrieved live ChatGPT CIMD;
+- retrieved live OpenAI JWKS;
+- verified RS256 private-key JWTs through the production verifier path;
+- rejected replayed assertions;
+- rejected incorrect audiences;
+- preserved `provider_transport_client` scope;
+- preserved model/session as `not_established`;
+- preserved authority as `none`.
+
+A real OpenAI-signed ChatGPT assertion remains pending an actual OAuth exchange with a TYME MCP authorization server.
