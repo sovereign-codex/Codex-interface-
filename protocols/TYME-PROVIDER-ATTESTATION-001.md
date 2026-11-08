@@ -1,6 +1,6 @@
 # TYME-PROVIDER-ATTESTATION-001
 
-**Status:** Candidate implementation  
+**Status:** Executed bounded implementation — PASS  
 **Authority:** Non-authorizing  
 **Production route:** Not established  
 **Provider-specific compatibility:** Not claimed
@@ -89,3 +89,29 @@ Provider attestation answers "which provider identity claim is bound to this key
 ## First acceptance test
 
 Use a synthetic provider keypair and synthetic provider identity. A PASS proves the protocol mechanics only. It MUST NOT be represented as a real Google, xAI, OpenAI, Anthropic, or other provider attestation.
+
+
+---
+
+## Executed synthetic-provider probe
+
+`TYME-PROVIDER-ATTESTATION-001-PROBE` passed the full lifecycle matrix.
+
+Observed Commons sequences:
+
+`4, 5, 6, 7, 8, 9`
+
+Observed identity states:
+
+```text
+provider_attested
+provider_attested
+cryptographically_attested
+cryptographically_attested
+provider_attested
+cryptographically_attested
+```
+
+The provider, auth, and probe public workers.dev subdomains are disabled after execution.
+
+No production Hall write route was created.
