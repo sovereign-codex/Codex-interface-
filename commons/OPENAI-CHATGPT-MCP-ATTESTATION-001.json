@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1",
+  "artifact": "OPENAI-CHATGPT-MCP-ATTESTATION-001",
+  "status": "RUNTIME_READY_LIVE_ASSERTION_PENDING",
+  "executed_at": "2026-11-08T16:41:57Z",
+  "authority_state": "none",
+  "institutional_effect": "none",
+  "provider": "OpenAI",
+  "product": "ChatGPT",
+  "attestation_scope": "provider_transport_client",
+  "attestation_direction": "provider_to_tyme",
+  "runtime": {
+    "adapter_worker": "tyme-openai-chatgpt-mcp-attestation-v0",
+    "probe_worker": "tyme-openai-chatgpt-mcp-attestation-probe-v0",
+    "adapter_public_subdomain": false,
+    "probe_public_subdomain_after_test": false
+  },
+  "live_openai_metadata": {
+    "client_id": "https://chatgpt.com/oauth/client.json",
+    "client_name": "ChatGPT",
+    "signing_alg": "RS256",
+    "jwks_uri": "https://chatgpt.com/oauth/jwks.json",
+    "jwks_kids": [
+      "cimd-20260428030119"
+    ],
+    "client_document_digest": "5b62ad00a6d2562dda7b8e373611c41e09967518f5fc0824b243a8e1a29f915e",
+    "jwks_document_digest": "d6e3f50d10230a5238732ae2d73d98c4f4721a171d22dbfc79a2cff0c2ebc114"
+  },
+  "acceptance_probe": {
+    "verdict": "PASS",
+    "checks": {
+      "live_cimd_valid": true,
+      "live_private_key_jwt_supported": true,
+      "live_rs256": true,
+      "live_jwks_has_key": true,
+      "synthetic_assertion_accepted": true,
+      "scope_transport_client": true,
+      "model_not_established": true,
+      "session_not_established": true,
+      "authority_none": true,
+      "replay_rejected": true,
+      "wrong_audience_rejected": true
+    },
+    "replay": {
+      "status": 409,
+      "error": "ASSERTION_REPLAY"
+    },
+    "wrong_audience": {
+      "status": 401,
+      "error": "JWT_AUD_MISMATCH"
+    }
+  },
+  "real_openai_assertion": {
+    "executed": false,
+    "state": "not_established_until_actual_chatgpt_oauth_exchange"
+  },
+  "proof_ceiling": [
+    "Live OpenAI ChatGPT CIMD/JWKS coordinates were retrieved and validated.",
+    "The production verifier accepts a standards-shaped RS256 private_key_jwt under the exact same claim/signature/replay path.",
+    "Replay and audience mismatch are rejected.",
+    "The adapter emits provider_transport_client scope only.",
+    "No specific GPT model, ChatGPT session, end-user identity, or institutional authority is established.",
+    "A real OpenAI-signed client assertion remains pending an actual ChatGPT OAuth exchange."
+  ],
+  "governing_invariant": "OpenAI-authenticated ChatGPT transport != specific GPT model/session != institutional authority"
+}

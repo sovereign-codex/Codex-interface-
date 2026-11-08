@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tymehall.org/schemas/openai-chatgpt-mcp-attestation-v0.1.schema.json",
+  "title": "OpenAI ChatGPT MCP Attestation v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "adapter_id",
+    "provider",
+    "product",
+    "attestation_scope",
+    "attestation_direction",
+    "verification_method",
+    "client_id",
+    "kid",
+    "algorithm",
+    "assertion_digest",
+    "expires_at",
+    "audience_profile",
+    "client_document_digest",
+    "jwks_uri",
+    "jwks_document_digest",
+    "tyme_binding",
+    "model_runtime_state",
+    "session_state",
+    "institutional_authority_state"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "adapter_id": {
+      "const": "OPENAI-CHATGPT-MCP-ATTESTATION-001"
+    },
+    "provider": {
+      "const": "OpenAI"
+    },
+    "product": {
+      "const": "ChatGPT"
+    },
+    "attestation_scope": {
+      "const": "provider_transport_client"
+    },
+    "attestation_direction": {
+      "const": "provider_to_tyme"
+    },
+    "verification_method": {
+      "const": "cimd_private_key_jwt"
+    },
+    "client_id": {
+      "const": "https://chatgpt.com/oauth/client.json"
+    },
+    "client_name": {
+      "const": "ChatGPT"
+    },
+    "kid": {
+      "type": "string",
+      "minLength": 1
+    },
+    "algorithm": {
+      "const": "RS256"
+    },
+    "assertion_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "jti": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "issued_at": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "expires_at": {
+      "type": "integer"
+    },
+    "audience_profile": {
+      "enum": [
+        "rfc10070_issuer",
+        "rfc7523_legacy_token_endpoint"
+      ]
+    },
+    "client_document_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "jwks_uri": {
+      "const": "https://chatgpt.com/oauth/jwks.json"
+    },
+    "jwks_document_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "tyme_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_id",
+        "connection_id",
+        "binding_authority",
+        "provider_signed"
+      ],
+      "properties": {
+        "participant_id": {
+          "type": "string"
+        },
+        "connection_id": {
+          "type": "string"
+        },
+        "binding_authority": {
+          "const": "tyme_oauth_server"
+        },
+        "provider_signed": {
+          "const": false
+        }
+      }
+    },
+    "model_runtime_state": {
+      "const": "not_established"
+    },
+    "session_state": {
+      "const": "not_established"
+    },
+    "institutional_authority_state": {
+      "const": "none"
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
