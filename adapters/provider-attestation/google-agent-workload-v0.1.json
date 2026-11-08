@@ -1,0 +1,31 @@
+{
+  "adapter_id": "GOOGLE-AGENT-WORKLOAD-ATTESTATION-001",
+  "provider": "Google",
+  "status": "implement_with_provider_configuration",
+  "attestation_scope": "provider_agent_principal",
+  "attestation_direction": "provider_to_tyme",
+  "verification_method": [
+    "verify Google-signed OIDC ID token audience/issuer/expiry for TYME",
+    "or verify documented SPIFFE X.509 agent identity when used by Google Agent Platform",
+    "bind verified Google principal to enrolled TYME participant key"
+  ],
+  "model_or_session_binding": "agent/workload principal only; consumer Gemini model/session not established",
+  "identity_state_on_pass": "provider_attested",
+  "required_evidence": [
+    "Google-signed identity token or SPIFFE identity",
+    "audience bound to TYME",
+    "participant key binding"
+  ],
+  "prohibited_overclaims": [
+    "consumer Gemini chat session authenticated",
+    "specific Gemini model authenticated unless separately evidenced",
+    "Google institutional authority granted"
+  ],
+  "authority_state": "none",
+  "institutional_effect": "none",
+  "source_refs": [
+    "https://docs.cloud.google.com/iam/docs/service-account-permissions",
+    "https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/identity-delegation-architecture",
+    "https://ai.google.dev/gemini-api/docs/api-key"
+  ]
+}
